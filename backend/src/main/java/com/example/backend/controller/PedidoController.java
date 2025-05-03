@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.PedidoCreateDTO;
 import com.example.backend.dto.PedidoDTO;
+import com.example.backend.dto.PedidoUpdateDTO;
 import com.example.backend.service.PedidoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,12 @@ public class PedidoController {
     @PostMapping
     public PedidoDTO create(@RequestBody PedidoCreateDTO dto) {
         return pedidoService.create(dto);
+    }
+
+    @PutMapping("/{id}")
+    public PedidoDTO update(@PathVariable Long id,
+                            @RequestBody PedidoUpdateDTO dto) {
+        return pedidoService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")

@@ -12,7 +12,8 @@ public class ViniloCreateDTO {
     private String artista;
     private String genero;
     private Double precio;
-    private String imagenUrl;
+    private String imagen;
     private Integer stock;
     private Long idProveedor;
+    private String descripcion;
 }

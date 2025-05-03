@@ -10,4 +10,5 @@ import lombok.*;
 public class AsistenciaEventoCreateDTO {
     private Long idUsuario;
     private Long idEvento;
+    private Boolean confirmado;
 }

@@ -1,7 +1,6 @@
 package com.example.backend.dto;
 
 import lombok.*;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -11,8 +10,7 @@ import java.time.LocalDateTime;
 public class TemaForoDTO {
     private Long id;
     private String titulo;
-    private String descripcion;
-    private LocalDateTime fechaCreacion;
+    private String contenido;
     private UsuarioDTO usuario;
     private ForoDTO foro;
 }

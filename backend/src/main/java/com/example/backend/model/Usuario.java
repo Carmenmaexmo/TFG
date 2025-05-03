@@ -33,7 +33,7 @@ public class Usuario {
     private String rol;
 
     @Lob
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String carrito;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)

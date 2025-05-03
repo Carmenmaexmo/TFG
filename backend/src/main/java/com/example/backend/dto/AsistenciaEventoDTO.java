@@ -11,4 +11,5 @@ public class AsistenciaEventoDTO {
     private Long id;
     private UsuarioDTO usuario;
     private EventoDTO evento;
+    private Boolean confirmado;
 }

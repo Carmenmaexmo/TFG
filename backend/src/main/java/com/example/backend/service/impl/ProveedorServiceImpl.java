@@ -47,6 +47,7 @@ public class ProveedorServiceImpl implements ProveedorService {
         proveedor.setNombre(dto.getNombre());
         proveedor.setEmail(dto.getEmail());
         proveedor.setTelefono(dto.getTelefono());
+        proveedor.setDireccion(dto.getDireccion());
 
         return proveedorMapper.toDTO(proveedorRepository.save(proveedor));
     }

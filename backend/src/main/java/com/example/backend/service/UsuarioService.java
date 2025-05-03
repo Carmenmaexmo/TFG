@@ -9,5 +9,6 @@ public interface UsuarioService {
     List<UsuarioDTO> findAll();
     UsuarioDTO findById(Long id);
     UsuarioDTO create(UsuarioCreateDTO dto);
+    UsuarioDTO update(Long id, UsuarioCreateDTO dto);
     void delete(Long id);
 }

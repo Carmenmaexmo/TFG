@@ -60,6 +60,8 @@ public class ViniloServiceImpl implements ViniloService {
         vinilo.setGenero(dto.getGenero());
         vinilo.setPrecio(dto.getPrecio());
         vinilo.setStock(dto.getStock());
+        vinilo.setImagen(dto.getImagen());
+        vinilo.setDescripcion(dto.getDescripcion());
         vinilo.setProveedor(proveedor);
 
         return viniloMapper.toDTO(viniloRepository.save(vinilo));

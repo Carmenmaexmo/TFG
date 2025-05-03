@@ -15,11 +15,14 @@ public class Evento {
     @Column(nullable = false)
     private String titulo;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String descripcion;
 
     @Column(nullable = false)
-    private LocalDateTime fecha;
+    private LocalDateTime fecha_inicio;
+
+    @Column(nullable = false)
+    private LocalDateTime fecha_fin;
 
     @Column(nullable = false)
     private String lugar;

@@ -3,7 +3,6 @@ package com.example.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 @Entity
 @Table(name = "temas_foro")
@@ -16,10 +15,7 @@ public class TemaForo {
     private String titulo;
 
     @Column(nullable = false)
-    private String descripcion;
-
-    @Column(nullable = false)
-    private LocalDateTime fechaCreacion;
+    private String contenido;
 
     @ManyToOne
     @JoinColumn(name = "idUsuario", nullable = false)

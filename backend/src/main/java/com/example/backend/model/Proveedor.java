@@ -20,6 +20,10 @@ public class Proveedor {
     @Column(nullable = false)
     private String telefono;
 
+    @Column(nullable = false)
+    private String direccion;
+
     @OneToMany(mappedBy = "proveedor")
     private List<Vinilo> vinilos;
+
 }

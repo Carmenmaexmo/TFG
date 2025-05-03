@@ -40,6 +40,23 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    public UsuarioDTO update(Long id, UsuarioCreateDTO dto) {
+        Usuario u = usuarioRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        // Copiamos los campos editables
+        u.setNombre(dto.getNombre());
+        u.setApellidos(dto.getApellidos());
+        u.setEmail(dto.getEmail());
+        u.setPassword(dto.getPassword());
+        u.setTelefono(dto.getTelefono());
+        u.setDni(dto.getDni());
+        // (El rol y el carrito posiblemente no se editen aquí)
+
+        return usuarioMapper.toDTO(usuarioRepository.save(u));
+    }
+
+    @Override
     public void delete(Long id) {
         if (!usuarioRepository.existsById(id)) {
             throw new RuntimeException("Usuario no existe");

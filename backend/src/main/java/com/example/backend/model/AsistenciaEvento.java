@@ -17,4 +17,7 @@ public class AsistenciaEvento {
     @ManyToOne
     @JoinColumn(name = "idEvento", nullable = false)
     private Evento evento;
+
+    @Column(nullable = false)
+    private boolean confirmado;
 }

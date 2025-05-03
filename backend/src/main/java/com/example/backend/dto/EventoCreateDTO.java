@@ -10,8 +10,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class EventoCreateDTO {
-    private String nombre;
+    private String titulo;
     private String descripcion;
-    private LocalDateTime fecha;
+    private LocalDateTime fecha_inicio;
+    private LocalDateTime fecha_fin;
     private String lugar;
 }

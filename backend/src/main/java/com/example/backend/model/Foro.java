@@ -17,7 +17,7 @@ public class Foro {
     @Column(nullable = false)
     private String nombre;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String descripcion;
 
     @OneToMany(mappedBy = "foro")

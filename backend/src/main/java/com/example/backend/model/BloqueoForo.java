@@ -17,6 +17,9 @@ public class BloqueoForo {
     @Column(nullable = false)
     private LocalDateTime fechaBloqueo;
 
+    @Column(nullable = false)
+    private String estado;
+
     @ManyToOne
     @JoinColumn(name = "idUsuario", nullable = false)
     private Usuario usuario;

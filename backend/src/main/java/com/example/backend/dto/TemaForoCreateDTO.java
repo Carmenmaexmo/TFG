@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 public class TemaForoCreateDTO {
     private String titulo;
-    private String descripcion;
+    private String contenido;
     private Long idUsuario;
     private Long idForo;
 }

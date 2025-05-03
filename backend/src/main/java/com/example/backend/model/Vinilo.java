@@ -26,8 +26,11 @@ public class Vinilo {
     @Column(nullable = false)
     private int stock;
 
-    @Column(nullable = false)
-    private String imagenUrl;
+    @Column(nullable = true)
+    private String imagen;
+
+    @Column(nullable = true)
+    private String descripcion;
 
     @ManyToOne
     @JoinColumn(name = "idProveedor", nullable = false)
