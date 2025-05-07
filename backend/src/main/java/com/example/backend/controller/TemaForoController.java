@@ -3,6 +3,7 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.TemaForoCreateDTO;
 import com.example.backend.dto.TemaForoDTO;
+import com.example.backend.dto.TemaForoUpdateDTO;
 import com.example.backend.service.TemaForoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class TemaForoController {
     }
 
     @PutMapping("/{id}")
-    public TemaForoDTO update(@PathVariable Long id, @RequestBody TemaForoCreateDTO dto) {
+    public TemaForoDTO update(@PathVariable Long id, @RequestBody TemaForoUpdateDTO dto) {
         return temaService.update(id, dto);
     }
 

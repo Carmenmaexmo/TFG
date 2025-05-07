@@ -3,6 +3,7 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.ComentarioForoCreateDTO;
 import com.example.backend.dto.ComentarioForoDTO;
+import com.example.backend.dto.ComentarioForoUpdateDTO;
 import com.example.backend.service.ComentarioForoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class ComentarioForoController {
     }
 
     @PutMapping("/{id}")
-    public ComentarioForoDTO update(@PathVariable Long id, @RequestBody ComentarioForoCreateDTO dto) {
+    public ComentarioForoDTO update(@PathVariable Long id, @RequestBody ComentarioForoUpdateDTO dto) {
         return comentarioService.update(id, dto);
     }
 

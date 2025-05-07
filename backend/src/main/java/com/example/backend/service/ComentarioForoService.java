@@ -2,6 +2,7 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.ComentarioForoDTO;
+import com.example.backend.dto.ComentarioForoUpdateDTO;
 import com.example.backend.dto.ComentarioForoCreateDTO;
 
 import java.util.List;
@@ -10,6 +11,6 @@ public interface ComentarioForoService {
     List<ComentarioForoDTO> findAll();
     ComentarioForoDTO findById(Long id);
     ComentarioForoDTO create(ComentarioForoCreateDTO dto);
-    ComentarioForoDTO update(Long id, ComentarioForoCreateDTO dto);
+    ComentarioForoDTO update(Long id, ComentarioForoUpdateDTO dto);
     void delete(Long id);
 }

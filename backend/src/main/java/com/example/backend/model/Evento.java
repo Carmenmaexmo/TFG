@@ -18,8 +18,8 @@ public class Evento {
     @Column(nullable = true)
     private String descripcion;
 
-    @Column(nullable = false)
-    private LocalDateTime fecha_inicio;
+    @Column(nullable = false, name = "fecha_inicio")
+    private LocalDateTime fechaInicio;
 
     @Column(nullable = false)
     private LocalDateTime fecha_fin;

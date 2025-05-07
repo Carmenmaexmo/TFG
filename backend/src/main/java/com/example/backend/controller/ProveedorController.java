@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.ProveedorDTO;
+import com.example.backend.dto.ProveedorUpdateDTO;
 import com.example.backend.dto.ProveedorCreateDTO;
 import com.example.backend.service.ProveedorService;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +33,11 @@ public class ProveedorController {
         return proveedorService.create(dto);
     }
 
-    @PutMapping("/{id}")
-    public ProveedorDTO update(@PathVariable Long id, @RequestBody ProveedorCreateDTO dto) {
+   @PutMapping("/{id}")
+    public ProveedorDTO update(
+        @PathVariable Long id,
+        @RequestBody ProveedorUpdateDTO dto
+    ) {
         return proveedorService.update(id, dto);
     }
 

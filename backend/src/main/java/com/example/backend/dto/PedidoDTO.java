@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class PedidoDTO {
     private Long id;
-    private LocalDateTime fecha;
+    private LocalDateTime fechaPedido;
     private Double total;
     private String estado;
     private UsuarioDTO usuario;

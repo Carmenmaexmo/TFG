@@ -3,6 +3,7 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.BloqueoForoCreateDTO;
 import com.example.backend.dto.BloqueoForoDTO;
+import com.example.backend.dto.BloqueoForoUpdateDTO;
 import com.example.backend.service.BloqueoForoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class BloqueoForoController {
     }
 
     @PutMapping("/{id}")
-    public BloqueoForoDTO update(@PathVariable Long id, @RequestBody BloqueoForoCreateDTO dto) {
+    public BloqueoForoDTO update(@PathVariable Long id, @RequestBody BloqueoForoUpdateDTO dto) {
         return bloqueoService.update(id, dto);
     }
 

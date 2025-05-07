@@ -1,13 +1,16 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.UsuarioDTO;
+import com.example.backend.dto.UsuarioUpdateDTO;
 import com.example.backend.dto.UsuarioCreateDTO;
 import com.example.backend.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -32,14 +35,21 @@ public class UsuarioController {
         return usuarioService.create(dto);
     }
 
-    @PutMapping("/{id}")
-    public UsuarioDTO update(@PathVariable Long id, @RequestBody UsuarioCreateDTO dto) {
-        return usuarioService.update(id, dto);
+   @PutMapping("/{id}")
+    public UsuarioDTO update(
+        @PathVariable Long id,
+        @RequestBody UsuarioUpdateDTO dto   // ← aquí
+    ) {
+        return usuarioService.partialUpdate(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        usuarioService.delete(id);
-        return ResponseEntity.noContent().build();
+        public ResponseEntity<Map<String,String>> delete(@PathVariable Long id) {
+            usuarioService.delete(id);
+            Map<String,String> resp = new HashMap<>();
+            resp.put("message", "Usuario con ID " + id + " eliminado correctamente");
+            return ResponseEntity
+                    .ok()          // HTTP 200 OK
+                    .body(resp);   // cuerpo { "message": "...eliminado correctamente" }
     }
 }

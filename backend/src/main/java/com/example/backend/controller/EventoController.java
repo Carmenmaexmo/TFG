@@ -3,6 +3,7 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.EventoCreateDTO;
 import com.example.backend.dto.EventoDTO;
+import com.example.backend.dto.EventoUpdateDTO;
 import com.example.backend.service.EventoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,10 @@ public class EventoController {
     }
 
     @PutMapping("/{id}")
-    public EventoDTO update(@PathVariable Long id, @RequestBody EventoCreateDTO dto) {
+    public EventoDTO update(
+            @PathVariable Long id,
+            @RequestBody EventoUpdateDTO dto
+    ) {
         return eventoService.update(id, dto);
     }
 

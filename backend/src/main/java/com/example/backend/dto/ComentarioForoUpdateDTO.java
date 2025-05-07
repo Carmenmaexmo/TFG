@@ -1,18 +1,14 @@
+// src/main/java/com/example/backend/dto/ComentarioForoUpdateDTO.java
 package com.example.backend.dto;
 
+import lombok.Data;
 import java.time.LocalDateTime;
 
-import lombok.*;
-
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class ComentarioForoCreateDTO {
+@Data
+public class ComentarioForoUpdateDTO {
     private String contenido;
-    private Long idUsuario;
     private LocalDateTime fechaComentario;
+    private Long idUsuario;
     private Long idTema;
     private Long idComentarioPadre;
 }

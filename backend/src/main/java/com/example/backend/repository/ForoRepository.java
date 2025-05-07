@@ -5,4 +5,6 @@ import com.example.backend.model.Foro;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ForoRepository extends JpaRepository<Foro, Long> {
+    boolean existsByNombre(String nombre); // Verifica si ya existe un foro con el mismo nombre
+    Foro findByNombre(String nombre); // Busca un foro por su nombre
 }

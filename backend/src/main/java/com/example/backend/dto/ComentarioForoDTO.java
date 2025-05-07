@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 public class ComentarioForoDTO {
     private Long id;
     private String contenido;
-    private LocalDateTime fecha;
+    private LocalDateTime fechaComentario;
     private UsuarioDTO usuario;
     private TemaForoDTO tema;
+    private ComentarioForoDTO comentarioPadre;
 }

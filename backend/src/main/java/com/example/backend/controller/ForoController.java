@@ -3,6 +3,7 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.ForoCreateDTO;
 import com.example.backend.dto.ForoDTO;
+import com.example.backend.dto.ForoUpdateDTO;
 import com.example.backend.service.ForoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class ForoController {
     public ForoDTO create(@RequestBody ForoCreateDTO dto) { return foroService.create(dto); }
 
     @PutMapping("/{id}")
-    public ForoDTO update(@PathVariable Long id, @RequestBody ForoCreateDTO dto) {
+    public ForoDTO update(@PathVariable Long id, @RequestBody ForoUpdateDTO dto) {
         return foroService.update(id, dto);
     }
 

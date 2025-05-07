@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class DireccionEnvioCreateDTO {
-    private Long idUsuario; // para asociarla al usuario
+    private Long idUsuario; 
     private String ciudad;
     private String direccion;
     private String telefono;

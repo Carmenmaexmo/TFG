@@ -3,6 +3,7 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.AsistenciaEventoCreateDTO;
 import com.example.backend.dto.AsistenciaEventoDTO;
+import com.example.backend.dto.AsistenciaEventoUpdateDTO;
 import com.example.backend.service.AsistenciaEventoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,10 @@ public class AsistenciaEventoController {
     }
 
     @PutMapping("/{id}")
-    public AsistenciaEventoDTO update(@PathVariable Long id, @RequestBody AsistenciaEventoCreateDTO dto) {
+    public AsistenciaEventoDTO update(
+            @PathVariable Long id,
+            @RequestBody AsistenciaEventoUpdateDTO dto
+    ) {
         return asistenciaService.update(id, dto);
     }
 

@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.ViniloDTO;
+import com.example.backend.dto.ViniloUpdateDTO;
 import com.example.backend.dto.ViniloCreateDTO;
 import com.example.backend.service.ViniloService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/vinilos")
@@ -33,13 +35,17 @@ public class ViniloController {
     }
 
     @PutMapping("/{id}")
-    public ViniloDTO update(@PathVariable Long id, @RequestBody ViniloCreateDTO dto) {
+    public ViniloDTO update(@PathVariable Long id, @RequestBody ViniloUpdateDTO dto) {
         return viniloService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> delete(@PathVariable Long id) {
         viniloService.delete(id);
-        return ResponseEntity.noContent().build();
+        Map<String, String> response = Map.of(
+            "message", "Vinilo con id " + id + " eliminado correctamente"
+        );
+        return ResponseEntity.ok(response);
     }
+
 }
