@@ -1,0 +1,144 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #121212;
+  }
+
+  .main-navbar {
+    background-color: #1c1c1e;
+    color: #f8f8f8;
+    padding: 0.8rem 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  .navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo a {
+    color: #f8f8f8;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .logo i {
+    color: #fcd34d;
+    font-size: 1.8rem;
+  }
+
+  .brand-name {
+    font-family: 'Georgia', serif;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-links a {
+    color: #f8f8f8;
+    text-decoration: none;
+    margin: 0 1rem;
+    font-size: 1rem;
+    transition: color 0.3s;
+    position: relative;
+  }
+
+  .nav-links a::after {
+    content: '';
+    display: block;
+    width: 0%;
+    height: 2px;
+    background: #fcd34d;
+    transition: width 0.3s;
+    margin-top: 4px;
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+  }
+
+  .nav-links a:hover::after,
+  .nav-links a.active::after {
+    width: 100%;
+  }
+
+  .user-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .user-dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .admin-btn {
+    background-color: #fcd34d;
+    color: #1c1c1e;
+    padding: 0.4rem 1rem;
+    border: none;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 120%;
+    background-color: #1c1c1e;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    padding: 0.5rem;
+    min-width: 180px;
+    z-index: 100;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  
+  .user-dropdown:hover .dropdown-content {
+    display: flex;
+  }
+  
+  .dropdown-link {
+    color: #f8f8f8;
+    text-decoration: none;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    transition: background 0.2s;
+  }
+  .dropdown-link:hover {
+    background-color: #2a2a2c;
+    color: #fcd34d;
+  }
+  
+  .dropdown-button {
+    background-color: transparent;
+    border: 1px solid #fcd34d;
+    color: #fcd34d;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+  .dropdown-button:hover {
+    background-color: #fcd34d;
+    color: #1c1c1e;
+  }
+  
+  
+  
+  
+  
+  

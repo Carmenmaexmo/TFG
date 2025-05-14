@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navbar Vinilos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+  <header class="main-navbar">
+    <div class="navbar-container">
+      <div class="logo">
+        <a routerLink="/">
+          <i class="bi bi-vinyl-fill"></i> <span class="brand-name">VinylRevolution</span>
+        </a>
+      </div>
+
+      <nav class="nav-links">
+        <a routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
+        <a routerLink="/eventos" routerLinkActive="active">Eventos</a>
+        <a routerLink="/foros" routerLinkActive="active">Foros</a>
+      </nav>
+
+      <div class="user-area">
+        <a *ngIf="!isLogged()" class="btn btn-outline-light" routerLink="/login">Login</a>
+      
+        <div *ngIf="isLogged()" class="user-dropdown">
+          <button class="btn admin-btn">{{ getUsername() }}</button>
+          <div class="dropdown-content">
+            <a routerLink="/pedidos" class="dropdown-link">Mis Pedidos</a>
+            <button (click)="logout()" class="dropdown-button">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>    
+    </div>
+  </header>
+</body>
+</html>
