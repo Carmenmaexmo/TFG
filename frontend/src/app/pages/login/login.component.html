@@ -1,22 +1,24 @@
-<div class="container d-flex align-items-center justify-content-center min-vh-100">
-    <div class="card p-4 shadow" style="max-width: 400px; width: 100%;">
-      <h3 class="text-center mb-4">Iniciar Sesión</h3>
-  
-      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-  
-      <div class="mb-3">
-        <label for="usuario" class="form-label">Usuario</label>
-        <input [(ngModel)]="nombreUsuario" type="text" class="form-control" id="usuario" required />
-      </div>
-  
-      <div class="mb-3">
-        <label for="password" class="form-label">Contraseña</label>
-        <input [(ngModel)]="password" type="password" class="form-control" id="password" required />
-      </div>
-  
-      <div class="d-grid">
-        <button (click)="login()" class="btn btn-dark">Entrar</button>
-      </div>
+<section class="login-section">
+  <div class="login-wrapper">
+    <h2 class="login-title">Iniciar Sesión</h2>
+
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+    <div class="form-group">
+      <label for="usuario">Usuario</label>
+      <input [(ngModel)]="nombreUsuario" type="text" id="usuario" class="form-control" required />
     </div>
+
+    <div class="form-group">
+      <label for="password">Contraseña</label>
+      <input [(ngModel)]="password" type="password" id="password" class="form-control" required />
+    </div>
+
+    <button (click)="login()" class="btn login-button">Entrar</button>
+
+    <p class="register-text">
+      ¿No te has registrado aún?
+      <a (click)="goToRegistro()" class="register-link">Regístrate</a>
+    </p>
   </div>
-  
+</section>

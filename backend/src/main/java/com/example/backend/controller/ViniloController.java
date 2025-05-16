@@ -21,6 +21,7 @@ public class ViniloController {
 
     @GetMapping
     public List<ViniloDTO> getAll() {
+        System.out.println("Entrando a getAll");
         return viniloService.findAll();
     }
 

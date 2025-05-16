@@ -17,6 +17,7 @@ body {
   .navbar-container {
     max-width: 1200px;
     margin: 0 auto;
+    flex-wrap: wrap;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -69,10 +70,28 @@ body {
     width: 100%;
   }
 
+  a.btn-outline-light {
+    background-color: transparent;
+    color: #fcd34d;
+    border: 1px solid #fcd34d;
+    border-radius: 20px; /* 🎯 Esquinas redondeadas */
+    padding: 0.4rem 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  }
+  
+  a.btn-outline-light:hover {
+    background-color: #fcd34d;
+    color: #1c1c1e;
+  }
+  
+
   .user-area {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.2rem;
   }
   
   .user-dropdown {
@@ -92,25 +111,22 @@ body {
   }
   
   .dropdown-content {
-    display: none;
     position: absolute;
+    top: 100%;
     right: 0;
-    top: 120%;
     background-color: #1c1c1e;
     border: 1px solid #fcd34d;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
     padding: 0.5rem;
     min-width: 180px;
     z-index: 100;
+    display: flex;
     flex-direction: column;
     gap: 0.4rem;
   }
   
-  .user-dropdown:hover .dropdown-content {
-    display: flex;
-  }
-  
+  /* Mis Pedidos */
   .dropdown-link {
     color: #f8f8f8;
     text-decoration: none;
@@ -123,6 +139,7 @@ body {
     color: #fcd34d;
   }
   
+  /* Cerrar sesión */
   .dropdown-button {
     background-color: transparent;
     border: 1px solid #fcd34d;
@@ -136,9 +153,40 @@ body {
     background-color: #fcd34d;
     color: #1c1c1e;
   }
+  .nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    position: relative;
+  }
   
+  /* Iconos */
+  .search-icon,
+  .cart-icon {
+    font-size: 1.3rem;
+    color: #fcd34d;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
   
+  .search-icon:hover,
+  .cart-icon:hover {
+    color: #ffffff;
+  }
   
+  /* Campo de búsqueda alineado horizontalmente a la izquierda */
+  .search-input {
+    order: -1; /* Lo mueve a la izquierda del primer elemento (lupa) */
+    width: 200px;
+    padding: 0.4rem 0.7rem;
+    border-radius: 8px;
+    border: 1px solid #fcd34d;
+    background-color: #1c1c1e;
+    color: #f8f8f8;
+    outline: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
+  }
   
   
   

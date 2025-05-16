@@ -1,0 +1,54 @@
+<section class="login-section">
+    <div class="login-wrapper">
+      <h2 class="login-title">Crear Cuenta</h2>
+  
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+      <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+  
+      <form (ngSubmit)="registrar()" #form="ngForm" novalidate>
+  
+        <div class="form-group">
+          <label for="usuario">Usuario</label>
+          <input [(ngModel)]="nombreUsuario" name="usuario" id="usuario" class="form-control" required [class.invalid]="submitted && !nombreUsuario" />
+        </div>
+  
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input [(ngModel)]="email" name="email" id="email" type="email" class="form-control" required [class.invalid]="submitted && !validEmail(email)" />
+        </div>
+  
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input [(ngModel)]="nombre" name="nombre" id="nombre" class="form-control" required [class.invalid]="submitted && !nombre" />
+        </div>
+  
+        <div class="form-group">
+          <label for="apellidos">Apellidos</label>
+          <input [(ngModel)]="apellidos" name="apellidos" id="apellidos" class="form-control" required [class.invalid]="submitted && !apellidos" />
+        </div>
+  
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input [(ngModel)]="telefono" name="telefono" id="telefono" class="form-control" required [class.invalid]="submitted && !telefono" />
+        </div>
+  
+        <div class="form-group">
+          <label for="dni">DNI</label>
+          <input [(ngModel)]="dni" name="dni" id="dni" class="form-control" required [class.invalid]="submitted && !dni" />
+        </div>
+  
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input [(ngModel)]="password" name="password" id="password" type="password" class="form-control" required [class.invalid]="submitted && !password" />
+        </div>
+  
+        <div class="form-group">
+          <label for="confirmPassword">Confirmar Contraseña</label>
+          <input [(ngModel)]="confirmPassword" name="confirmPassword" id="confirmPassword" type="password" class="form-control" required [class.invalid]="submitted && password !== confirmPassword" />
+        </div>
+  
+        <button class="btn login-button" type="submit">Registrarme</button>
+      </form>
+    </div>
+  </section>
+  

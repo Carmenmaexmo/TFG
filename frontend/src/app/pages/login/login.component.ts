@@ -25,13 +25,19 @@ export class LoginComponent {
           localStorage.setItem('token', res.token);
           localStorage.setItem('nombreUsuario', res.nombreUsuario);
           localStorage.setItem('roles', JSON.stringify(res.roles));
-          //mensaje de texto que muestre el token guardado en localStorage
           console.log('Token guardado:', res.token);
           console.log('Nombre de usuario guardado:', res.nombreUsuario);
           console.log('Roles guardados:', res.roles);
-          //this.router.navigate(['/catalogo']);
+  
+          // ✅ Redirige a /catalogo directamente
+          this.router.navigate(['/']);
         },
         error: () => this.error = 'Usuario o contraseña incorrectos'
       });
   }
+  
+  goToRegistro() {
+    this.router.navigate(['/registro']);
+  }
+  
 }

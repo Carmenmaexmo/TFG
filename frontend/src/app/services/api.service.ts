@@ -25,16 +25,33 @@ export class ApiService {
   }
 
   /**
+   * Registro de un nuevo usuario.
+   * Devuelve un objeto con el usuario creado.
+   */
+  registrar(usuario: {
+    nombreUsuario: string;
+    password: string;
+    email: string;
+    nombre: string;
+    apellidos: string;
+    telefono: string;
+    dni: string;
+  }) {
+    return this.http.post(`${this.base}/api/auth/signup`, usuario);
+  }
+  
+  
+  /**
    * Obtiene el listado de vinilos (requiere token si el backend lo pide).
    */
   getVinilos(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.base}/vinilos`);
+    return this.http.get<any[]>(`${this.base}/api/vinilos`);
   }
 
   /**
    * Obtiene los pedidos del usuario autenticado.
    */
   getPedidos(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.base}/pedidos`);
+    return this.http.get<any[]>(`${this.base}/api/pedidos`);
   }
 }

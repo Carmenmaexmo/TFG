@@ -21,17 +21,35 @@
         <a routerLink="/foros" routerLinkActive="active">Foros</a>
       </nav>
 
-      <div class="user-area">
-        <a *ngIf="!isLogged()" class="btn btn-outline-light" routerLink="/login">Login</a>
+      <div class="nav-icons">
+        <i class="bi bi-search search-icon" (click)="toggleSearch()"></i>
+        <i class="bi bi-cart3 cart-icon"></i>
       
-        <div *ngIf="isLogged()" class="user-dropdown">
-          <button class="btn admin-btn">{{ getUsername() }}</button>
-          <div class="dropdown-content">
-            <a routerLink="/pedidos" class="dropdown-link">Mis Pedidos</a>
-            <button (click)="logout()" class="dropdown-button">Cerrar sesión</button>
+        <input *ngIf="searchVisible"
+               type="text"
+               placeholder="Buscar..."
+               class="search-input"
+               [(ngModel)]="searchTerm"
+               (keydown.enter)="onSearch()" />
+      </div>
+      
+      <div class="user-area">
+        <ng-container *ngIf="!isLogged(); else logueado">
+          <a class="btn btn-outline-light" routerLink="/login">Login</a>
+        </ng-container>
+      
+        <ng-template #logueado>
+          <div class="user-dropdown"
+               (mouseenter)="dropdownOpen = true"
+               (mouseleave)="dropdownOpen = false">
+            <button class="btn admin-btn">{{ getUsername() }}</button>
+            <div class="dropdown-content" *ngIf="dropdownOpen">
+              <a routerLink="/pedidos" class="dropdown-link">Mis Pedidos</a>
+              <button (click)="logout()" class="dropdown-button">Cerrar sesión</button>
+            </div>
           </div>
-        </div>
-      </div>    
+        </ng-template>
+      </div>        
     </div>
   </header>
 </body>

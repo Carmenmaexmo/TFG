@@ -9,6 +9,7 @@ import com.example.backend.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -59,10 +59,16 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupRequest r) {
         if (usuarioRepo.existsByNombreUsuario(r.getNombreUsuario())) {
-            return ResponseEntity
-                .badRequest()
-                .body("Error: el nombre de usuario ya existe");
+                return ResponseEntity
+        .status(409)
+        .body(Map.of("message", "El nombre de usuario ya existe"));
+
         }
+        if (usuarioRepo.existsByEmail(r.getEmail())) {
+            return ResponseEntity
+                .status(409)
+                .body(Map.of("message", "El email ya está registrado"));
+        }        
         Usuario u = new Usuario();
         u.setNombreUsuario(r.getNombreUsuario());
         u.setPassword(encoder.encode(r.getPassword()));
@@ -73,6 +79,7 @@ public class AuthController {
         u.setDni(r.getDni());
         u.setRol("CLIENTE");
         usuarioRepo.save(u);
-        return ResponseEntity.ok("Usuario registrado correctamente");
+        return ResponseEntity.ok(Map.of("message", "Usuario registrado correctamente"));
+
     }
 }

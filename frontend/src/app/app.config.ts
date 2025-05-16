@@ -1,10 +1,12 @@
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { tokenInterceptor } from './services/token-interceptor.service';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TokenInterceptor } from './interceptors/token-interceptor.service';
 
 export const appConfig = {
   providers: [
-    provideHttpClient(
-      withInterceptors([tokenInterceptor])
-    )
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    }
   ]
 };

@@ -1,0 +1,29 @@
+<div class="catalogo-container">
+  <div class="catalogo-header sticky-header">
+    <h2>Catálogo</h2>
+    <div class="catalogo-controls">
+      <button class="filtro-btn"><i class="bi bi-sliders"></i> Filtrar</button>
+      <div class="ordenar">
+        <label>Ordenar por:</label>
+        <select>
+          <option>Características</option>
+          <option>Precio</option>
+          <option>Título</option>
+        </select>
+      </div>
+      <span class="contador-productos">{{ productos.length }} productos</span>
+    </div>
+  </div>
+
+  <div class="catalogo-grid">
+    <div class="producto-card" *ngFor="let p of productos">
+      <img [src]="p.imagen || 'assets/placeholder-vinilo.jpg'" [alt]="p.titulo" />
+      <h3 class="titulo">{{ p.titulo }}</h3>
+      <p class="sub">{{ p.artista }} · {{ p.genero }}</p>
+      <p class="precio">{{ p.precio | currency: 'EUR' }}</p>
+      <button class="btn-aniadir">
+        <i class="bi bi-cart3"></i> Añadir
+      </button>
+    </div>
+  </div>
+</div>

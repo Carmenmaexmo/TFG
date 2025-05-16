@@ -1,9 +1,92 @@
-body {
-    background: linear-gradient(to right, #232526, #414345);
-    color: #fff;
-  }
-  .card {
-    background-color: #f8f9fa;
-    border-radius: 12px;
-  }
-  
+/* Tipografía moderna global */
+body, input, button, label, h1, h2, h3, p, a {
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+}
+
+/* Ocupa todo el espacio de contenido */
+.login-section {
+  padding: 4rem 1rem 6rem;
+  background-color: #f9f9f9;
+  min-height: calc(100vh - 70px); /* Resta la altura de la navbar aprox. */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Formulario integrado como sección de contenido */
+.login-wrapper {
+  width: 100%;
+  max-width: 500px;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Título */
+.login-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* Campos */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+input.form-control {
+  width: 93%;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-size: 1rem;
+  background-color: #fdfdfd;
+  transition: border 0.2s;
+}
+
+input.form-control:focus {
+  border-color: #fcd34d;
+  outline: none;
+}
+
+/* Botón */
+.login-button {
+  background-color: #fcd34d;
+  color: #1c1c1e;
+  border: none;
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  border-radius: 999px;
+  width: 100%;
+  margin-top: 0.5rem;
+  transition: all 0.3s ease-in-out;
+}
+
+.login-button:hover {
+  background-color: #1c1c1e;
+  color: #fcd34d;
+}
+
+/* Enlace de registro */
+.register-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.register-link {
+  color: #1c1c1e;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.register-link:hover {
+  color: #fcd34d;
+}
+
+/* Mensajes de error */
+.error{
+  color: #e74c3c;
+}
