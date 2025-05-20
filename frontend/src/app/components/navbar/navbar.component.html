@@ -9,22 +9,32 @@
 <body>
   <header class="main-navbar">
     <div class="navbar-container">
+      <!-- LOGO -->
       <div class="logo">
         <a routerLink="/">
           <i class="bi bi-vinyl-fill"></i> <span class="brand-name">VinylRevolution</span>
         </a>
       </div>
-
+  
+      <!-- ENLACES -->
       <nav class="nav-links">
         <a routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
         <a routerLink="/eventos" routerLinkActive="active">Eventos</a>
         <a routerLink="/foros" routerLinkActive="active">Foros</a>
       </nav>
-
+  
+      <!-- ICONOS DERECHA -->
       <div class="nav-icons">
         <i class="bi bi-search search-icon" (click)="toggleSearch()"></i>
-        <i class="bi bi-cart3 cart-icon"></i>
-      
+  
+        <!-- ICONO CARRITO -->
+        <div class="carrito-wrapper">
+          <i class="bi bi-cart3 cart-icon" (click)="toggleCarrito()">
+            <span *ngIf="carritoCantidad > 0" class="cart-count">{{ carritoCantidad }}</span>
+          </i>
+        </div>
+  
+        <!-- BUSCADOR -->
         <input *ngIf="searchVisible"
                type="text"
                placeholder="Buscar..."
@@ -32,25 +42,70 @@
                [(ngModel)]="searchTerm"
                (keydown.enter)="onSearch()" />
       </div>
-      
+  
+      <!-- USUARIO -->
       <div class="user-area">
         <ng-container *ngIf="!isLogged(); else logueado">
           <a class="btn btn-outline-light" routerLink="/login">Login</a>
         </ng-container>
-      
+  
         <ng-template #logueado>
           <div class="user-dropdown"
                (mouseenter)="dropdownOpen = true"
                (mouseleave)="dropdownOpen = false">
             <button class="btn admin-btn">{{ getUsername() }}</button>
             <div class="dropdown-content" *ngIf="dropdownOpen">
+              <a routerLink="/perfil" class="dropdown-link">Mi Perfil</a>
               <a routerLink="/pedidos" class="dropdown-link">Mis Pedidos</a>
               <button (click)="logout()" class="dropdown-button">Cerrar sesión</button>
             </div>
           </div>
         </ng-template>
-      </div>        
+      </div>
     </div>
   </header>
+  
+  <!-- ✅ SLIDE CARRITO FUERA DEL WRAPPER PARA EVITAR CONFLICTOS -->
+  <div class="slide-carrito-overlay" *ngIf="mostrarCarritoSlide" (click)="toggleCarrito()"></div>
+  
+  <div class="slide-carrito" *ngIf="mostrarCarritoSlide">
+    <div class="slide-header">
+      <h4>Tu carrito</h4>
+      <button (click)="toggleCarrito()" class="close-btn">×</button>
+    </div>
+  
+    <div class="slide-productos" *ngIf="carritoContenido.length > 0; else vacio">
+      <div *ngFor="let item of carritoContenido" class="slide-producto">
+        <img [src]="item.imagen || 'assets/placeholder-vinilo.jpg'" class="slide-img" />
+        <div class="slide-detalles">
+          <div class="slide-titulo">{{ item.titulo }}</div>
+          <div class="slide-precio">{{ item.precio | currency:'EUR' }}</div>
+          <div class="slide-controles">
+            <button (click)="reducirCantidad(item.id)">−</button>
+            <span>{{ item.cantidad }}</span>
+            <button (click)="aumentarCantidad(item.id)">+</button>
+            <button class="trash" (click)="eliminarProducto(item.id)">🗑</button>
+          </div>
+        </div>
+      </div>
+  
+      <div class="slide-total">
+        <strong>Total estimado:</strong>
+        {{ getTotalCarrito() | currency:'EUR' }}
+      </div>
+  
+      <div class="slide-condiciones">
+        <input type="checkbox" id="condiciones" />
+        <label for="condiciones">Acepto las condiciones de compra y privacidad</label>
+      </div>
+  
+      <button class="btn-pagar">Pagar pedido</button>
+    </div>
+  
+    <ng-template #vacio>
+      <p class="text-center">Tu carrito está vacío.</p>
+    </ng-template>
+  </div>
+  
 </body>
 </html>

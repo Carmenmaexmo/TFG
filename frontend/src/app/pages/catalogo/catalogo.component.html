@@ -1,29 +1,87 @@
 <div class="catalogo-container">
-  <div class="catalogo-header sticky-header">
-    <h2>Catálogo</h2>
-    <div class="catalogo-controls">
-      <button class="filtro-btn"><i class="bi bi-sliders"></i> Filtrar</button>
-      <div class="ordenar">
-        <label>Ordenar por:</label>
-        <select>
-          <option>Características</option>
-          <option>Precio</option>
-          <option>Título</option>
-        </select>
+    <div class="catalogo-header sticky-header">
+      <h2>Catálogo</h2>
+      <div class="catalogo-controls">
+        <button class="filtro-btn" (click)="toggleFiltros()">
+          <i class="bi bi-sliders"></i> Filtrar
+        </button>
+        <label for="ordenSelect">Ordenar por:</label>
+        <select id="ordenSelect" #ordenador (change)="ordenarProductos(ordenador.value)">
+          <option value="">     </option>
+          <option value="precio">Precio</option>
+          <option value="titulo">Título</option>
+        </select>             
+        <span class="contador-productos">{{ productos.length }} productos</span>
       </div>
-      <span class="contador-productos">{{ productos.length }} productos</span>
     </div>
-  </div>
+  
+    <!-- FILTROS LATERALES -->
+    <div class="sidebar-filtros" *ngIf="mostrarFiltros">
+    <h3 class="filtros-titulo">Filtros</h3>
+      <div *ngIf="!categoriaActiva" class="sidebar-categorias">
+        <div class="filtro-categoria" (click)="categoriaActiva = 'artista'">Artista <span>&rarr;</span></div>
+        <div class="filtro-categoria" (click)="categoriaActiva = 'genero'">Género <span>&rarr;</span></div>
+        <div class="filtro-categoria" (click)="categoriaActiva = 'precio'">Precio <span>&rarr;</span></div>
+      </div>
+  
+    <!-- ARTISTAS -->
+    <div class="filtro-detalle" *ngIf="categoriaActiva === 'artista'">
+        <div class="volver" (click)="categoriaActiva = null">&larr; Artista</div>
+        <label *ngFor="let artista of artistas">
+        <input type="checkbox"
+                [value]="artista"
+                [checked]="selectedArtistas.includes(artista)"
+                (change)="toggleSeleccion(artista, 'artista')" />
+        {{ artista }}
+        </label>
+    </div>
+    
+    <!-- GÉNEROS -->
+    <div class="filtro-detalle" *ngIf="categoriaActiva === 'genero'">
+        <div class="volver" (click)="categoriaActiva = null">&larr; Género</div>
+        <label *ngFor="let genero of generos">
+        <input type="checkbox"
+                [value]="genero"
+                [checked]="selectedGeneros.includes(genero)"
+                (change)="toggleSeleccion(genero, 'genero')" />
+        {{ genero }}
+        </label>
+    </div>
 
-  <div class="catalogo-grid">
-    <div class="producto-card" *ngFor="let p of productos">
-      <img [src]="p.imagen || 'assets/placeholder-vinilo.jpg'" [alt]="p.titulo" />
-      <h3 class="titulo">{{ p.titulo }}</h3>
-      <p class="sub">{{ p.artista }} · {{ p.genero }}</p>
-      <p class="precio">{{ p.precio | currency: 'EUR' }}</p>
-      <button class="btn-aniadir">
-        <i class="bi bi-cart3"></i> Añadir
-      </button>
+   <!-- PRECIO -->
+    <div class="filtro-detalle" *ngIf="categoriaActiva === 'precio'">
+        <div class="volver" (click)="categoriaActiva = null">← Volver a categorías</div>
+        <div class="precio-contenedor">
+        <div class="precio-campo">
+            <label for="precioMin">De</label>
+            <input id="precioMin" type="number" [(ngModel)]="precioMin" placeholder="€ mínimo" />
+        </div>
+        <div class="precio-campo">
+            <label for="precioMax">A</label>
+            <input id="precioMax" type="number" [(ngModel)]="precioMax" placeholder="€ máximo" />
+        </div>
+        </div>
+    </div>
+  
+  
+      <!-- BOTONES -->
+      <div class="acciones-filtros">
+        <button class="aplicar" (click)="aplicarFiltros()">Aplicar</button>
+        <button class="eliminar" (click)="eliminarFiltros()">Eliminar todos</button>
+      </div>
+    </div>
+  
+    <!-- PRODUCTOS -->
+    <div class="catalogo-grid">
+      <div class="producto-card" *ngFor="let p of productos">
+        <img [src]="p.imagen || 'assets/placeholder-vinilo.jpg'" [alt]="p.titulo" />
+        <h3 class="titulo">{{ p.titulo }}</h3>
+        <p class="sub">{{ p.artista }} · {{ p.genero }}</p>
+        <p class="precio">{{ p.precio | currency: 'EUR' }}</p>
+        <button class="btn-aniadir" (click)="aniadirAlCarrito(p)">
+          <i class="bi bi-cart3"></i> Añadir
+        </button>
+      </div>
     </div>
   </div>
-</div>
+  

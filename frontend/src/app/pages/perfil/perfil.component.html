@@ -1,0 +1,55 @@
+<div class="perfil-container" *ngIf="usuario">
+    <!-- CABECERA -->
+    <div class="perfil-header">
+      <div class="perfil-avatar">
+        <i class="bi bi-person-circle"></i>
+      </div>
+      <h2>Mi Perfil</h2>
+    </div>
+  
+    <!-- DATOS -->
+    <div class="perfil-datos">
+        <form *ngIf="editando; else soloVista" class="formulario-perfil">
+            <div class="campo">
+              <label for="nombre"><strong>Nombre:</strong></label>
+              <input [(ngModel)]="usuario.nombre" name="nombre" id="nombre" />
+            </div>
+          
+            <div class="campo">
+              <label for="apellidos"><strong>Apellidos:</strong></label>
+              <input [(ngModel)]="usuario.apellidos" name="apellidos" id="apellidos" />
+            </div>
+          
+            <div class="campo">
+              <label for="email"><strong>Email:</strong></label>
+              <input [(ngModel)]="usuario.email" name="email" id="email" />
+            </div>
+          
+            <div class="campo">
+              <label for="telefono"><strong>Teléfono:</strong></label>
+              <input [(ngModel)]="usuario.telefono" name="telefono" id="telefono" />
+            </div>
+          
+            <div class="campo">
+              <label for="dni"><strong>DNI:</strong></label>
+              <input [(ngModel)]="usuario.dni" name="dni" id="dni" />
+            </div>
+          
+            <div class="acciones">
+              <button type="button" (click)="guardarCambios()">Guardar</button>
+              <button type="button" (click)="cancelar()">Cancelar</button>
+            </div>
+          </form>
+      <ng-template #soloVista>
+        <p><strong>Nombre:</strong> {{ usuario.nombre }}</p>
+        <p><strong>Apellidos:</strong> {{ usuario.apellidos }}</p>
+        <p><strong>Email:</strong> {{ usuario.email }}</p>
+        <p><strong>Teléfono:</strong> {{ usuario.telefono }}</p>
+        <p><strong>DNI:</strong> {{ usuario.dni }}</p>
+        <div class="acciones">
+          <button (click)="activarEdicion()">Editar</button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+  

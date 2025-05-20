@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 export interface JwtResponse {
   token: string;
   nombreUsuario: string;
+  idUsuario: number;
   roles: string[];
 }
 
@@ -51,7 +52,26 @@ export class ApiService {
   /**
    * Obtiene los pedidos del usuario autenticado.
    */
-  getPedidos(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.base}/api/pedidos`);
+  getPedidosPorUsuario(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/api/pedidos/por-usuario/${localStorage.getItem('idUsuario')}`);
   }
+
+  /**
+   * Actualizar los datos de un usuario.
+   */
+  actualizarUsuario(id: number, datosParciales: any) {
+    return this.http.put(`${this.base}/api/usuarios/${id}`, datosParciales);
+  }
+
+  /**
+   * Obtener un usuario por su ID.
+   */
+  getUsuarioPorId(id: number): Observable<any> {
+    return this.http.get<any>(`${this.base}/api/usuarios/${id}`);
+  }
+  
+  actualizarPedido(id: number, datosParciales: any) {
+    return this.http.put(`${this.base}/api/pedidos/${id}`, datosParciales);
+  }
+  
 }

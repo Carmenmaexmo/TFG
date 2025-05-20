@@ -1,0 +1,106 @@
+.pedidos-container {
+    max-width: 850px;
+    margin: 2rem auto;
+    font-family: 'Segoe UI', sans-serif;
+    color: #222;
+  }
+  
+  .mensaje-vacio {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 1.1rem;
+    color: #555;
+  }
+  
+  .pedido-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.07);
+    transition: transform 0.2s;
+  }
+  
+  .pedido-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .pedido-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .pedido-card h3 {
+    font-size: 1.3rem;
+    margin: 0;
+  }
+  
+  .estado-badge {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .estado-badge.pendiente {
+    background-color: #ffeeba;
+    color: #856404;
+  }
+  
+  .estado-badge.enviado {
+    background-color: #cce5ff;
+    color: #004085;
+  }
+  
+  .estado-badge.entregado {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .estado-badge.cancelado {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  .pedido-card p {
+    margin: 0.6rem 0;
+    font-size: 1rem;
+  }
+  
+  .acciones-pedido {
+    margin-top: 1.5rem;
+    text-align: right;
+  }
+  
+  .acciones-pedido button {
+    background-color: #000;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.3rem;
+    border-radius: 24px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .acciones-pedido button:hover {
+    background-color: #ffcc33;
+    color: #000;
+  }
+
+  .envio {
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-top: 1rem;
+    color: #333;
+  }
+  .envio strong {
+    color: #111;
+  }
+  
+  

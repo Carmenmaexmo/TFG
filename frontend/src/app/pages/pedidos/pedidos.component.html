@@ -1,0 +1,26 @@
+<div class="pedidos-container">
+    <h2>Mis Pedidos</h2>
+  
+    <div *ngIf="pedidos.length === 0" class="mensaje-vacio">No tienes pedidos aún.</div>
+  
+    <div *ngFor="let pedido of pedidos" class="pedido-card">
+      <div class="pedido-header">
+        <h3>Pedido #{{ pedido.id }}</h3>
+        <span class="estado-badge" [ngClass]="pedido.estado.toLowerCase()">{{ pedido.estado }}</span>
+      </div>
+  
+      <p><strong>Fecha:</strong> {{ pedido.fechaPedido | date:'dd/MM/yyyy HH:mm' }}</p>
+      <p><strong>Total:</strong> {{ pedido.total | currency:'EUR' }}</p>
+      <p class="envio">
+        <strong>Dirección de envío:</strong><br>
+        {{ pedido.direccionEnvio?.direccion }}<br>
+        {{ pedido.direccionEnvio?.codigoPostal }} - {{ pedido.direccionEnvio?.ciudad }}<br>
+        <strong>Teléfono:</strong> {{ pedido.direccionEnvio?.telefono }}
+      </p>
+
+      <div class="acciones-pedido" *ngIf="pedido.estado === 'ENVIADO'">
+        <button (click)="confirmarEntrega(pedido)">Confirmar entrega</button>
+      </div>
+    </div>
+  </div>
+  
