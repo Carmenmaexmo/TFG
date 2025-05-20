@@ -69,9 +69,18 @@ export class ApiService {
   getUsuarioPorId(id: number): Observable<any> {
     return this.http.get<any>(`${this.base}/api/usuarios/${id}`);
   }
-  
+
+
+  /**
+   * Actualizar un pedido.
+   */
   actualizarPedido(id: number, datosParciales: any) {
     return this.http.put(`${this.base}/api/pedidos/${id}`, datosParciales);
   }
+
+  getEventos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/api/eventos`);
+  }
+  
   
 }

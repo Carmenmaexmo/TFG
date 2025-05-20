@@ -75,11 +75,18 @@ export class CarritoService {
     if (!id || !token) return;
   
     const url = `http://localhost:8080/api/usuarios/${id}`;
+
+    carrito: JSON.stringify([
+      { id: 1, titulo: 'Disco X', cantidad: 1 }
+    ])
+    
+  
+    // 🔥 Aquí transformamos el array en string plano JSON
     const body = {
-      carrito: this.carrito  // ← ahora mandamos array de objetos directamente
+      carrito: JSON.stringify(this.carrito)
     };
   
-    console.log('🟢 Enviando carrito al backend:', body);
+    console.log('🟢 Enviando carrito al backend (string):', body);
   
     this.http.put(url, body, {
       headers: {

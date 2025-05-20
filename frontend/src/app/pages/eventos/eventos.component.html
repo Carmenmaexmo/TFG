@@ -1,0 +1,31 @@
+<div class="agenda">
+    <h2 class="titulo-agenda">Agenda de Eventos</h2>
+     <!-- Filtro de orden -->
+<div class="ordenar-eventos mb-3">
+    <label for="orden">Ordenar por fecha:</label>
+    <select id="orden" [(ngModel)]="sentidoOrden" (ngModelChange)="ordenarEventos()">
+        <option value="">Seleccionar</option>
+      <option value="asc">📅 Mas antoguios primero</option>
+      <option value="desc">⏳ Mas recientes primero</option>
+    </select>
+  </div>
+  
+    <div *ngFor="let evento of eventos" 
+    [ngClass]="{ 'evento-pasado': esPasado(evento.fecha_fin), 'evento-futuro': !esPasado(evento.fecha_fin) }" 
+    class="evento-card">
+    
+ <h4>🎤 {{ evento.titulo }}</h4>
+
+ <p>📍 <i>{{ evento.lugar }}</i></p>
+ <p>🎶 {{ evento.descripcion }}</p>
+
+ <p>🗓️ <strong>Inicio:</strong> {{ evento.fechaInicio | date:'fullDate' }} - {{ evento.fechaInicio | date:'shortTime' }}</p>
+ <p>⏳ <strong>Fin:</strong> {{ evento.fecha_fin | date:'fullDate' }} - {{ evento.fecha_fin | date:'shortTime' }}</p>
+
+</div>
+<div *ngIf="eventos.length === 0" class="alert alert-warning text-center">
+    No se encontraron eventos para esta búsqueda.
+  </div>
+  
+  </div>
+  

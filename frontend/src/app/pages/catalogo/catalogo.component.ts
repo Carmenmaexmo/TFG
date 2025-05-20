@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { CarritoService } from '../../services/carrito.service';
+import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-catalogo',
@@ -23,39 +25,54 @@ export class CatalogoComponent implements OnInit {
   precioMin: number | null = null;
   precioMax: number | null = null;
 
+  busquedaActiva: string | null = null;
+
   mostrarFiltros = false;
   categoriaActiva: 'artista' | 'genero' | 'precio' | null = null;
 
-  constructor(private api: ApiService, private carrito: CarritoService) {}
+  constructor(private api: ApiService, private carrito: CarritoService, private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
     this.api.getVinilos().subscribe({
       next: (res) => {
         this.productos = res;
         this.productosOriginales = [...res];
-
+  
         this.artistas = [...new Set(res.map(p => p.artista))]
           .sort()
           .map(artista => {
             const count = res.filter(p => p.artista === artista).length;
             return `${artista} (${count})`;
           });
-
+  
         this.generos = [...new Set(res.map(p => p.genero))]
           .sort()
           .map(genero => {
             const count = res.filter(p => p.genero === genero).length;
             return `${genero} (${count})`;
           });
+  
+          this.route.queryParams.subscribe(params => {
+            const termino = params['q']?.toLowerCase();
+            if (termino) {
+              this.busquedaActiva = termino;
+              this.filtrarPorBusqueda(termino);
+            } else {
+              this.busquedaActiva = null;
+              this.productos = [...this.productosOriginales];
+            }
+          });
+          
       },
       error: (err) => console.error('Error cargando vinilos:', err)
     });
-
+  
     const token = localStorage.getItem('token');
     if (token) {
       setTimeout(() => this.carrito.cargarCarritoDelServidor(), 50);
     }
   }
+  
 
   aniadirAlCarrito(producto: any) {
     this.carrito.aniadir(producto);
@@ -119,6 +136,18 @@ export class CatalogoComponent implements OnInit {
         this.aplicarFiltros(); 
         break;
     }
+  }
+
+  filtrarPorBusqueda(termino: string) {
+    this.productos = this.productosOriginales.filter(p =>
+      p.titulo.toLowerCase().includes(termino) ||
+      p.artista.toLowerCase().includes(termino) ||
+      p.genero.toLowerCase().includes(termino)
+    );
+  }
+  
+  limpiarBusqueda() {
+    this.router.navigate(['/catalogo']);  // Navega sin el parámetro ?q
   }
   
   

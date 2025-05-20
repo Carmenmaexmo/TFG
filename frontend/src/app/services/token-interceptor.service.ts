@@ -1,4 +1,3 @@
-// token-interceptor.service.ts
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -9,13 +8,16 @@ export class TokenInterceptor implements HttpInterceptor {
     const token = localStorage.getItem('token');
     console.log('TokenInterceptor activo. Token:', token);
 
-    if (token) {
+    // Solo añadir si hay token y la URL apunta a tu backend
+    if (token && req.url.startsWith('http://localhost:8080/api')) {
       const cloned = req.clone({
-        headers: req.headers.set('Authorization', `Bearer ${token}`)
+        setHeaders: {
+          Authorization: `Bearer ${token}`
+        }
       });
       return next.handle(cloned);
-    } else {
-      return next.handle(req);
     }
+
+    return next.handle(req);
   }
 }

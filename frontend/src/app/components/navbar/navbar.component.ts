@@ -62,12 +62,29 @@ export class NavbarComponent {
   }
 
   onSearch() {
-    if (this.searchTerm.trim()) {
-      console.log('Buscando:', this.searchTerm);
-      // Aquí puedes redirigir o lanzar búsqueda real
-      this.searchVisible = false;
+    const query = this.searchTerm.trim();
+    const currentUrl = this.router.url.split('?')[0];  // ignora query params
+  
+    // Define a helper para navegar con o sin término de búsqueda
+    const navegar = (ruta: string) => {
+      this.router.navigate([ruta], {
+        queryParams: query ? { q: query } : {},
+        queryParamsHandling: query ? 'merge' : undefined
+      });
+    };
+  
+    if (currentUrl.includes('/catalogo')) {
+      navegar('/catalogo');
+    } else if (currentUrl.includes('/eventos')) {
+      navegar('/eventos');
+    } else {
+      console.log('🔍 Buscador no soportado en esta ruta');
     }
+  
+    this.searchVisible = false;
   }
+  
+  
 
   toggleCarrito() {
     this.mostrarCarritoSlide = !this.mostrarCarritoSlide;

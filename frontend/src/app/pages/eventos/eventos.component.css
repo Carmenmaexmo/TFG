@@ -1,0 +1,99 @@
+.agenda {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', sans-serif;
+    color: #1d1d1d;
+  }
+  
+  .titulo-agenda {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #444;
+    font-weight: bold;
+    position: relative;
+  }
+  
+  .titulo-agenda::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: #ffcc00;
+    margin: 10px auto 0;
+    border-radius: 2px;
+  }
+  
+  .ordenar-eventos {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 10px;
+  }
+  
+  .ordenar-eventos label {
+    font-weight: 500;
+  }
+  
+  .ordenar-eventos select {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: #f8f8f8;
+    transition: all 0.3s ease;
+  }
+  
+  .ordenar-eventos select:hover {
+    border-color: #ffcc00;
+    background-color: #fff;
+  }
+  
+  .evento-card {
+    background-color: #f4f4f4;
+    border-left: 6px solid #4caf50;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+  }
+  
+  .evento-card:hover {
+    transform: translateY(-3px);
+  }
+  
+  .evento-pasado {
+    opacity: 0.85;
+    border-left-color: #e53935; /* rojo */
+    background-color: #ffecec;
+  }
+  
+  .evento-futuro {
+    border-left-color: #4caf50; /* verde */
+    background-color: #eaffea;
+  }
+  
+  .evento-card h4 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: #333;
+  }
+  
+  .evento-card p {
+    margin: 0.5rem 0;
+    font-size: 15px;
+  }
+  
+  .alert {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    border-radius: 6px;
+    font-weight: 500;
+    color: #856404;
+  }
+  
