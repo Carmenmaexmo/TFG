@@ -1,0 +1,143 @@
+.foro-wrapper {
+    max-width: 800px;
+    margin: auto;
+    padding: 2rem;
+    background: #fdfdfd;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .foro-titulo {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 0.2rem;
+    color: #222;
+  }
+  
+  .foro-descripcion {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 2rem;
+  }
+  
+  .temas-titulo {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+  
+  .temas-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .tema-card {
+    background: #faf1d9;
+    padding: 1rem 1.5rem;
+    border-left: 4px solid #fcd34d;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .tema-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  .tema-card h4 {
+    margin: 0 0 0.3rem;
+    color: #1a1a1a;
+  }
+  
+  .tema-card p {
+    margin: 0 0 0.5rem;
+    color: #444;
+  }
+  
+  .tema-card small {
+    color: #888;
+  }
+  
+  .sin-temas {
+    text-align: center;
+    color: #777;
+    margin-top: 2rem;
+  }
+
+  .btn-crear-tema {
+    background-color: #fcd34d;
+    color: white;
+    font-weight: bold;
+    padding: 0.6rem 1.3rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  
+  .btn-crear-tema:hover {
+    background-color: #e2be46;
+    transform: translateY(-1px);
+  }
+  
+  .form-crear-tema {
+    background-color: #f0f4ff;
+    border-left: 4px solid #c8a74e;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .form-crear-tema input[type="text"],
+  .form-crear-tema textarea {
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .form-crear-tema textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  .form-crear-tema button {
+    align-self: flex-start;
+    padding: 0.5rem 1.2rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .form-crear-tema button:first-of-type {
+    background-color: #e2be46;
+    color: white;
+  }
+  
+  .form-crear-tema button:first-of-type:hover {
+    background-color: #d6b445;
+  }
+  
+  .form-crear-tema button.cancelar {
+    background-color: #ccc;
+    margin-left: 0.5rem;
+  }
+  
+  .form-crear-tema button.cancelar:hover {
+    background-color: #aaa;
+  }
+  
+  
+  

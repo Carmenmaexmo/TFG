@@ -1,0 +1,71 @@
+<div class="comentarios-wrapper">
+    <h2>🗨️ Comentarios del Tema</h2>
+  
+    <div *ngIf="comentariosJerarquicos.length === 0" class="vacio">
+      No hay comentarios aún en este tema.
+    </div>
+
+    <button class="btn-ir-abajo" (click)="scrollAbajo()">⬇ Ir abajo</button>
+  
+    <ng-container *ngFor="let comentario of comentariosJerarquicos">
+      <div class="comentario" (contextmenu)="onRightClick($event, comentario)">
+        <div class="cabecera">
+          <strong>👤 {{ comentario.usuario?.nombreUsuario || 'Usuario anónimo' }}</strong>
+          <span class="fecha">{{ comentario.fechaComentario | date:'short' }}</span>
+        </div>
+        <div *ngIf="comentarioEditandoId === comentario.id; else verContenido">
+            <textarea [(ngModel)]="comentarioEditadoTexto" class="editar-textarea"></textarea>
+            <button (click)="guardarEdicionComentario()" class="guardar-btn">💾 Guardar</button>
+            <button (click)="cancelarEdicion()" class="cancelar">Cancelar</button>
+          </div>
+          
+          <ng-template #verContenido>
+            <p class="contenido">{{ comentario.contenido }}</p>
+          </ng-template>
+        <div *ngFor="let respuesta of comentario.respuestas" class="respuesta" >
+          <div class="cabecera">
+            <strong>↳ {{ respuesta.usuario?.nombreUsuario || 'Usuario anónimo' }}</strong>
+            <span class="fecha">{{ respuesta.fechaComentario | date:'short' }}</span>
+          </div>
+          <p class="contenido">{{ respuesta.contenido }}</p>
+        </div>
+      </div>
+    </ng-container>
+    <button class="btn-volver" (click)="volverAForo()">← Volver a temas</button>
+
+    <!-- 💬 Formulario nuevo comentario o respuesta -->
+    <div class="nuevo-comentario">
+        <h4 *ngIf="comentarioPadreId">Respondiendo a <strong>{{ respuestaAUsuario }}</strong></h4>
+      
+        <textarea [(ngModel)]="nuevoComentario" placeholder="Escribe tu comentario aquí..."></textarea>
+        <button (click)="enviarComentario()">Enviar</button>
+        <button *ngIf="comentarioPadreId" (click)="cancelarRespuesta()" class="cancelar">Cancelar respuesta</button>
+    </div>
+    
+    <div 
+    *ngIf="contextMenuVisible"
+    class="context-menu"
+    [ngStyle]="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }">
+  
+    <div (click)="responderComentario()">📝 Responder</div>
+
+    <hr class="menu-separador" *ngIf="comentarioContextual?.idUsuario === idUsuarioActual" />
+  
+    <div *ngIf="comentarioContextual?.usuario?.idUsuario === idUsuarioActual"
+    (click)="editarComentario()">✏️ Editar</div>
+
+    <hr class="menu-separador" *ngIf="comentarioContextual?.idUsuario === idUsuarioActual" />
+
+    <!-- Solo si el comentario es del usuario logueado -->
+    <div *ngIf="comentarioContextual?.usuario?.idUsuario === idUsuarioActual"
+         (click)="borrarComentario()">🗑 Borrar mensaje</div>
+    </div>
+    
+    <!-- ⬇ Ancla para ir abajo -->
+    <div id="scroll-final"></div>
+
+    <!-- ⬇ Botón para desplazarse abajo -->
+    <button class="btn-ir-abajo" (click)="scrollAbajo()">⬇ Ir abajo</button>
+
+</div>
+  

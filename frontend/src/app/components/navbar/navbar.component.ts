@@ -77,6 +77,8 @@ export class NavbarComponent {
       navegar('/catalogo');
     } else if (currentUrl.includes('/eventos')) {
       navegar('/eventos');
+    } else if (currentUrl.includes('/foros')) {
+      navegar('/foros');
     } else {
       console.log('🔍 Buscador no soportado en esta ruta');
     }
@@ -108,6 +110,5 @@ export class NavbarComponent {
   getTotalCarrito(): number {
     return this.carrito.getTotal();
   }
-  
 
 }

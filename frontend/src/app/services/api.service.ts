@@ -42,45 +42,117 @@ export class ApiService {
   }
   
   
-  /**
-   * Obtiene el listado de vinilos (requiere token si el backend lo pide).
-   */
-  getVinilos(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.base}/api/vinilos`);
+   // ---------- USUARIOS ----------
+   getUsuarioPorId(id: number): Observable<any> {
+    return this.http.get<any>(`${this.base}/api/usuarios/${id}`);
   }
 
-  /**
-   * Obtiene los pedidos del usuario autenticado.
-   */
-  getPedidosPorUsuario(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.base}/api/pedidos/por-usuario/${localStorage.getItem('idUsuario')}`);
-  }
-
-  /**
-   * Actualizar los datos de un usuario.
-   */
   actualizarUsuario(id: number, datosParciales: any) {
     return this.http.put(`${this.base}/api/usuarios/${id}`, datosParciales);
   }
 
-  /**
-   * Obtener un usuario por su ID.
-   */
-  getUsuarioPorId(id: number): Observable<any> {
-    return this.http.get<any>(`${this.base}/api/usuarios/${id}`);
+  // ---------- VINILOS ----------
+  getVinilos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/api/vinilos`);
   }
 
+  // ---------- PEDIDOS ----------
+  getPedidosPorUsuario(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/api/pedidos/por-usuario/${localStorage.getItem('idUsuario')}`);
+  }
 
-  /**
-   * Actualizar un pedido.
-   */
   actualizarPedido(id: number, datosParciales: any) {
     return this.http.put(`${this.base}/api/pedidos/${id}`, datosParciales);
   }
 
+  // ---------- EVENTOS ----------
   getEventos(): Observable<any[]> {
     return this.http.get<any[]>(`${this.base}/api/eventos`);
   }
+
+  // ---------- FORO ----------
+  /**
+   * Obtiene el foro principal (asumes que solo hay uno).
+   */
+  getForo(): Observable<any> {
+    return this.http.get<any>(`${this.base}/api/foros`);
+  }
+
+  /**
+   * Obtiene los temas de un foro.
+   */
+  getTemas(foroId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/api/temas-foro`);
+  }
+
+  /**
+   * Obtiene los comentarios de un tema del foro.
+   */
+  getComentarios(temaId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/api/comentarios-foro/por-tema/${temaId}`);
+  }
+
+  /**
+   * Obtiene un tema concreto por su ID (si lo necesitas en la vista de tema).
+   */
+  getTemaPorId(id: number): Observable<any> {
+    return this.http.get<any>(`${this.base}/api/foro/temas/${id}`);
+  }
+
+  /**
+   * Crea un nuevo comentario (o respuesta si se indica `idComentarioPadre`).
+   */
+  crearComentario(temaId: number, comentario: any): Observable<any> {
+    return this.http.post(`${this.base}/api/comentarios-foro`, comentario);
+  }
+
+  /**
+   * Crear un nuevo tema en el foro.
+   */
+  crearTemaEnForo(foroId: number, tema: any): Observable<any> {
+    return this.http.post(`${this.base}/api/temas-foro`, tema);
+  }
+
+  /**
+   * Eliminar un comentario existente.
+   */
+  BorrarComentario(id: number): Observable<any> {
+    return this.http.delete(`${this.base}/api/comentarios-foro/${id}`);
+  }
   
+  /**
+   * Editar un comentario existente.
+   */
+  EditarComentario(id: number, comentario: any): Observable<any> {
+    return this.http.put(`${this.base}/api/comentarios-foro/${id}`, comentario);
+  }
+
+  /**
+   * Direcciones del usuario.
+   */
+  getDireccionesPorUsuario(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/api/direcciones-envio/por-usuario/${localStorage.getItem('idUsuario')}`);
+  }
+
+  /**
+   * Guardar dirección.
+   */
+  guardarDireccion(datos: any): Observable<any> {
+    return this.http.post(`${this.base}/api/direcciones-envio`, datos);
+  }
+
+  /**
+   * Eliminar dirección.
+   */
+  eliminarDireccion(id: number): Observable<any> {
+    return this.http.delete(`${this.base}/api/direcciones-envio/${id}`);
+  }
+
+  /**
+   * Guardar un nuevo pedido.
+   */
+  crearPedido(datos: any): Observable<any> {
+    return this.http.post(`${this.base}/api/pedidos`, datos);
+  }
   
 }

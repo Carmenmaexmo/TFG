@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="pago-wrapper">
+        <h2>💳 Finalizar Pago</h2>
+      
+        <!-- Dirección de envío -->
+        <label for="direccion">Dirección de envío:</label>
+        <div *ngIf="mensajeError" class="mensaje-error-superior">
+            {{ mensajeError }}
+          </div>          
+        <!-- Lista de direcciones personalizadas -->
+        <div class="direcciones-personalizadas">
+            <div *ngFor="let d of direcciones" class="item-direccion">
+            <label>
+                <input
+                type="radio"
+                name="direccion"
+                [value]="d.id"
+                [(ngModel)]="direccionSeleccionada"
+                />
+                {{ d.direccion }}
+            </label>
+            <button class="btn-eliminar" (click)="eliminarDireccion(d.id)">🗑</button>
+            </div>
+        </div>
+      
+        <!-- Botón tipo enlace -->
+        <span class="enlace-anadir" (click)="mostrarFormularioDireccion = true">
+            ➕ Añadir nueva dirección
+        </span>
+        
+        <div *ngIf="mostrarFormularioDireccion" class="nueva-direccion">
+            <h4>Añadir nueva dirección</h4>
+          
+            <!-- Ciudad + autocompletado -->
+            <div class="campo">
+              <input 
+                [(ngModel)]="nuevaDireccionObj.ciudad" 
+                (input)="onInputCiudad()" 
+                placeholder="Ciudad" 
+              />
+              <ul *ngIf="ciudadesFiltradas.length > 0" class="sugerencias">
+                <li *ngFor="let ciudad of ciudadesFiltradas" (click)="seleccionarCiudad(ciudad)">
+                  {{ ciudad }}
+                </li>
+              </ul>
+              <div *ngIf="!nuevaDireccionObj.ciudad" class="mensaje-error"></div>
+            </div>
+          
+            <!-- Código postal -->
+            <div class="campo">
+              <input 
+                [(ngModel)]="nuevaDireccionObj.codigoPostal" 
+                placeholder="Código postal" 
+                maxlength="5" 
+                [class.invalido]="nuevaDireccionObj.codigoPostal && !esCodigoPostalValido()" 
+              />
+              <div *ngIf="nuevaDireccionObj.codigoPostal && !esCodigoPostalValido()" class="mensaje-error">
+                Código postal inválido (5 dígitos)
+              </div>
+            </div>
+          
+            <!-- Dirección -->
+            <div class="campo">
+              <input [(ngModel)]="nuevaDireccionObj.direccion" placeholder="Dirección" />
+              <div *ngIf="!nuevaDireccionObj.direccion" class="mensaje-error"></div>
+            </div>
+          
+            <!-- Teléfono -->
+            <div class="campo">
+              <input 
+                [(ngModel)]="nuevaDireccionObj.telefono" 
+                placeholder="Teléfono" 
+                maxlength="9" 
+                [class.invalido]="nuevaDireccionObj.telefono && !esTelefonoValido()" 
+              />
+              <div *ngIf="nuevaDireccionObj.telefono && !esTelefonoValido()" class="mensaje-error">
+                Teléfono inválido (9 dígitos, empieza por 6, 7, 8 o 9)
+              </div>
+            </div>
+          
+            <!-- Botones -->
+            <button 
+              (click)="guardarNuevaDireccion()" 
+              [disabled]="!esCodigoPostalValido() || !esTelefonoValido() || !nuevaDireccionObj.ciudad || !nuevaDireccionObj.direccion"
+            >
+              Guardar dirección
+            </button>
+          
+            <button class="cancelar" (click)="mostrarFormularioDireccion = false">Cancelar</button>
+          </div>
+          
+        <!-- Método de pago -->
+        <h3>Método de pago</h3>
+        <div class="metodos-pago">
+          <label>
+            <input type="radio" name="metodo" [(ngModel)]="metodoPago" value="tarjeta" />
+            💳 Tarjeta
+          </label>
+          <label>
+            <input type="radio" name="metodo" [(ngModel)]="metodoPago" value="paypal" />
+            🅿️ PayPal
+          </label>
+        </div>
+      
+        <!-- Datos tarjeta -->
+        <div *ngIf="metodoPago === 'tarjeta'" class="form-tarjeta">
+          <input type="text" [(ngModel)]="tarjeta.nombre" placeholder="Nombre del titular" />
+          <div *ngIf="tarjeta.nombre && !esNombreTitularValido()" class="mensaje-error">
+            El nombre debe contener solo letras
+          </div>      
+          <input
+            type="text"
+            [(ngModel)]="tarjeta.numero"
+            (input)="formatearNumeroTarjeta()"
+            placeholder="Número de tarjeta"
+            maxlength="19"
+            />
+          <div class="fila-tarjeta">
+            <input
+            type="text"
+            [(ngModel)]="tarjeta.fecha"
+            (input)="formatearFechaTarjeta()"
+            placeholder="MM/AA"
+            maxlength="5"
+          />
+          
+          <input
+            type="text"
+            [(ngModel)]="tarjeta.cvv"
+            (input)="soloNumeros($event)"
+            placeholder="CVV"
+            maxlength="3"
+          />
+          </div>
+        </div>
+      
+        <button 
+            class="btn-pagar-final"
+            [disabled]="
+            !direccionSeleccionada || 
+            (metodoPago === 'tarjeta' && 
+                (!datosTarjetaCompletos() || !esNombreTitularValido())
+            )"
+            (click)="confirmarPago()"
+        >
+            Confirmar pago
+        </button>
+      
+      </div>
+      
+</body>
+</html>

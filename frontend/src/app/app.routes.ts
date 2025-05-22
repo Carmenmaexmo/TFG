@@ -10,6 +10,9 @@ export const routes: Routes = [
   { path: 'perfil', loadComponent: () => import('./pages/perfil/perfil.component').then(m => m.PerfilComponent), canActivate: [AuthGuard] },
   { path: 'pedidos', loadComponent: () => import('./pages/pedidos/pedidos.component').then(m => m.PedidosComponent), canActivate: [AuthGuard] },
   { path: 'eventos', loadComponent: () => import('./pages/eventos/eventos.component').then(m => m.EventosComponent), canActivate: [AuthGuard] },
+  { path: 'foros', loadComponent: () => import('./pages/foros/foros.component').then(m => m.ForosComponent), canActivate: [AuthGuard] },
+  { path: 'temas/:id', loadComponent: () => import('./pages/tema-detalle/tema-detalle.component').then(m => m.TemaDetalleComponent), canActivate: [AuthGuard] },
+  { path: 'pago', loadComponent: () => import('./pages/pago/pago.component').then(m => m.PagoComponent), canActivate: [AuthGuard] },
 ];
 
 @NgModule({

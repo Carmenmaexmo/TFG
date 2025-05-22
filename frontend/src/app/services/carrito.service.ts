@@ -53,8 +53,12 @@ export class CarritoService {
   }
 
   getTotal(): number {
-    return this.carrito.reduce((sum, p) => sum + p.precio * p.cantidad, 0);
-  }
+    return this.carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
+  }  
+
+  getCarrito(): any[] {
+    return this.carrito;
+  }  
 
   vaciar() {
     this.carrito = [];
@@ -122,4 +126,5 @@ export class CarritoService {
       error: err => console.error('❌ Error al cargar carrito:', err)
     });
   }
+
 }

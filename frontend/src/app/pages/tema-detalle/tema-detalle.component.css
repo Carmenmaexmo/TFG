@@ -1,0 +1,200 @@
+.comentarios-wrapper {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background: #fefefe;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .comentarios-wrapper h2 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #333;
+  }
+  
+  .vacio {
+    text-align: center;
+    font-style: italic;
+    color: #777;
+  }
+  
+  .comentario {
+    background: #f1f1f1;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #ccb800;
+  }
+  
+  .respuesta {
+    background: #e9f5ff;
+    padding: 0.8rem;
+    margin: 1rem 0 0 2rem;
+    border-left: 4px solid #ffdb66;
+    border-radius: 6px;
+  }
+  
+  .cabecera {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .contenido {
+    margin: 0;
+    font-size: 1rem;
+    color: #222;
+  }
+
+  .btn-volver {
+    background-color: #ffd563;
+    color: white;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .btn-volver:hover {
+    background-color: rgb(230, 195, 100);
+  }
+
+  .nuevo-comentario {
+    margin-top: 2rem;
+    border-top: 1px solid #ccc;
+    padding-top: 1.5rem;
+  }
+  
+  .nuevo-comentario textarea {
+    width: 97%;
+    height: 80px;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    resize: vertical;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+  
+  .nuevo-comentario button {
+    background-color: #ffd563;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    margin-right: 0.5rem;
+    transition: background-color 0.3s;
+  }
+  
+  .nuevo-comentario button:hover {
+    background-color: #e1cb4f;
+  }
+  
+  .context-menu {
+    position: fixed;
+    background: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;
+    font-size: 14px;
+    transition: background 0.2s;
+  }
+  
+  .context-menu:hover {
+    background: #f0f0f0;
+  }
+
+
+  .context-menu {
+    position: fixed;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+    z-index: 1000;
+    padding: 0.5rem 0;
+    min-width: 140px;
+  }
+  
+  .context-menu div {
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .context-menu div:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .btn-ir-abajo {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: #ffda33;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 50px;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease;
+    z-index: 999;
+  }
+  
+  .btn-ir-abajo:hover {
+    background: #ddbb22;
+  }
+  
+.context-menu .icon {
+    margin-right: 8px;
+    opacity: 0.6;
+  }
+  
+  .menu-separador {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 0;
+  }
+  
+  .editar-textarea {
+    width: 100%;
+    min-height: 80px;
+    border-radius: 8px;
+    padding: 0.6rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    resize: vertical;
+    margin-bottom: 0.5rem;
+  }
+  
+  .guardar-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    margin-right: 0.5rem;
+    cursor: pointer;
+  }
+  
+  .cancelar {
+    background-color: #ccc;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+
+  
