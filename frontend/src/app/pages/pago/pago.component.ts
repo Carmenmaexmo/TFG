@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { CarritoService } from '../../services/carrito.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-pago',
@@ -44,7 +45,7 @@ export class PagoComponent {
     cvv: ''
   };
 
-  constructor(private api: ApiService, private carrito: CarritoService) {}
+  constructor(private api: ApiService, private carrito: CarritoService, private router: Router) {}
 
   ngOnInit() {
     const idUsuario = Number(localStorage.getItem('idUsuario'));
@@ -197,8 +198,8 @@ export class PagoComponent {
   
     this.api.crearPedido(nuevoPedido).subscribe({
       next: () => {
-        alert('✅ Pedido realizado correctamente');
         this.carrito.vaciar();
+        this.router.navigate(['/pedidos']);
       },
       error: err => console.error('Error creando pedido', err)
     });

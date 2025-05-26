@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { CarritoService } from '../../services/carrito.service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-catalogo',
@@ -19,19 +20,60 @@ export class CatalogoComponent implements OnInit {
 
   artistas: string[] = [];
   generos: string[] = [];
+  proveedores: any[] = [];
 
   selectedArtistas: string[] = [];
   selectedGeneros: string[] = [];
   precioMin: number | null = null;
   precioMax: number | null = null;
+  
+  paginaActual: number = 1; 
+  vinilosPorPagina: number = 20;
+
+  estaSobrePapelera = false;
 
   busquedaActiva: string | null = null;
 
   mostrarFiltros = false;
   categoriaActiva: 'artista' | 'genero' | 'precio' | null = null;
 
-  constructor(private api: ApiService, private carrito: CarritoService, private route: ActivatedRoute, private router: Router) {}
+  mostrarFormularioVinilo = false;
+  mostrarFormProveedor = false;
+  mensajeErrorVinilo: string | null = null;
+  mensajeErrorProveedor: string | null = null;
 
+  busquedaProveedor: string = '';
+  proveedoresFiltrados: any[] = [];
+
+  proveedorEditando: any = null;
+  generosFiltrados: string[] = [];
+
+  viniloEditandoId: number | null = null;
+
+  generosDisponibles: string[] = [
+    'Rock', 'Pop', 'Jazz', 'Hip-Hop', 'Metal', 'Clásica', 'Reggae', 'Funk', 'Soul','Indie', 'Electrónica', 'Folk', 'Alternativo', 'Punk', 'Country', 'Grunge', 'Flamenco', 'Latino', 'R&B', 'Gospel', 'Blues', 'Bossa Nova', 'Salsa'
+  ];
+
+  nuevoVinilo = {
+    titulo: '',
+    artista: '',
+    descripcion: '',
+    genero: '',
+    imagen: '',
+    precio: null,
+    stock: null,
+    idProveedor: null
+  };  
+
+  nuevoProveedor = {
+    nombre: '',
+    direccion: '',
+    email: '',
+    telefono: ''
+  };
+
+  constructor(private api: ApiService, private carrito: CarritoService, private route: ActivatedRoute, private router: Router) {}
+  @ViewChild('gridContainer') gridContainerRef!: ElementRef;
   ngOnInit(): void {
     this.api.getVinilos().subscribe({
       next: (res) => {
@@ -62,7 +104,11 @@ export class CatalogoComponent implements OnInit {
               this.productos = [...this.productosOriginales];
             }
           });
-          
+          this.api.getProveedores().subscribe({
+            next: (res) => this.proveedores = res,
+            error: (err) => console.error('Error cargando proveedores', err)
+          });         
+           
       },
       error: (err) => console.error('Error cargando vinilos:', err)
     });
@@ -72,8 +118,12 @@ export class CatalogoComponent implements OnInit {
       setTimeout(() => this.carrito.cargarCarritoDelServidor(), 50);
     }
   }
-  
 
+  rolAdminOEmpleado(): boolean {
+    const roles = JSON.parse(localStorage.getItem('roles') || '[]');
+    return roles.includes('ROLE_ADMINISTRADOR') || roles.includes('ROLE_EMPLEADO');
+  }
+  
   aniadirAlCarrito(producto: any) {
     this.carrito.aniadir(producto);
   }
@@ -150,5 +200,262 @@ export class CatalogoComponent implements OnInit {
     this.router.navigate(['/catalogo']);  // Navega sin el parámetro ?q
   }
   
+  crearVinilo() {
+    if (!this.nuevoVinilo.titulo || !this.nuevoVinilo.artista || !this.nuevoVinilo.genero || !this.nuevoVinilo.precio) {
+      this.mensajeErrorVinilo = '❌ Debe rellenar todos los campos para crear o actualizar el vinilo.';
+      setTimeout(() => this.mensajeErrorVinilo = null, 4000);
+      return;
+    }
   
+    if (this.viniloEditandoId) {
+      // ACTUALIZAR
+      const datosActualizar = { id: this.viniloEditandoId, ...this.nuevoVinilo };
+      this.api.actualizarVinilo(this.viniloEditandoId, datosActualizar).subscribe({
+        next: (res) => {
+          const idx = this.productos.findIndex(v => v.id === res.id);
+          if (idx !== -1) {
+            this.productos[idx] = res;
+            this.productosOriginales[idx] = res;
+          }
+          this.limpiarFormularioVinilo();
+          alert('✅ Vinilo actualizado correctamente.');
+        },
+        error: () => {
+          alert('❌ Error al actualizar el vinilo.');
+        }
+      });
+    } else {
+      // CREAR
+      this.api.crearVinilo(this.nuevoVinilo).subscribe({
+        next: (res) => {
+          this.productos.push(res);
+          this.productosOriginales.push(res);
+          this.limpiarFormularioVinilo();
+          alert('✅ Vinilo creado correctamente.');
+        },
+        error: (err) => console.error('Error creando vinilo:', err)
+      });
+    }
+  }
+
+  limpiarFormularioVinilo() {
+    this.nuevoVinilo = {
+      titulo: '',
+      artista: '',
+      descripcion: '',
+      genero: '',
+      imagen: '',
+      precio: null,
+      stock: null,
+      idProveedor: null
+    };
+    this.viniloEditandoId = null;
+    this.mostrarFormularioVinilo = false;
+    this.generosFiltrados = [];
+    this.mensajeErrorVinilo = null;
+  }  
+
+  cancelarFormularioVinilo() {
+    this.limpiarFormularioVinilo();
+  }  
+  
+
+  filtrarGeneros() {
+    const texto = this.nuevoVinilo.genero.toLowerCase();
+    this.generosFiltrados = this.generosDisponibles
+      .filter(g => g.toLowerCase().includes(texto))
+      .slice(0, 5);
+  }
+  
+  seleccionarGenero(genero: string) {
+    this.nuevoVinilo.genero = genero;
+    this.generosFiltrados = [];
+  }
+
+  guardarProveedor() {
+    const { nombre, direccion, email, telefono } = this.nuevoProveedor;
+  
+    // Validación básica
+    if (!nombre || !direccion || !email || !telefono) {
+      this.mensajeErrorProveedor = '❌ Todos los campos del proveedor son obligatorios.';
+      setTimeout(() => this.mensajeErrorProveedor = null, 4000);
+      return;
+    }
+  
+    // Validación de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      this.mensajeErrorProveedor = '❌ El email no tiene un formato válido.';
+      setTimeout(() => this.mensajeErrorProveedor = null, 4000);
+      return;
+    }
+  
+    // Validación de teléfono (ej. 9 dígitos numéricos, empezando por 6, 7 o 9)
+    const telefonoRegex = /^[6789]\d{8}$/;
+    if (!telefonoRegex.test(telefono)) {
+      this.mensajeErrorProveedor = '❌ El teléfono debe tener 9 dígitos numéricos y empezar por 6, 7 o 9.';
+      setTimeout(() => this.mensajeErrorProveedor = null, 4000);
+      return;
+    }
+  
+    // Si pasa todo, guardar
+    this.api.crearProveedor(this.nuevoProveedor).subscribe({
+      next: (res) => {
+        this.proveedores.push(res);
+        this.nuevoVinilo.idProveedor = res.id;
+        this.nuevoProveedor = { nombre: '', direccion: '', email: '', telefono: '' };
+        this.mensajeErrorProveedor = null;
+        this.mostrarFormProveedor = false;
+      },
+      error: (err) => {
+        console.error('Error creando proveedor:', err);
+        this.mensajeErrorProveedor = '❌ Error al guardar el proveedor.';
+      }
+    });
+  }
+  
+  eliminarProveedor(id: number) {
+    this.api.eliminarProveedor(id).subscribe({
+      next: () => {
+        this.proveedores = this.proveedores.filter(p => p.id !== id);
+        if (this.nuevoVinilo.idProveedor === id) {
+          this.nuevoVinilo.idProveedor = null;
+        }
+      },
+      error: (err) => {
+        console.error('Error al eliminar proveedor:', err);
+        this.mensajeErrorVinilo = '❌ No se pudo eliminar el proveedor ya que tiene vinilos vinculados a él.';
+        setTimeout(() => this.mensajeErrorVinilo = null, 4000);
+      }
+    });
+  }
+
+  editarProveedor(proveedor: any) {
+    this.mostrarFormProveedor = true;
+    this.proveedorEditando = { ...proveedor }; // copia para editar
+    this.nuevoProveedor = { ...proveedor };
+  }
+  
+  actualizarProveedor() {
+    const { id } = this.proveedorEditando;
+  
+    // Validación básica
+    if (!this.nuevoProveedor.nombre || !this.nuevoProveedor.direccion || !this.nuevoProveedor.email || !this.nuevoProveedor.telefono) {
+      this.mensajeErrorProveedor = '❌ Todos los campos del proveedor son obligatorios.';
+      setTimeout(() => this.mensajeErrorProveedor = null, 4000);
+      return;
+    }
+    // Validación de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.nuevoProveedor.email)) {
+      this.mensajeErrorProveedor = '❌ El email no tiene un formato válido.';
+      setTimeout(() => this.mensajeErrorProveedor = null, 4000);
+      return;
+    }
+    // Validación de teléfono (ej. 9 dígitos numéricos, empezando por 6, 7 o 9)
+    const telefonoRegex = /^[6789]\d{8}$/;
+    if (!telefonoRegex.test(this.nuevoProveedor.telefono)) {
+      this.mensajeErrorProveedor = '❌ El teléfono debe tener 9 dígitos numéricos y empezar por 6, 7 o 9.';
+      setTimeout(() => this.mensajeErrorProveedor = null, 4000);
+      return;
+    }
+    // Si pasa todo, actualizar
+  
+    this.api.actualizarProveedor(id, this.nuevoProveedor).subscribe({
+      next: (res) => {
+        this.api.getProveedores().subscribe({
+          next: (proveedores) => {
+            this.proveedores = proveedores;
+            this.filtrarProveedores();  // ACTUALIZA también los filtrados
+          },
+          error: (err) => console.error('Error recargando proveedores', err)
+        });
+        this.cancelarEdicionProveedor();
+      },
+      error: (err) => {
+        console.error('Error actualizando proveedor:', err);
+        this.mensajeErrorProveedor = '❌ No se pudo actualizar el proveedor.';
+        setTimeout(() => this.mensajeErrorProveedor = null, 4000);
+      }
+    });       
+  }
+  
+  cancelarEdicionProveedor() {
+    this.mostrarFormProveedor = false;
+    this.proveedorEditando = null;
+    this.nuevoProveedor = { nombre: '', direccion: '', email: '', telefono: '' };
+    this.mensajeErrorProveedor = null;
+  }
+
+  filtrarProveedores() {
+    const termino = this.busquedaProveedor.toLowerCase();
+    this.proveedoresFiltrados = this.proveedores
+      .filter(p =>
+        p.nombre.toLowerCase().includes(termino) ||
+        p.email.toLowerCase().includes(termino)
+      )
+      .slice(0, 5); // limitar a 5 resultados
+  }
+  
+  get vinilosPaginados() {
+    const inicio = (this.paginaActual - 1) * this.vinilosPorPagina;
+    const fin = inicio + this.vinilosPorPagina;
+    return this.productos.slice(inicio, fin);
+  }  
+  
+  get totalPaginas() {
+    return Math.ceil(this.productos.length / this.vinilosPorPagina);
+  }
+  
+  cambiarPagina(nuevaPagina: number) {
+    if (nuevaPagina >= 1 && nuevaPagina <= this.totalPaginas) {
+      this.paginaActual = nuevaPagina;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  ajustarVinilosPorPagina() {
+    const anchoPantalla = window.innerWidth;
+    const altoPantalla = window.innerHeight;
+  
+    const columnas = Math.floor(anchoPantalla / 220); // ancho aproximado de una card
+    const filas = Math.floor(altoPantalla / 400);     // alto aproximado de una card + padding
+  
+    this.vinilosPorPagina = columnas * filas;
+  }
+  
+  eliminarVinilo(vinilo: any) {
+    const confirmacion = confirm(`¿Estás seguro de eliminar "${vinilo.titulo}"?`);
+    if (!confirmacion) return;
+  
+    this.api.eliminarVinilo(vinilo.id).subscribe({
+      next: () => {
+        this.productos = this.productos.filter(v => v.id !== vinilo.id);
+        this.productosOriginales = this.productosOriginales.filter(v => v.id !== vinilo.id);
+        alert('✅ Vinilo eliminado correctamente.');
+      },
+      error: () => {
+        alert('❌ Error al eliminar el vinilo.');
+      }
+    });
+  }
+  
+  editarVinilo(vinilo: any) {
+    this.viniloEditandoId = vinilo.id;
+    this.mostrarFormularioVinilo = true;
+    this.nuevoVinilo = {
+      titulo: vinilo.titulo,
+      artista: vinilo.artista,
+      descripcion: vinilo.descripcion,
+      genero: vinilo.genero,
+      imagen: vinilo.imagen,
+      precio: vinilo.precio,
+      stock: vinilo.stock,
+      idProveedor: vinilo.idProveedor
+    };
+  }
+  
+  
+  
+
 }

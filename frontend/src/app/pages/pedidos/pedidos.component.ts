@@ -35,4 +35,14 @@ export class PedidosComponent implements OnInit {
       error: (err) => console.error('Error al confirmar entrega:', err)
     });
   }
+
+  cancelarPedido(pedido: any) {
+      this.api.eliminarPedido(pedido.id).subscribe({
+        next: () => {
+          this.pedidos = this.pedidos.filter(p => p.id !== pedido.id);
+        },
+        error: (err) => console.error('Error al cancelar el pedido:', err)
+      });
+  }
+  
 }

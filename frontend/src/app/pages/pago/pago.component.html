@@ -144,17 +144,19 @@
         </div>
       
         <button 
-            class="btn-pagar-final"
-            [disabled]="
-            !direccionSeleccionada || 
-            (metodoPago === 'tarjeta' && 
-                (!datosTarjetaCompletos() || !esNombreTitularValido())
-            )"
-            (click)="confirmarPago()"
-        >
-            Confirmar pago
-        </button>
-      
+        class="btn-pagar-final"
+        [disabled]="
+          !direccionSeleccionada || 
+          !metodoPago ||
+          (metodoPago === 'tarjeta' && 
+            (!datosTarjetaCompletos() || !esNombreTitularValido())
+          )
+        "
+        (click)="confirmarPago()"
+      >
+        Confirmar pago
+      </button>      
+
       </div>
       
 </body>

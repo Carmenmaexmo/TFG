@@ -111,4 +111,10 @@ export class NavbarComponent {
     return this.carrito.getTotal();
   }
 
+  irAPago() {
+    this.mostrarCarritoSlide = false; // cierra el carrito
+    this.router.navigate(['/pago']);  // navega a /pago
+  }
+  
+
 }

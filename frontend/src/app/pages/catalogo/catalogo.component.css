@@ -85,17 +85,17 @@ body {
   
   .producto-card {
     background: #fff;
-    border-radius: 16px;
+    border-radius: 20px;
     padding: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
-    height: 480px;
+    text-align: left;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
+    width: 100%;
+    min-height: 500px; /* altura aún mayor */
+}
+
   .producto-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
@@ -103,12 +103,14 @@ body {
   
   .producto-card img {
     width: 100%;
-    height: 190px;
+    aspect-ratio: 1 / 1;
     object-fit: contain;
-    border-radius: 8px;
+    border-radius: 10px;
     margin-bottom: 1rem;
-  }
-  
+    background-color: #f8f8f8;
+    padding: 14px;
+}
+
   .titulo {
     font-size: 1.2rem;
     font-weight: 600;
@@ -263,6 +265,309 @@ body {
     outline: none;
     box-shadow: 0 0 0 2px rgba(255, 204, 51, 0.3);
   }
+
+  .catalogo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  /* Tarjeta "Añadir vinilo" */
+.add-vinilo-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #fdfdfd;
+    border: 2px dashed #ccc;
+    border-radius: 16px;
+    padding: 1rem;
+    cursor: pointer;
+    height: 480px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+  
+  .add-vinilo-card:hover {
+    background-color: #fffbe6;
+    border-color: #ffcc33;
+    transform: scale(1.03);
+  }
+  
+  .add-vinilo-content {
+    text-align: center;
+  }
+  
+  .add-icon {
+    font-size: 48px;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 0.5rem;
+  }
+  
+  .add-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #222;
+  }
+  
+  /* Formulario fuera del grid */
+  .formulario-vinilo {
+    margin-top: 2rem;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .formulario-vinilo input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+  
+  .acciones-formulario {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+  
+  .acciones-formulario button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+  
+  .acciones-formulario button:not(.cancelar) {
+    background-color: #ffcc33;
+    color: #000;
+  }
+  
+  .acciones-formulario .cancelar {
+    background-color: #eee;
+    color: #333;
+  }
+  
+  /* Fondo modal oscuro translúcido */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    z-index: 1000;
+  }
+  
+  .modal-formulario {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1010;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem 1rem;
+  }
+  
+  .formulario-contenido {
+    background-color: #fff;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 1100px;
+    min-width: 400px;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  
+  .formulario-contenido h3 {
+    margin-top: 0;
+    font-size: 1.4rem;
+    color: #222;
+  }
+  
+  .formulario-contenido input {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+  
+  .acciones-formulario {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .acciones-formulario button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-size: 0.95rem;
+  }
+  
+  .acciones-formulario button:not(.cancelar) {
+    background-color: #ffcc33;
+    color: black;
+  }
+  
+  .acciones-formulario .cancelar {
+    background-color: #eee;
+    color: #444;
+  }
+
+  @media (max-width: 768px) {
+    .formulario-contenido {
+      width: 90vw;
+      padding: 1.5rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .formulario-contenido {
+      width: 95vw;
+      padding: 1rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .catalogo-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+  .dropdown-generos ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    max-height: 180px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    position: absolute;
+    z-index: 1001;
+    width: 48%;
+  }
+  
+  .dropdown-generos li {
+    padding: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .dropdown-generos li:hover {
+    background-color: #f8f8f8;
+  }
+
+  .paginacion {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    font-weight: 500;
+  }
+  .paginacion button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+  }
+  .paginacion button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .catalogo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); /* subido de 300px a 360px */
+    gap: 28px; /* más espacio entre tarjetas */
+    align-items: start;
+}
+.admin-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn-editar {
+    padding: 6px 14px;
+    font-size: 0.95rem;
+    background-color: #fff8e1;
+    border: 1px solid #ffcc33;
+    color: #444;
+    border-radius: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-editar:hover {
+    background-color: #ffed99;
+  }
+  
+  .btn-eliminar {
+    padding: 6px 14px;
+    font-size: 0.95rem;
+    background-color: #fff0f0;
+    border: 1px solid #ff6666;
+    color: #444;
+    border-radius: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-eliminar:hover {
+    background-color: #ffb3b3;
+  }
+  
+
+  .btn-anadir-vinilo {
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    background-color: #ffcc33;
+    color: #000;
+    border: none;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-anadir-vinilo:hover {
+    background-color: #ffd84d;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  
+  
+
+  
+  
+  
+  
+  
   
   
   

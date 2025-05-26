@@ -10,8 +10,31 @@
       </div>
   
       <p><strong>Fecha:</strong> {{ pedido.fechaPedido | date:'dd/MM/yyyy HH:mm' }}</p>
+      <div class="detalle-productos">
+        <h4>Productos:</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Vinilo</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of pedido.detalles">
+              <td class="vinilo-info">
+                <img [src]="item.vinilo?.imagen || 'assets/placeholder-vinilo.jpg'" alt="Vinilo" />
+                <span>{{ item.vinilo?.titulo || 'Vinilo desconocido' }}</span>
+              </td>                  
+              <td>{{ item.cantidad }}</td>
+              <td>{{ item.precio | currency:'EUR' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>      
       <p><strong>Total:</strong> {{ pedido.total | currency:'EUR' }}</p>
       <p class="envio">
+        
         <strong>Dirección de envío:</strong><br>
         {{ pedido.direccionEnvio?.direccion }}<br>
         {{ pedido.direccionEnvio?.codigoPostal }} - {{ pedido.direccionEnvio?.ciudad }}<br>
@@ -21,6 +44,10 @@
       <div class="acciones-pedido" *ngIf="pedido.estado === 'ENVIADO'">
         <button (click)="confirmarEntrega(pedido)">Confirmar entrega</button>
       </div>
+
+      <div class="acciones-pedido" *ngIf="pedido.estado === 'PENDIENTE'">
+        <button (click)="cancelarPedido(pedido)">Cancelar pedido</button>
+      </div>      
     </div>
   </div>
   

@@ -102,5 +102,67 @@
   .envio strong {
     color: #111;
   }
+
+  .pedido-card p {
+    margin: 8px 0;
+    font-size: 15px;
+    color: #444;
+  }
+  
+  .detalle-productos {
+    background-color: #f4f4f4;
+    padding: 12px;
+    border-radius: 6px;
+    margin: 10px 0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  
+  .detalle-productos h4 {
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .detalle-productos table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .detalle-productos th,
+  .detalle-productos td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+  }
+  
+  .detalle-productos th {
+    background-color: #e9ecef;
+    color: #555;
+  }
+  
+  .detalle-productos tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .pedido-card p strong {
+    color: #222;
+  }
+
+  .vinilo-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .vinilo-info img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  
   
   

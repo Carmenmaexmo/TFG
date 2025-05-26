@@ -154,5 +154,61 @@ export class ApiService {
   crearPedido(datos: any): Observable<any> {
     return this.http.post(`${this.base}/api/pedidos`, datos);
   }
+
+  /**
+   * Eliminar un pedido.
+   */
+  eliminarPedido(id: number): Observable<any> {
+    return this.http.delete(`${this.base}/api/pedidos/${id}`);
+  }
+
+  /**
+   * Crear un nuevo vinilo.
+   */
+  crearVinilo(datos: any): Observable<any> {
+    return this.http.post(`${this.base}/api/vinilos`, datos);
+  }
+
+  /**
+   * Obtener proveedores.
+   */
+  getProveedores(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/api/proveedores`);
+  }
+
+  /**
+   * Crear un nuevo proveedor.
+   */
+  crearProveedor(datos: any): Observable<any> {
+    return this.http.post(`${this.base}/api/proveedores`, datos);
+  }
+
+  /**
+   * Eliminar un proveedor.
+   */
+  eliminarProveedor(id: number): Observable<any> {
+    return this.http.delete(`${this.base}/api/proveedores/${id}`);
+  }
+
+  /**
+   * Actualizar un proveedor.
+   */
+  actualizarProveedor(id: number, datos: any): Observable<any> {
+    return this.http.put(`${this.base}/api/proveedores/${id}`, datos);
+  }
+
+  /**
+   * Eliminar un vinilo.
+   */
+  eliminarVinilo(id: number): Observable<any> {
+    return this.http.delete(`${this.base}/api/vinilos/${id}`);
+  }
+
+  /**
+   * Actualizar un vinilo.
+   */
+  actualizarVinilo(id: number, datos: any): Observable<any> {
+    return this.http.put(`${this.base}/api/vinilos/${id}`, datos);
+  }
   
 }
