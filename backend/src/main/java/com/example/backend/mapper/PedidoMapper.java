@@ -15,4 +15,5 @@ public interface PedidoMapper {
 
     DetallePedidoDTO toDetalleDTO(DetallePedido detalle);
     List<DetallePedidoDTO> toDetalleDTOList(List<DetallePedido> detalles);
+    
 }

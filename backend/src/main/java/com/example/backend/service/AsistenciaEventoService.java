@@ -14,4 +14,5 @@ public interface AsistenciaEventoService {
     AsistenciaEventoDTO update(Long id, AsistenciaEventoUpdateDTO dto);
     void delete(Long id);
     AsistenciaEventoDTO confirmar(Long id);
+    List<AsistenciaEventoDTO> findByEvento(Long idEvento);
 }

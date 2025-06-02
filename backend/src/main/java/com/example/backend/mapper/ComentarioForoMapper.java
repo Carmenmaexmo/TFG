@@ -11,3 +11,5 @@ public interface ComentarioForoMapper {
     ComentarioForoDTO toDTO(ComentarioForo comentario);
     ComentarioForo fromCreateDTO(ComentarioForoCreateDTO dto);
 }
+
+

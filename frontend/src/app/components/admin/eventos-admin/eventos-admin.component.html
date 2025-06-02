@@ -1,0 +1,120 @@
+<div class="eventos-panel">
+  <h2>🎤 Gestión de Eventos</h2>
+
+  <!-- Filtros -->
+  <div class="filtros">
+    <input type="text" [(ngModel)]="filtro" placeholder="Buscar por título, lugar, tipo..." />
+    <button class="btn-nuevo" (click)="abrirCrear()">+ Crear Evento</button>
+  </div>
+
+  <!-- Tabla eventos -->
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Fecha Inicio</th>
+        <th>Fecha Fin</th>
+        <th>Lugar</th>
+        <th>Descuento (%)</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let evento of eventosFiltrados">
+        <td>{{ evento.id }}</td>
+
+        <td *ngIf="editandoId !== evento.id">{{ evento.titulo }}</td>
+        <td *ngIf="editandoId === evento.id">
+          <input [(ngModel)]="evento.titulo" />
+        </td>
+
+        <td *ngIf="editandoId !== evento.id">{{ evento.fechaInicio | date: 'short' }}</td>
+        <td *ngIf="editandoId === evento.id">
+          <input type="datetime-local" [(ngModel)]="evento.fechaInicio" />
+        </td>
+
+        <td *ngIf="editandoId !== evento.id">{{ evento.fecha_fin | date: 'short' }}</td>
+        <td *ngIf="editandoId === evento.id">
+          <input type="datetime-local" [(ngModel)]="evento.fecha_fin" />
+        </td>
+
+        <td *ngIf="editandoId !== evento.id">{{ evento.lugar }}</td>
+        <td *ngIf="editandoId === evento.id">
+          <input [(ngModel)]="evento.lugar" />
+        </td>
+
+        <td *ngIf="editandoId !== evento.id">{{ evento.descuento }}%</td>
+        <td *ngIf="editandoId === evento.id">
+          <input type="number" [(ngModel)]="evento.descuento" min="0" max="100" />
+        </td>
+
+        <td class="acciones">
+          <button (click)="verAsistentes(evento)">
+            <i class="bi bi-people-fill"></i>
+          </button>
+          <button *ngIf="editandoId !== evento.id" (click)="activarEdicion(evento)">
+            <i class="bi bi-pencil-fill"></i>
+          </button>
+          <button *ngIf="editandoId === evento.id" (click)="guardarEdicion(evento)">
+            <i class="bi bi-check-lg"></i>
+          </button>
+          <button (click)="eliminarEvento(evento.id)">
+            <i class="bi bi-trash-fill"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Modal Crear Evento -->
+  <div class="modal-overlay" *ngIf="creandoEvento">
+    <div class="modal-content">
+      <button class="close-btn" (click)="cerrarCrear()">×</button>
+      <h3>Crear Nuevo Evento</h3>
+      <form (ngSubmit)="guardarNuevoEvento()">
+        <input type="text" [(ngModel)]="nuevoEvento.titulo" name="titulo" placeholder="Título" required />
+        <input type="text" [(ngModel)]="nuevoEvento.descripcion" name="descripcion" placeholder="Descripción" required />
+        <input type="datetime-local" [(ngModel)]="nuevoEvento.fechaInicio" name="fechaInicio" required />
+        <input type="datetime-local" [(ngModel)]="nuevoEvento.fecha_fin" name="fechaFin" required />
+        <input type="text" [(ngModel)]="nuevoEvento.lugar" name="lugar" placeholder="Lugar" required />
+        <input type="number" [(ngModel)]="nuevoEvento.descuento" name="descuento" placeholder="Descuento (%)" min="0" max="100" required />
+        <button type="submit" class="btn-guardar">Guardar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Asistentes -->
+  <div class="modal-overlay" *ngIf="eventoSeleccionado">
+    <div class="modal-content asistentes-modal">
+      <button class="close-btn" (click)="cerrarAsistentes()">×</button>
+      <h3>Asistentes al evento: {{ eventoSeleccionado.titulo }}</h3>
+      <input type="text" [(ngModel)]="filtroUsuario" placeholder="Buscar usuario por nombre o email..." class="filtro-usuario" />
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Email</th>
+            <th>Confirmado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let asistencia of asistentesFiltrados">
+            <td>{{ asistencia.usuario.nombre }}</td>
+            <td>{{ asistencia.usuario.email }}</td>
+            <td>
+              <span [ngClass]="asistencia.confirmado ? 'confirmado' : 'no-confirmado'">
+                {{ asistencia.confirmado ? '✅ Sí' : '❌ No' }}
+              </span>
+            </td>
+            <td>
+              <button (click)="marcarAsistencia(asistencia, true)" class="btn-confirm">Confirmar</button>
+              <button (click)="marcarAsistencia(asistencia, false)" class="btn-cancelar">Cancelar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

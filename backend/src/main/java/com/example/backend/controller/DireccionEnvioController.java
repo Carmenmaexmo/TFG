@@ -27,6 +27,11 @@ public class DireccionEnvioController {
         return direccionEnvioService.findById(id);
     }
 
+    @GetMapping("/por-usuario/{idUsuario}")
+    public List<DireccionEnvioDTO> obtenerPorUsuario(@PathVariable Long idUsuario) {
+        return direccionEnvioService.findByUsuario(idUsuario);
+    }
+     
     @PostMapping
     public DireccionEnvioDTO create(@RequestBody DireccionEnvioCreateDTO dto) {
         return direccionEnvioService.create(dto);

@@ -50,7 +50,7 @@ public class EventoServiceImpl implements EventoService {
         String titulo = dto.getTitulo().trim();
 
         // 2) Validar fechas
-        LocalDateTime inicio = dto.getFecha_inicio();
+        LocalDateTime inicio = dto.getFechaInicio();
         LocalDateTime fin    = dto.getFecha_fin();
         if (inicio == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -119,8 +119,8 @@ public class EventoServiceImpl implements EventoService {
         }
 
         // Fecha de inicio
-        if (dto.getFecha_inicio() != null) {
-            LocalDateTime ni = dto.getFecha_inicio();
+        if (dto.getFechaInicio() != null) {
+            LocalDateTime ni = dto.getFechaInicio();
             if (ni.isBefore(LocalDateTime.now())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "La fecha de inicio debe ser futura");

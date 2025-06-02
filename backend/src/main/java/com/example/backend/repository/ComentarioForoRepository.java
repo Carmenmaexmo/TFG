@@ -9,4 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ComentarioForoRepository extends JpaRepository<ComentarioForo, Long> {
     List<ComentarioForo> findByComentarioPadre_Id(Long padreId);
+
+    List<ComentarioForo> findByTemaId(Long idTema);
+
 }

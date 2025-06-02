@@ -1,55 +1,64 @@
 package com.example.backend.security;
 
+import com.example.backend.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-
 import org.springframework.web.filter.OncePerRequestFilter;
-import com.example.backend.service.CustomUserDetailsService;
 
+import java.io.IOException;
+import java.util.List;
 
-@RequiredArgsConstructor
 public class AuthTokenFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private final CustomUserDetailsService userDetailsService;
 
+    public AuthTokenFilter(JwtUtils jwtUtils, CustomUserDetailsService userDetailsService) {
+        this.jwtUtils = jwtUtils;
+        this.userDetailsService = userDetailsService;
+    }
+
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res,
-                                    FilterChain chain) throws java.io.IOException, jakarta.servlet.ServletException {
-                          System.out.println("🛡️ Filtro ejecutado");               
+    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
+            throws ServletException, IOException {
+                System.out.println("🔥 AuthTokenFilter ACTIVADO para " + req.getMethod() + " " + req.getRequestURI());
+
+
         String header = req.getHeader("Authorization");
-    
+
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-            System.out.println("🔐 Token recibido: " + token);
-    
+
             if (jwtUtils.validateJwtToken(token)) {
-                System.out.println("✅ Token válido");
-    
-                String nombreUsuario = jwtUtils.getNombreUsuarioFromJwt(token);
-                System.out.println("👤 Usuario extraído del token: " + nombreUsuario);
-    
-                var userDetails = userDetailsService.loadUserByUsername(nombreUsuario);
-                System.out.println("🎭 Roles cargados: " + userDetails.getAuthorities());
-    
-                var auth = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-    
+                String username = jwtUtils.getNombreUsuarioFromJwt(token);
+                List<String> roles = jwtUtils.getRolesFromJwt(token);
+
+                var authorities = roles.stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .toList();
+
+                var userDetails = userDetailsService.loadUserByUsername(username);
+                // Esta línea es innecesaria si no usas userDetails por ID:
+
+                var auth = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            } else {
-                System.out.println("❌ Token inválido");
-            }
-        } else {
-            System.out.println("⚠️ No se encontró token en la cabecera Authorization");
-        }
+                
+
+                System.out.println("Token recibido: " + token);
+                System.out.println("Usuario autenticado: " + username);
+                System.out.println("Authorities: " + auth.getAuthorities());
+
     
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+        }
+
         chain.doFilter(req, res);
     }
-    
 }

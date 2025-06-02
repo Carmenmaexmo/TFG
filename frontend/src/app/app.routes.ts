@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 
+
 export const routes: Routes = [
   { path: '', redirectTo: 'catalogo', pathMatch: 'full' },
   { path: 'login', loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent) },
@@ -13,6 +14,9 @@ export const routes: Routes = [
   { path: 'foros', loadComponent: () => import('./pages/foros/foros.component').then(m => m.ForosComponent), canActivate: [AuthGuard] },
   { path: 'temas/:id', loadComponent: () => import('./pages/tema-detalle/tema-detalle.component').then(m => m.TemaDetalleComponent), canActivate: [AuthGuard] },
   { path: 'pago', loadComponent: () => import('./pages/pago/pago.component').then(m => m.PagoComponent), canActivate: [AuthGuard] },
+  { path: 'admin/usuarios', loadComponent: () => import('./components/admin/usuarios-admin/usuarios-admin.component').then(m => m.UsuariosAdminComponent), canActivate: [AuthGuard], data: { roles: ['ADMINISTRADOR', 'EMPLEADO'] } },
+  { path: 'admin/pedidos', loadComponent: () => import('./components/admin/pedidos-admin/pedidos-admin.component').then(m => m.PedidosAdminComponent), canActivate: [AuthGuard], data: { roles: ['ADMINISTRADOR', 'EMPLEADO'] } },
+  { path: 'admin/eventos', loadComponent: () => import('./components/admin/eventos-admin/eventos-admin.component').then(m => m.EventosAdminComponent), canActivate: [AuthGuard], data: { roles: ['ADMINISTRADOR', 'EMPLEADO'] } },
 ];
 
 @NgModule({

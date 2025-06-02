@@ -16,4 +16,5 @@ public class UsuarioCreateDTO {
     private String telefono;
     private String rol;
     private String dni;
+    private String carrito;
 }

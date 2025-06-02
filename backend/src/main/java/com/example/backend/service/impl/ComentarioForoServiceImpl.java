@@ -45,6 +45,13 @@ public class ComentarioForoServiceImpl implements ComentarioForoService {
     }
 
     @Override
+    public List<ComentarioForoDTO> findByTema(Long idTema) {
+        return comentarioRepo.findByTemaId(idTema).stream()
+                .map(comentarioMapper::toDTO)
+                .toList();
+    }
+    
+    @Override
     public ComentarioForoDTO create(ComentarioForoCreateDTO dto) {
         // 1) Validar contenido
         if (dto.getContenido() == null || dto.getContenido().isBlank()) {

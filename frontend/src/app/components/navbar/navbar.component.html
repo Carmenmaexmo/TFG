@@ -21,6 +21,16 @@
         <a routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
         <a routerLink="/eventos" routerLinkActive="active">Eventos</a>
         <a routerLink="/foros" routerLinkActive="active">Foros</a>
+          <ng-container *ngIf="hasRole(['ADMINISTRADOR', 'EMPLEADO'])">
+            <div class="admin-dropdown" (mouseenter)="adminDropdownOpen = true" (mouseleave)="adminDropdownOpen = false">
+              <a class="dropdown-toggle">Administración ▾</a>
+              <div class="dropdown-content" *ngIf="adminDropdownOpen">
+                <a routerLink="/admin/usuarios" routerLinkActive="active" class="dropdown-link">Gestionar Usuarios</a>
+                <a routerLink="/admin/pedidos" routerLinkActive="active" class="dropdown-link">Gestionar Pedidos</a>
+                <a routerLink="/admin/eventos" routerLinkActive="active" class="dropdown-link">Gestionar Eventos</a>
+              </div>
+            </div>
+          </ng-container>
       </nav>
   
       <!-- ICONOS DERECHA -->

@@ -28,6 +28,11 @@ public class PedidoController {
         return pedidoService.findById(id);
     }
 
+    @GetMapping("/por-usuario/{idUsuario}")
+    public List<PedidoDTO> getByUsuario(@PathVariable Long idUsuario) {
+        return pedidoService.findByUsuario(idUsuario);
+    }
+
     @PostMapping
     public PedidoDTO create(@RequestBody PedidoCreateDTO dto) {
         return pedidoService.create(dto);

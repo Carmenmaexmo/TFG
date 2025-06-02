@@ -9,5 +9,6 @@ import lombok.*;
 @Builder
 public class DetallePedidoCreateDTO {
     private Long idVinilo;
+    private Double precio;
     private Integer cantidad;
 }

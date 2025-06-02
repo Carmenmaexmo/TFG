@@ -1,0 +1,88 @@
+<div class="pedidos-panel">
+    <h2>📦 Gestión de Pedidos</h2>
+  
+    <div class="filtros">
+      <input type="text" [(ngModel)]="filtro" placeholder="Buscar pedido por ID, cliente, estado..." />
+      <select [(ngModel)]="filtroEstado">
+        <option value="">Todos</option>
+        <option value="PENDIENTE">Pendiente</option>
+        <option value="ENVIADO">Enviado</option>
+        <option value="ENTREGADO">Entregado</option>
+        <option value="CANCELADO">Cancelado</option>
+      </select>
+    </div>
+  
+    <div class="resumen">
+      <div class="card" *ngFor="let resumen of resumenPedidos">
+        <h3>{{ resumen.estado }}</h3>
+        <p>{{ resumen.cantidad }} pedidos</p>
+      </div>
+    </div>
+  
+    <div class="table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Fecha</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let pedido of pedidosFiltrados">
+            <td>{{ pedido.id }}</td>
+            <td>{{ pedido.usuario.nombre }}</td>
+            <td>{{ pedido.fechaPedido | date: 'short' }}</td>
+            <td>{{ pedido.total | currency:'EUR' }}</td>
+            <td>
+              <span *ngIf="editandoId !== pedido.id" class="badge" [ngClass]="pedido.estado.toLowerCase()">
+                {{ pedido.estado }}
+              </span>
+              <select *ngIf="editandoId === pedido.id" [(ngModel)]="pedido.estado" class="estado-select">
+                <option *ngFor="let estado of estadosDisponibles" [value]="estado">{{ estado }}</option>
+              </select>              
+            </td>
+            <td class="acciones">
+              <button class="icon-button" *ngIf="editandoId !== pedido.id" (click)="activarEdicion(pedido)">
+                <i class="bi bi-arrow-repeat"></i>
+              </button>
+              <button class="icon-button green" *ngIf="editandoId === pedido.id" (click)="guardarEstado(pedido)">
+                <i class="bi bi-check-lg"></i>
+              </button>
+              <button class="icon-button" (click)="verDetalle(pedido)">
+                <i class="bi bi-eye-fill"></i>
+              </button>
+              <button class="icon-button red" (click)="eliminarPedido(pedido.id)">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- Modal detalle -->
+    <div class="modal-overlay" *ngIf="pedidoSeleccionado">
+      <div class="modal-content">
+        <button class="close-btn" (click)="cerrarDetalle()">×</button>
+        <h3>Detalles del pedido #{{ pedidoSeleccionado.id }}</h3>
+        <p><strong>Cliente:</strong> {{ pedidoSeleccionado.usuario.nombre }}</p>
+        <p><strong>Fecha:</strong> {{ pedidoSeleccionado.fechaPedido | date: 'short' }}</p>
+        <p><strong>Total:</strong> {{ pedidoSeleccionado.total | currency:'EUR' }}</p>
+        <p><strong>Estado:</strong> {{ pedidoSeleccionado.estado }}</p>
+        <p><strong>Productos:</strong></p>
+        <div *ngFor="let detalle of pedidoSeleccionado.detalles" class="product-item">
+            <img [src]="detalle.vinilo.imagen" alt="{{ detalle.vinilo.titulo }}" class="product-image" />
+            <div class="product-info">
+                <p><strong>{{ detalle.vinilo.titulo }}</strong></p>
+                <p>Precio unitario: {{ detalle.vinilo.precio | currency:'EUR' }}</p>
+                <p>Cantidad: {{ detalle.cantidad }}</p>
+            </div>
+        </div>                
+      </div>
+    </div>
+  </div>
+  

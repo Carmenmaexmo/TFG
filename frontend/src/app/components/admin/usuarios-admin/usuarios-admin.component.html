@@ -1,0 +1,179 @@
+<div class="admin-panel">
+    <h2>👥 Gestión de Usuarios</h2>
+  
+    <!-- Buscador -->
+    <input type="text" [(ngModel)]="filtro" placeholder="Buscar por cualquier campo..." class="search-input" />
+  
+    <button class="btn-create" (click)="mostrarFormularioCrear = !mostrarFormularioCrear">
+      <i class="bi bi-plus-circle"></i> Crear Nuevo Usuario
+    </button>
+  
+    <!-- Formulario crear nuevo usuario -->
+    <div *ngIf="mostrarFormularioCrear" class="form-crear">
+        <div>
+          <input [(ngModel)]="nuevoUsuario.nombreUsuario" placeholder="Nombre Usuario" />
+          <div class="error-msg" *ngIf="erroresFormulario && erroresFormulario['nombreUsuario']">
+            {{ erroresFormulario['nombreUsuario'] }}
+          </div>
+        </div>
+      
+        <div>
+          <input [(ngModel)]="nuevoUsuario.nombre" placeholder="Nombre" />
+          <div class="error-msg" *ngIf="erroresFormulario && erroresFormulario['nombre']">
+            {{ erroresFormulario['nombre'] }}
+          </div>
+        </div>
+      
+        <div>
+          <input [(ngModel)]="nuevoUsuario.apellidos" placeholder="Apellidos" />
+          <div class="error-msg" *ngIf="erroresFormulario && erroresFormulario['apellidos']">
+            {{ erroresFormulario['apellidos'] }}
+          </div>
+        </div>
+      
+        <div>
+          <input [(ngModel)]="nuevoUsuario.email" placeholder="Email" />
+          <div class="error-msg" *ngIf="erroresFormulario && erroresFormulario['email']">
+            {{ erroresFormulario['email'] }}
+          </div>
+        </div>
+      
+        <div>
+          <input type="password" [(ngModel)]="nuevoUsuario.password" placeholder="Contraseña" />
+          <div class="error-msg" *ngIf="erroresFormulario && erroresFormulario['password']">
+            {{ erroresFormulario['password'] }}
+          </div>
+        </div>
+      
+        <div>
+          <input [(ngModel)]="nuevoUsuario.telefono" placeholder="Teléfono" />
+          <div class="error-msg" *ngIf="erroresFormulario && erroresFormulario['telefono']">
+            {{ erroresFormulario['telefono'] }}
+          </div>
+        </div>
+      
+        <div>
+          <input [(ngModel)]="nuevoUsuario.dni" placeholder="DNI" />
+          <div class="error-msg" *ngIf="erroresFormulario && erroresFormulario['dni']">
+            {{ erroresFormulario['dni'] }}
+          </div>
+        </div>
+      
+        <div>
+          <select [(ngModel)]="nuevoUsuario.rol">
+            <option *ngFor="let rol of rolesDisponibles" [value]="rol">{{ rol }}</option>
+          </select>
+          <div class="error-msg" *ngIf="erroresFormulario && erroresFormulario['rol']">
+            {{ erroresFormulario['rol'] }}
+          </div>
+        </div>
+      
+        <div style="flex-basis: 100%; text-align: right;">
+          <button class="btn-save" (click)="crearUsuario()">Guardar Usuario</button>
+        </div>
+      </div>
+      
+  
+    <!-- Tabla de usuarios -->
+    <div class="table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Nombre</th>
+            <th>Apellidos</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>DNI</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of usuariosFiltrados">
+            <td>{{ user.idUsuario }}</td>
+  
+            <!-- Usuario -->
+            <td *ngIf="editandoId !== user.idUsuario">{{ user.nombreUsuario }}</td>
+            <td *ngIf="editandoId === user.idUsuario">
+              <input [(ngModel)]="userEdit.nombreUsuario" />
+              <div class="error-msg" *ngIf="erroresEdicion && erroresEdicion['nombreUsuario']">
+                {{ erroresEdicion['nombreUsuario'] }}
+              </div>
+            </td>
+  
+            <!-- Nombre -->
+            <td *ngIf="editandoId !== user.idUsuario">{{ user.nombre }}</td>
+            <td *ngIf="editandoId === user.idUsuario">
+              <input [(ngModel)]="userEdit.nombre" />
+              <div class="error-msg" *ngIf="erroresEdicion && erroresEdicion['nombre']">
+                {{ erroresEdicion['nombre'] }}
+              </div>
+            </td>
+  
+            <!-- Apellidos -->
+            <td *ngIf="editandoId !== user.idUsuario">{{ user.apellidos }}</td>
+            <td *ngIf="editandoId === user.idUsuario">
+              <input [(ngModel)]="userEdit.apellidos" />
+              <div class="error-msg" *ngIf="erroresEdicion && erroresEdicion['apellidos']">
+                {{ erroresEdicion['apellidos'] }}
+              </div>
+            </td>
+  
+            <!-- Email -->
+            <td *ngIf="editandoId !== user.idUsuario">{{ user.email }}</td>
+            <td *ngIf="editandoId === user.idUsuario">
+              <input [(ngModel)]="userEdit.email" />
+              <div class="error-msg" *ngIf="erroresEdicion && erroresEdicion['email']">
+                {{ erroresEdicion['email'] }}
+              </div>
+            </td>
+  
+            <!-- Teléfono -->
+            <td *ngIf="editandoId !== user.idUsuario">{{ user.telefono }}</td>
+            <td *ngIf="editandoId === user.idUsuario">
+              <input [(ngModel)]="userEdit.telefono" />
+              <div class="error-msg" *ngIf="erroresEdicion && erroresEdicion['telefono']">
+                {{ erroresEdicion['telefono'] }}
+              </div>
+            </td>
+  
+            <!-- DNI -->
+            <td *ngIf="editandoId !== user.idUsuario">{{ user.dni }}</td>
+            <td *ngIf="editandoId === user.idUsuario">
+              <input [(ngModel)]="userEdit.dni" />
+              <div class="error-msg" *ngIf="erroresEdicion && erroresEdicion['dni']">
+                {{ erroresEdicion['dni'] }}
+              </div>
+            </td>
+  
+            <!-- Rol -->
+            <td *ngIf="editandoId !== user.idUsuario">{{ user.rol }}</td>
+            <td *ngIf="editandoId === user.idUsuario">
+              <select [(ngModel)]="userEdit.rol">
+                <option *ngFor="let rol of rolesDisponibles" [value]="rol">{{ rol }}</option>
+              </select>
+              <div class="error-msg" *ngIf="erroresEdicion && erroresEdicion['rol']">
+                {{ erroresEdicion['rol'] }}
+              </div>
+            </td>
+  
+            <!-- Acciones -->
+            <td class="acciones">
+              <button *ngIf="editandoId !== user.idUsuario" class="icon-button" (click)="activarEdicion(user)">
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+              <button *ngIf="editandoId === user.idUsuario" class="icon-button green" (click)="guardarEdicion(user)">
+                <i class="bi bi-check-lg"></i>
+              </button>
+              <button class="icon-button red" (click)="eliminarUsuario(user.idUsuario)">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  

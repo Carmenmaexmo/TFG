@@ -27,6 +27,11 @@ public class ComentarioForoController {
         return comentarioService.findById(id);
     }
 
+    @GetMapping("/por-tema/{idTema}")
+    public List<ComentarioForoDTO> getByTema(@PathVariable Long idTema) {
+        return comentarioService.findByTema(idTema);
+    }
+
     @PostMapping
     public ComentarioForoDTO create(@RequestBody ComentarioForoCreateDTO dto) {
         return comentarioService.create(dto);

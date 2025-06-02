@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class EventoUpdateDTO {
     private String titulo;
     private String descripcion;
-    private LocalDateTime fecha_inicio;
+    private LocalDateTime fechaInicio;
     private LocalDateTime fecha_fin;
     private String lugar;
 }

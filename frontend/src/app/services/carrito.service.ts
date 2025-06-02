@@ -1,3 +1,5 @@
+import { switchMap, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
@@ -9,7 +11,7 @@ export class CarritoService {
   private carrito$ = new BehaviorSubject<any[]>([]);
   private base = 'http://localhost:8080';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private apiService: ApiService) {
     const guardado = localStorage.getItem('carrito');
     if (guardado) {
       this.carrito = JSON.parse(guardado);
@@ -75,34 +77,23 @@ export class CarritoService {
 
   guardarCarritoEnServidor() {
     const id = localStorage.getItem('idUsuario');
-    const token = localStorage.getItem('token');
-    if (!id || !token) return;
+    if (!id) return of(null);
   
-    const url = `http://localhost:8080/api/usuarios/${id}`;
-
-    carrito: JSON.stringify([
-      { id: 1, titulo: 'Disco X', cantidad: 1 }
-    ])
-    
-  
-    // 🔥 Aquí transformamos el array en string plano JSON
-    const body = {
+    const datosActualizados = {
       carrito: JSON.stringify(this.carrito)
     };
   
-    console.log('🟢 Enviando carrito al backend (string):', body);
+    const rawBody = JSON.stringify(datosActualizados);
+
+    console.log('🛒 Guardando carrito en servidor:', rawBody);
   
-    this.http.put(url, body, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    }).subscribe({
-      next: () => console.log('✅ Carrito guardado correctamente'),
-      error: err => console.error('❌ Error guardando carrito:', err)
-    });
+    return this.apiService.actualizarUsuarioConRawBody(+id, rawBody).pipe(
+      catchError(err => {
+        console.error('❌ Error guardando carrito en servidor:', err);
+        return of(null);
+      })
+    );
   }
-  
   
 
   cargarCarritoDelServidor() {

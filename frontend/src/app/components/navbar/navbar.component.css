@@ -350,6 +350,40 @@ body {
   cursor: pointer;
 }
   
-  
+/* Dropdown general para administración */
+.admin-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.admin-dropdown .dropdown-toggle {
+  cursor: pointer;
+  color: #f8f8f8;
+  text-decoration: none;
+  margin: 0 1rem;
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+
+.admin-dropdown .dropdown-toggle:hover {
+  color: #fcd34d;
+}
+
+.admin-dropdown .dropdown-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #1c1c1e;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+  padding: 0.5rem;
+  min-width: 180px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+ 
   
   

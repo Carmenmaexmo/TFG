@@ -5,7 +5,6 @@ import com.example.backend.security.AuthTokenFilter;
 import com.example.backend.security.JwtUtils;
 import com.example.backend.service.CustomUserDetailsService;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,43 +22,51 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
-
 @Configuration
 @EnableMethodSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtUtils jwtUtils;
-    private final CustomUserDetailsService userDetailsService;
     private final AuthEntryPointJwt unauthorizedHandler;
+    private final CustomUserDetailsService userDetailsService;
+    private final JwtUtils jwtUtils;
 
-    @Bean
-    public AuthTokenFilter authTokenFilter() {
-        return new AuthTokenFilter(jwtUtils, userDetailsService);
+    public SecurityConfig(AuthEntryPointJwt unauthorizedHandler,
+                          CustomUserDetailsService userDetailsService,
+                          JwtUtils jwtUtils) {
+        this.unauthorizedHandler = unauthorizedHandler;
+        this.userDetailsService = userDetailsService;
+        this.jwtUtils = jwtUtils;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        System.out.println("✅ SecurityFilterChain cargado");
-
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+      
+        // 👉 CREA el filtro aquí, con las dependencias que ya tienes
+        AuthTokenFilter authTokenFilter = new AuthTokenFilter(jwtUtils, userDetailsService);
+    
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .exceptionHandling(e -> e.authenticationEntryPoint(unauthorizedHandler))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/vinilos/**").hasAnyRole("CLIENTE", "TRABAJADOR", "ADMINISTRADOR")
-                .requestMatchers(HttpMethod.POST, "/api/vinilos/**").hasAnyRole("TRABAJADOR", "ADMINISTRADOR")
-                .requestMatchers(HttpMethod.PUT, "/api/vinilos/**").hasAnyRole("TRABAJADOR", "ADMINISTRADOR")
-                .requestMatchers(HttpMethod.DELETE, "/api/vinilos/**").hasAnyRole("TRABAJADOR", "ADMINISTRADOR")
+                .requestMatchers(HttpMethod.GET, "/api/vinilos/**").hasAnyRole("CLIENTE", "TRABAJADOR", "ADMINISTRADOR", "MODERADOR")
+                .requestMatchers(HttpMethod.PUT, "/api/usuarios/**").hasAnyRole("CLIENTE", "TRABAJADOR", "ADMINISTRADOR")
+                .requestMatchers(HttpMethod.GET, "/api/usuarios/**").hasAnyRole("CLIENTE", "TRABAJADOR", "ADMINISTRADOR")
+                //Foro
+                .requestMatchers(HttpMethod.GET, "/api/foro").hasAnyRole("CLIENTE", "TRABAJADOR", "ADMINISTRADOR", "MODERADOR")
+                .requestMatchers(HttpMethod.GET, "/api/foro/**").hasAnyRole("CLIENTE", "TRABAJADOR", "ADMINISTRADOR", "MODERADOR")
+                .requestMatchers(HttpMethod.POST, "/api/temas-foro").hasAnyRole("CLIENTE", "TRABAJADOR", "ADMINISTRADOR", "MODERADOR")
+                .requestMatchers(HttpMethod.GET, "/api/direcciones-envio/**").hasAnyRole("CLIENTE", "TRABAJADOR", "ADMINISTRADOR", "MODERADOR")
                 .anyRequest().authenticated()
-            );
-
-        http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
+            )
+            // 🔥 INSERTAMOS el filtro ANTES del UsernamePasswordAuthenticationFilter
+            .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
+    
         return http.build();
     }
+    
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -75,8 +82,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration cfg) throws Exception {
-        return cfg.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 
     @Bean

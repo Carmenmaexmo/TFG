@@ -102,6 +102,7 @@ public class PedidoServiceImpl implements PedidoService {
             DetallePedido det = new DetallePedido();
             det.setPedido(pedidoGuardado);
             det.setVinilo(vinilo);
+            det.setPrecio(vinilo.getPrecio());
             det.setCantidad(item.getCantidad());
             detalles.add(det);
         }
@@ -237,4 +238,16 @@ public class PedidoServiceImpl implements PedidoService {
                 ));
         return pedidoMapper.toDTO(p);
     }
+
+
+    @Override
+    public List<PedidoDTO> findByUsuario(Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+    
+        return pedidoRepository.findByUsuario(usuario).stream()
+            .map(pedidoMapper::toDTO)
+            .collect(Collectors.toList());
+    }    
+    
 }

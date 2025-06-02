@@ -4,7 +4,8 @@ import lombok.*;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class DetallePedidoUpsertDTO {
-  private Long id;        // null si es nuevo
-  private Long idVinilo;  // el identificador del vinilo
+  private Long id;        
+  private Long idVinilo;  
+  private Double precio;
   private Integer cantidad;
 }

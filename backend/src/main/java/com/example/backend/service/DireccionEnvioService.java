@@ -11,4 +11,5 @@ public interface DireccionEnvioService {
     DireccionEnvioDTO create(DireccionEnvioCreateDTO dto);
     DireccionEnvioDTO update(Long id, DireccionEnvioCreateDTO dto);
     void delete(Long id);
+    List<DireccionEnvioDTO> findByUsuario(Long idUsuario);
 }

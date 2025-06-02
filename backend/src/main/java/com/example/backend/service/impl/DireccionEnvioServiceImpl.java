@@ -46,6 +46,20 @@ public class DireccionEnvioServiceImpl implements DireccionEnvioService {
     }
 
     @Override
+    public List<DireccionEnvioDTO> findByUsuario(Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Usuario no encontrado"
+            ));
+    
+        return direccionEnvioRepository.findByUsuario(usuario)
+                .stream()
+                .map(direccionEnvioMapper::toDTO)
+                .toList();
+    }    
+    
+
+    @Override
     public DireccionEnvioDTO create(DireccionEnvioCreateDTO dto) {
         // 1) Validar usuario
         Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())

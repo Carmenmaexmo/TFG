@@ -12,4 +12,5 @@ public interface PedidoService {
     PedidoDTO create(PedidoCreateDTO dto);
     PedidoDTO update(Long id, PedidoUpdateDTO dto);
     void delete(Long id);
+    List<PedidoDTO> findByUsuario(Long idUsuario);
 }

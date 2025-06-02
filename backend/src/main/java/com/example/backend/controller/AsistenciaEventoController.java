@@ -29,6 +29,11 @@ public class AsistenciaEventoController {
         return asistenciaService.findById(id);
     }
 
+    @GetMapping("/por-evento/{idEvento}")
+    public List<AsistenciaEventoDTO> getByEvento(@PathVariable Long idEvento) {
+        return asistenciaService.findByEvento(idEvento);
+    }
+
     @PostMapping
     public AsistenciaEventoDTO create(@RequestBody AsistenciaEventoCreateDTO dto) {
         return asistenciaService.create(dto);

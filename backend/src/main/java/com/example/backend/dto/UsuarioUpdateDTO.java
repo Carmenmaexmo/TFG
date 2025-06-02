@@ -12,5 +12,6 @@ public class UsuarioUpdateDTO {
     private String password;    
     private String telefono;     
     private String dni;           
-    private String rol;          
+    private String rol;      
+    private String carrito;    
 }

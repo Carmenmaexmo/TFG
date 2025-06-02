@@ -51,6 +51,14 @@ export class ApiService {
     return this.http.put(`${this.base}/api/usuarios/${id}`, datosParciales);
   }
 
+  getUsuarios(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/api/usuarios`);
+  }
+
+  eliminarUsuario(id: number): Observable<any> {
+    return this.http.delete(`${this.base}/api/usuarios/${id}`);
+  }
+
   // ---------- VINILOS ----------
   getVinilos(): Observable<any[]> {
     return this.http.get<any[]>(`${this.base}/api/vinilos`);
@@ -65,10 +73,45 @@ export class ApiService {
     return this.http.put(`${this.base}/api/pedidos/${id}`, datosParciales);
   }
 
+  getPedidos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/api/pedidos`);
+  }
+
+  getPedidoPorId(id: number): Observable<any> {
+    return this.http.get<any>(`${this.base}/api/pedidos/${id}`);
+  }
+
   // ---------- EVENTOS ----------
   getEventos(): Observable<any[]> {
     return this.http.get<any[]>(`${this.base}/api/eventos`);
   }
+
+  crearEvento(datos: any): Observable<any> {
+    return this.http.post(`${this.base}/api/eventos`, datos);
+  }
+
+  eliminarEvento(eventoId: number): Observable<any> {
+    return this.http.delete(`${this.base}/api/eventos/${eventoId}`);
+  }
+
+  actualizarEvento(eventoId: number, datos: any): Observable<any> {
+    return this.http.put(`${this.base}/api/eventos/${eventoId}`, datos);
+  }
+
+  // ---------- ASISTENCIAS EVENTO ----------
+
+  getAsistenciasPorEvento(eventoId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/api/asistencias-evento/por-evento/${eventoId}`);
+  }
+  
+  crearAsistenciaEvento(data: any): Observable<any> {
+    return this.http.post(`${this.base}/api/asistencias-evento`, data);
+  }
+  
+  actualizarAsistenciaEvento(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.base}/api/asistencias-evento/${id}`, data);
+  }
+  
 
   // ---------- FORO ----------
   /**
@@ -125,6 +168,32 @@ export class ApiService {
    */
   EditarComentario(id: number, comentario: any): Observable<any> {
     return this.http.put(`${this.base}/api/comentarios-foro/${id}`, comentario);
+  }
+
+  // ---------- BLOQUEOS FORO ----------
+  getBloqueosForo(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.base}/api/bloqueos-foro`);
+  }
+
+  crearBloqueoForo(bloqueo: any): Observable<any> {
+    return this.http.post(`${this.base}/api/bloqueos-foro`, bloqueo);
+  }
+
+  eliminarBloqueoForo(id: number): Observable<any> {
+    return this.http.delete(`${this.base}/api/bloqueos-foro/${id}`);
+  }
+
+  // ---------- TEMAS Y COMENTARIOS FORO ----------
+  actualizarTema(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.base}/api/temas-foro/${id}`, data);
+  }
+
+  borrarTema(id: number): Observable<any> {
+    return this.http.delete(`${this.base}/api/temas-foro/${id}`);
+  }
+
+  borrarComentario(id: number): Observable<any> {
+    return this.http.delete(`${this.base}/api/comentarios-foro/${id}`);
   }
 
   /**
@@ -210,5 +279,16 @@ export class ApiService {
   actualizarVinilo(id: number, datos: any): Observable<any> {
     return this.http.put(`${this.base}/api/vinilos/${id}`, datos);
   }
-  
+
+  /**
+   * Actualizar un usuario con un body completo carrito.
+   */
+  actualizarUsuarioConRawBody(id: number, rawBody: string): Observable<any> {
+    return this.http.put(`${this.base}/api/usuarios/${id}`, rawBody, {
+      headers: { 'Content-Type': 'application/json' },
+      responseType: 'json'
+    });
+
+  }
+
 }

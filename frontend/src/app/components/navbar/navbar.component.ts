@@ -17,6 +17,8 @@ export class NavbarComponent {
   carritoVisible: boolean = false;
   carritoContenido: any[] = [];
   mostrarCarritoSlide = false;
+  adminDropdownOpen: boolean = false;
+
 
 
   constructor(private router: Router, private carrito: CarritoService) {
@@ -48,12 +50,26 @@ export class NavbarComponent {
   }
 
   logout() {
-    this.carrito.guardarCarritoEnServidor();
-    localStorage.clear();
-    this.carrito.vaciar();
-    this.router.navigate(['/login']);
-  }
+    this.carrito.guardarCarritoEnServidor().subscribe({
+      next: () => console.log('✅ Carrito guardado al cerrar sesión'),
+      error: err => console.error('❌ Error guardando carrito al cerrar sesión', err),
+      complete: () => {
+        localStorage.clear();
+        this.carrito.vaciar();
+        this.router.navigate(['/login']);
+      }
+    });    
+  }  
 
+  hasRole(rolesPermitidos: string[]): boolean {
+    const rolesStr = localStorage.getItem('roles');
+    const roles = rolesStr ? JSON.parse(rolesStr) : [];
+    return roles.some((role: string) => {
+      const cleanRole = role.replace('ROLE_', '').toUpperCase();
+      return rolesPermitidos.map(r => r.toUpperCase()).includes(cleanRole);
+    });
+  }
+    
   searchVisible: boolean = false;
   searchTerm: string = '';
 

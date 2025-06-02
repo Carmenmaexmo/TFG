@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class EventoDTO {
     private Long id;
     private String titulo;
+    private Double descuento;
     private String descripcion;
     private LocalDateTime fechaInicio;
     private LocalDateTime fecha_fin;

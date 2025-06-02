@@ -12,6 +12,8 @@ import com.example.backend.repository.AsistenciaEventoRepository;
 import com.example.backend.repository.EventoRepository;
 import com.example.backend.repository.UsuarioRepository;
 import com.example.backend.service.AsistenciaEventoService;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
+@Transactional // ← Para que funcione la transacción los metodos publicos
 @RequiredArgsConstructor
 public class AsistenciaEventoServiceImpl implements AsistenciaEventoService {
 
@@ -43,6 +46,14 @@ public class AsistenciaEventoServiceImpl implements AsistenciaEventoService {
                 HttpStatus.NOT_FOUND, "Asistencia no encontrada"
             ));
         return asistenciaMapper.toDTO(ae);
+    }
+
+    @Override
+    public List<AsistenciaEventoDTO> findByEvento(Long idEvento) {
+        return asistenciaRepo.findByEventoId(idEvento).stream()
+            .map(asistenciaMapper::toDTO)
+            .toList();
+            
     }
 
     @Override

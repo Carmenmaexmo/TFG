@@ -13,4 +13,5 @@ public interface ComentarioForoService {
     ComentarioForoDTO create(ComentarioForoCreateDTO dto);
     ComentarioForoDTO update(Long id, ComentarioForoUpdateDTO dto);
     void delete(Long id);
+    List<ComentarioForoDTO> findByTema(Long idTema);
 }

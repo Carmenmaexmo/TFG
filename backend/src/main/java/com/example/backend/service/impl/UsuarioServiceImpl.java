@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
     private final PasswordEncoder passwordEncoder;  // inyectado
+    
 
     @Override
     public List<UsuarioDTO> findAll() {
@@ -39,6 +41,10 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioMapper.toDTO(usuario);
     }
 
+    public Optional<Usuario> findByNombreUsuario(String nombreUsuario) {
+        return usuarioRepository.findByNombreUsuario(nombreUsuario);
+    }
+    
     @Override
     public UsuarioDTO create(UsuarioCreateDTO dto) {
         // Validación manual de campos
@@ -77,6 +83,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setRol(rol);
         usuario.setNombreUsuario(nombreUsuario);
         usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
+    
 
         Usuario guardado = usuarioRepository.save(usuario);
         return usuarioMapper.toDTO(guardado);
@@ -173,7 +180,12 @@ public class UsuarioServiceImpl implements UsuarioService {
             u.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
 
-        // 9) guardas y devuelves el DTO
+        // 9) carrito
+        if (dto.getCarrito() != null) {
+            u.setCarrito(dto.getCarrito());
+        }
+
+        // 10) guardas y devuelves el DTO
         Usuario actualizado = usuarioRepository.save(u);
         return usuarioMapper.toDTO(actualizado);
     }
