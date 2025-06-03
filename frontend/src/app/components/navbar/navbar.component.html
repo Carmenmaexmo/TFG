@@ -20,7 +20,7 @@
       <nav class="nav-links">
         <a routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
         <a routerLink="/eventos" routerLinkActive="active">Eventos</a>
-        <a routerLink="/foros" routerLinkActive="active">Foros</a>
+        <a routerLink="/foros" routerLinkActive="active">Foro</a>
           <ng-container *ngIf="hasRole(['ADMINISTRADOR', 'EMPLEADO'])">
             <div class="admin-dropdown" (mouseenter)="adminDropdownOpen = true" (mouseleave)="adminDropdownOpen = false">
               <a class="dropdown-toggle">Administración ▾</a>

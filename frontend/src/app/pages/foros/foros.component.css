@@ -5,68 +5,67 @@
     background: #fdfdfd;
     border-radius: 12px;
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  .foro-titulo {
+}
+
+.foro-titulo {
     text-align: center;
     font-size: 2rem;
     margin-bottom: 0.2rem;
     color: #222;
-  }
-  
-  .foro-descripcion {
+}
+
+.foro-descripcion {
     text-align: center;
     font-size: 1.1rem;
     color: #555;
     margin-bottom: 2rem;
-  }
-  
-  .temas-titulo {
+}
+
+.temas-titulo {
     font-size: 1.4rem;
     margin-bottom: 1rem;
-  }
-  
-  .temas-lista {
+}
+
+.temas-lista {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-  }
-  
-  .tema-card {
+}
+
+.tema-card {
     background: #faf1d9;
     padding: 1rem 1.5rem;
     border-left: 4px solid #fcd34d;
     border-radius: 8px;
-    cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .tema-card:hover {
+}
+
+.tema-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-  }
-  
-  .tema-card h4 {
+}
+
+.tema-card h4 {
     margin: 0 0 0.3rem;
     color: #1a1a1a;
-  }
-  
-  .tema-card p {
+}
+
+.tema-card p {
     margin: 0 0 0.5rem;
     color: #444;
-  }
-  
-  .tema-card small {
+}
+
+.tema-card small {
     color: #888;
-  }
-  
-  .sin-temas {
+}
+
+.sin-temas {
     text-align: center;
     color: #777;
     margin-top: 2rem;
-  }
+}
 
-  .btn-crear-tema {
+.btn-crear-tema {
     background-color: #fcd34d;
     color: white;
     font-weight: bold;
@@ -77,14 +76,15 @@
     margin-bottom: 1.5rem;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.2s ease;
-  }
-  
-  .btn-crear-tema:hover {
+}
+
+.btn-crear-tema:hover {
     background-color: #e2be46;
     transform: translateY(-1px);
-  }
-  
-  .form-crear-tema {
+}
+
+.form-crear-tema,
+.editar-form {
     background-color: #f0f4ff;
     border-left: 4px solid #c8a74e;
     padding: 1rem;
@@ -93,24 +93,29 @@
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
-  }
-  
-  .form-crear-tema input[type="text"],
-  .form-crear-tema textarea {
+}
+
+.form-crear-tema input[type="text"],
+.form-crear-tema textarea,
+.editar-form input,
+.editar-form textarea {
     padding: 0.6rem;
     border: 1px solid #ccc;
     border-radius: 6px;
     font-size: 1rem;
     width: 100%;
     box-sizing: border-box;
-  }
-  
-  .form-crear-tema textarea {
+}
+
+.form-crear-tema textarea,
+.editar-form textarea {
     resize: vertical;
     min-height: 100px;
-  }
-  
-  .form-crear-tema button {
+}
+
+.form-crear-tema button,
+.editar-form button,
+.btn-ver-comentarios {
     align-self: flex-start;
     padding: 0.5rem 1.2rem;
     font-weight: 500;
@@ -119,25 +124,122 @@
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.2s ease;
-  }
-  
-  .form-crear-tema button:first-of-type {
-    background-color: #e2be46;
+    margin-right: 0.5rem;
+}
+
+.form-crear-tema button:first-of-type,
+.editar-form button.guardar,
+.btn-ver-comentarios {
+    background-color: #fcd34d;
     color: white;
-  }
-  
-  .form-crear-tema button:first-of-type:hover {
-    background-color: #d6b445;
-  }
-  
-  .form-crear-tema button.cancelar {
+}
+
+.form-crear-tema button:first-of-type:hover,
+.editar-form button.guardar:hover,
+.btn-ver-comentarios:hover {
+    background-color: #e2be46;
+}
+
+.form-crear-tema button.cancelar,
+.editar-form button.cancelar {
     background-color: #ccc;
-    margin-left: 0.5rem;
-  }
-  
-  .form-crear-tema button.cancelar:hover {
+}
+
+.form-crear-tema button.cancelar:hover,
+.editar-form button.cancelar:hover {
     background-color: #aaa;
-  }
-  
-  
-  
+}
+
+/* BOTONES PERSONALIZADOS */
+.btn-yellow {
+    background-color: #fcd34d;
+    color: #1c1c1e;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-yellow:hover {
+    background-color: #e2be46;
+}
+
+.btn-edit {
+    background-color: #6ee7b7;
+    color: #1c1c1e;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    transition: background 0.2s ease;
+}
+
+.btn-edit:hover {
+    background-color: #4ade80;
+}
+
+.btn-delete {
+    background-color: #f87171;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    transition: background 0.2s ease;
+}
+
+.btn-delete:hover {
+    background-color: #ef4444;
+}
+
+.btn-cancel {
+    background-color: #ccc;
+    color: #1c1c1e;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-cancel:hover {
+    background-color: #999;
+}
+
+/* MODAL */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    text-align: center;
+}
+
+.modal-buttons {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+

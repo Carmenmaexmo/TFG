@@ -1,36 +1,54 @@
 <div class="foro-wrapper">
     <h2 class="foro-titulo">💬 {{ foro?.nombre }}</h2>
     <p class="foro-descripcion">{{ foro?.descripcion }}</p>
-  
+
     <h3 class="temas-titulo">Temas en discusión</h3>
 
-    <!-- Botón para mostrar el formulario -->
     <button class="btn-crear-tema" (click)="mostrarFormulario = !mostrarFormulario">
         ➕ Crear nuevo tema
     </button>
-    
-    <!-- Formulario para crear tema -->
+
     <div *ngIf="mostrarFormulario" class="form-crear-tema">
         <input type="text" [(ngModel)]="nuevoTema.titulo" placeholder="Título del tema">
         <textarea [(ngModel)]="nuevoTema.contenido" placeholder="Contenido del tema"></textarea>
         <button (click)="crearTema()">Publicar</button>
         <button class="cancelar" (click)="mostrarFormulario = false">Cancelar</button>
     </div>
-  
+
     <div class="temas-lista">
         <div *ngFor="let tema of temas" class="tema-card">
-            <h4>📝 {{ tema.titulo }}</h4>
-            <p>{{ tema.contenido }}</p>
-            <small>🟣 Publicado por <strong>{{ tema.usuario?.nombreUsuario || 'Usuario desconocido' }}</strong></small>
-          
-            <!-- ✅ Aquí sí puedes usar tema -->
-            <a [routerLink]="['/temas', tema.id]">💬 Ver comentarios</a>
-          </div>
-          
+            <div *ngIf="editarTemaActivoId !== tema.id">
+                <h4>📝 {{ tema.titulo }}</h4>
+                <p>{{ tema.contenido }}</p>
+                <small>🟣 Publicado por <strong>{{ tema.usuario?.nombreUsuario || 'Usuario desconocido' }}</strong></small>
+                <br>
+                <button class="btn-yellow" (click)="verComentarios(tema.id)">💬 Ver comentarios</button>
+                <button *ngIf="puedeEditarTema(tema)" class="btn-edit" (click)="activarEdicionTema(tema.id); $event.stopPropagation()">✏️ Editar</button>
+                <button *ngIf="puedeEliminarTema(tema)" class="btn-delete" (click)="abrirModalEliminar(tema); $event.stopPropagation()">🗑 Eliminar</button>
+            </div>
+
+            <div *ngIf="editarTemaActivoId === tema.id" class="editar-form">
+                <input [(ngModel)]="tema.titulo" placeholder="Nuevo título">
+                <textarea [(ngModel)]="tema.contenido" placeholder="Nuevo contenido"></textarea>
+                <button class="guardar" (click)="guardarEdicionTema(tema); $event.stopPropagation()">💾 Guardar</button>
+                <button class="cancelar" (click)="cancelarEdicion(); $event.stopPropagation()">❌ Cancelar</button>
+            </div>
+        </div>
     </div>
-  
+
     <div *ngIf="temas.length === 0" class="sin-temas">
-      <p>No hay temas en el foro todavía.</p>
+        <p>No hay temas en el foro todavía.</p>
     </div>
-  </div>
-  
+</div>
+
+<!-- ✅ MODAL ELIMINAR -->
+<div class="modal-overlay" *ngIf="mostrarModalEliminar">
+    <div class="modal-content">
+        <h3>❗ Confirmar eliminación</h3>
+        <p>¿Estás seguro de que quieres eliminar el tema <strong>{{ temaAEliminar?.titulo }}</strong>?</p>
+        <div class="modal-buttons">
+            <button class="btn-delete" (click)="confirmarEliminar()">Sí, eliminar</button>
+            <button class="btn-cancel" (click)="cerrarModalEliminar()">Cancelar</button>
+        </div>
+    </div>
+</div>

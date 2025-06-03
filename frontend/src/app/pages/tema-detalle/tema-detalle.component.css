@@ -1,200 +1,231 @@
 .comentarios-wrapper {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
-    background: #fefefe;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    font-family: 'Segoe UI', sans-serif;
-  }
-  
-  .comentarios-wrapper h2 {
-    margin-bottom: 1.5rem;
-    text-align: center;
-    color: #333;
-  }
-  
-  .vacio {
-    text-align: center;
-    font-style: italic;
-    color: #777;
-  }
-  
+  max-width: 100%;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 1rem;
+  background: #fefefe;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  font-family: 'Segoe UI', sans-serif;
+  box-sizing: border-box;
+}
+
+.comentarios-wrapper h2 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #333;
+}
+
+.vacio {
+  text-align: center;
+  font-style: italic;
+  color: #777;
+}
+
+.comentario {
+  background: #f1f1f1;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #ccb800;
+  position: relative;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  max-width: 100%;
+}
+
+/* Responsividad para los márgenes anidados */
+@media (max-width: 768px) {
   .comentario {
-    background: #f1f1f1;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    border-radius: 8px;
-    border-left: 4px solid #ccb800;
+    margin-left: 0 !important;
+    padding-left: 0.5rem;
+    border-left: 2px dashed #ccb800;
   }
-  
-  .respuesta {
-    background: #e9f5ff;
-    padding: 0.8rem;
-    margin: 1rem 0 0 2rem;
-    border-left: 4px solid #ffdb66;
-    border-radius: 6px;
-  }
-  
-  .cabecera {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    color: #555;
-  }
-  
-  .contenido {
-    margin: 0;
-    font-size: 1rem;
-    color: #222;
-  }
+}
 
-  .btn-volver {
-    background-color: #ffd563;
-    color: white;
-    padding: 8px 14px;
-    border: none;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    cursor: pointer;
-    font-size: 14px;
+/* Aumenta el margen solo en pantallas grandes */
+@media (min-width: 769px) {
+  .comentario {
+    margin-left: calc(var(--nivel, 0) * 20px);
   }
-  .btn-volver:hover {
-    background-color: rgb(230, 195, 100);
-  }
+}
 
-  .nuevo-comentario {
-    margin-top: 2rem;
-    border-top: 1px solid #ccc;
-    padding-top: 1.5rem;
-  }
-  
-  .nuevo-comentario textarea {
-    width: 97%;
-    height: 80px;
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    resize: vertical;
-    font-size: 0.95rem;
-    margin-bottom: 1rem;
-  }
-  
-  .nuevo-comentario button {
-    background-color: #ffd563;
-    color: #fff;
-    border: none;
-    padding: 0.5rem 1.2rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.95rem;
-    margin-right: 0.5rem;
-    transition: background-color 0.3s;
-  }
-  
-  .nuevo-comentario button:hover {
-    background-color: #e1cb4f;
-  }
-  
-  .context-menu {
-    position: fixed;
-    background: #fff;
-    border: 1px solid #ddd;
-    box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    z-index: 1000;
-    font-size: 14px;
-    transition: background 0.2s;
-  }
-  
-  .context-menu:hover {
-    background: #f0f0f0;
-  }
+.cabecera {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.contenido {
+  font-size: 1rem;
+  color: #222;
+  margin: 0;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: #ffc107;
+  text-decoration: underline;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-top: 0.4rem;
+  padding: 0;
+}
+.toggle-btn:hover {
+  text-decoration: underline;
+}
+
+.subrespuestas {
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+  border-left: 2px dashed #ccc;
+}
+
+.nuevo-comentario {
+  margin-top: 2rem;
+  border-top: 1px solid #ccc;
+  padding-top: 1.5rem;
+}
+
+.nuevo-comentario textarea {
+  width: 96%;
+  height: 80px;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.nuevo-comentario button {
+  background-color: #ffc107;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  margin-right: 0.5rem;
+  transition: background-color 0.3s;
+}
+
+.nuevo-comentario button:hover {
+  background-color: #e0a800;
+}
+
+.context-menu {
+  position: fixed;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  z-index: 1000;
+  padding: 0.5rem 0;
+  min-width: 160px;
+}
+
+.context-menu div {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.context-menu div:hover {
+  background-color: #f0f0f0;
+}
+
+.btn-ir-abajo {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: #ffc107;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 50px;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease;
+  z-index: 999;
+}
+
+.btn-ir-abajo:hover {
+  background: #e0a800;
+}
+
+.editar-textarea {
+  width: 100%;
+  min-height: 80px;
+  border-radius: 8px;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  resize: vertical;
+  margin-bottom: 0.5rem;
+}
+
+.guardar-btn {
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.cancelar {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.menu-separador {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 0;
+}
+
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  background-color: #ffc107;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 30px;
+  margin-top: 1rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-volver:hover {
+  background-color: #e0a800;
+  transform: translateY(-2px);
+}
+
+.btn-volver::before {
+  margin-right: 8px;
+  font-size: 1.2rem;
+}
+
+.contenido.bloqueado {
+  font-style: italic;
+  color: #999;
+  background: #f8d7da;
+  padding: 0.5rem;
+  border-radius: 6px;
+}
 
 
-  .context-menu {
-    position: fixed;
-    background: white;
-    border: 1px solid #ccc;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
-    border-radius: 6px;
-    z-index: 1000;
-    padding: 0.5rem 0;
-    min-width: 140px;
-  }
-  
-  .context-menu div {
-    padding: 8px 16px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-  }
-  
-  .context-menu div:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .btn-ir-abajo {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    background: #ffda33;
-    color: white;
-    padding: 10px 14px;
-    border-radius: 50px;
-    border: none;
-    font-size: 1.4rem;
-    cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    transition: background 0.3s ease;
-    z-index: 999;
-  }
-  
-  .btn-ir-abajo:hover {
-    background: #ddbb22;
-  }
-  
-.context-menu .icon {
-    margin-right: 8px;
-    opacity: 0.6;
-  }
-  
-  .menu-separador {
-    border: none;
-    border-top: 1px solid #ddd;
-    margin: 0;
-  }
-  
-  .editar-textarea {
-    width: 100%;
-    min-height: 80px;
-    border-radius: 8px;
-    padding: 0.6rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    resize: vertical;
-    margin-bottom: 0.5rem;
-  }
-  
-  .guardar-btn {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 0.4rem 0.8rem;
-    border-radius: 6px;
-    margin-right: 0.5rem;
-    cursor: pointer;
-  }
-  
-  .cancelar {
-    background-color: #ccc;
-    border: none;
-    padding: 0.4rem 0.8rem;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  
-
-  

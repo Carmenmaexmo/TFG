@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
-import { DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -11,11 +9,9 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './tema-detalle.component.html',
-  styleUrls: ['./tema-detalle.component.css'],
-  providers: [DatePipe]
+  styleUrls: ['./tema-detalle.component.css']
 })
-export class TemaDetalleComponent implements OnInit  {
-  comentarios: any[] = [];
+export class TemaDetalleComponent implements OnInit, OnDestroy {
   comentariosJerarquicos: any[] = [];
   temaId: number = 0;
   nuevoComentario: string = '';
@@ -29,40 +25,37 @@ export class TemaDetalleComponent implements OnInit  {
   comentarioEditandoId: number | null = null;
   comentarioEditadoTexto: string = '';
 
-  constructor(
-    private route: ActivatedRoute,
-    private api: ApiService,
-    private router: Router
-  ) {}
+  constructor(private route: ActivatedRoute, private api: ApiService, private router: Router) {}
 
   ngOnInit(): void {
     this.temaId = Number(this.route.snapshot.paramMap.get('id'));
     document.addEventListener('click', () => this.cerrarContextMenu());
-
-    if (this.temaId) {
-      this.cargarComentarios();
-    }
+    if (this.temaId) this.cargarComentarios();
   }
 
   ngOnDestroy(): void {
     document.removeEventListener('click', () => this.cerrarContextMenu());
   }
 
-  /**
-   * Construye árbol de comentarios agrupando respuestas por comentario padre
-   */
+  cargarComentarios(): void {
+    this.api.getComentarios(this.temaId).subscribe({
+      next: (res) => {
+        const jerarquicos = this.construirJerarquia(res);
+        this.comentariosJerarquicos = this.marcarColapsos(jerarquicos);
+      },
+      error: (err) => console.error('Error al cargar comentarios:', err)
+    });
+  }
+
   construirJerarquia(comentarios: any[]): any[] {
     const mapa = new Map<number, any>();
+    comentarios.forEach(c => mapa.set(c.id, { ...c, respuestas: [], mostrarRespuestas: false }));
+
     const jerarquia: any[] = [];
-
-    comentarios.forEach(c => mapa.set(c.id, { ...c, respuestas: [] }));
-
     comentarios.forEach(c => {
       if (c.comentarioPadre?.id) {
         const padre = mapa.get(c.comentarioPadre.id);
-        if (padre) {
-          padre.respuestas.push(mapa.get(c.id));
-        }
+        if (padre) padre.respuestas.push(mapa.get(c.id));
       } else {
         jerarquia.push(mapa.get(c.id));
       }
@@ -71,103 +64,107 @@ export class TemaDetalleComponent implements OnInit  {
     return jerarquia;
   }
 
-  
+  marcarColapsos(lista: any[]): any[] {
+    return lista.map(c => ({
+      ...c,
+      mostrarRespuestas: false,
+      respuestas: c.respuestas ? this.marcarColapsos(c.respuestas) : []
+    }));
+  }
+
+  toggleRespuestas(comentario: any) {
+    comentario.mostrarRespuestas = !comentario.mostrarRespuestas;
+  }
+
   volverAForo() {
-    this.router.navigate(['/foros']); // ajusta si tu ruta de foros es distinta
+    this.router.navigate(['/foros']);
   }
 
   enviarComentario() {
     if (!this.nuevoComentario.trim()) return;
-  
     const comentario = {
       contenido: this.nuevoComentario.trim(),
-      fechaComentario: new Date().toISOString(), // 👈 FECHA ACTUAL obligatoria
+      fechaComentario: new Date().toISOString(),
       idTema: this.temaId,
       idComentarioPadre: this.comentarioPadreId || null,
-      idUsuario: Number(localStorage.getItem('idUsuario'))
+      idUsuario: this.idUsuarioActual
     };
-
-    console.log('Comentario a enviar:', comentario);
-  
     this.api.crearComentario(this.temaId, comentario).subscribe({
       next: () => {
         this.nuevoComentario = '';
         this.comentarioPadreId = null;
-        this.cargarComentarios(); // recarga los comentarios después de enviar
+        this.scrollAlFormulario();
+        this.cargarComentarios();
       },
       error: (err) => console.error('Error al crear comentario', err)
     });
   }
-  
-  
-  cancelarRespuesta() {
-    this.comentarioPadreId = null;
+
+  scrollAlFormulario() {
+    setTimeout(() => {
+      const el = document.getElementById('formulario-comentario');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 50);
   }
 
-  cargarComentarios(): void {
-    this.api.getComentarios(this.temaId).subscribe({
-      next: (res) => {
-        this.comentarios = res;
-        this.comentariosJerarquicos = this.construirJerarquia(res); // si usas estructura anidada
-      },
-      error: (err) => console.error('Error al cargar comentarios:', err)
-    });
+responderComentario() {
+  this.comentarioPadreId = this.comentarioContextual?.id;
+  this.respuestaAUsuario = this.comentarioContextual?.usuario?.nombreUsuario || 'Usuario';
+  this.cerrarContextMenu();
+
+  // ⚠ NUEVO: scroll al textarea al fondo
+  setTimeout(() => {
+    const textarea = document.getElementById('nuevo-comentario-textarea');
+    if (textarea) {
+      textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      (textarea as HTMLTextAreaElement).focus();
+    }
+  }, 100);
+}
+
+
+  cancelarRespuesta() {
+    this.comentarioPadreId = null;
+    this.respuestaAUsuario = '';
   }
 
   onRightClick(event: MouseEvent, comentario: any) {
+    event.stopPropagation();
     event.preventDefault();
     this.contextMenuVisible = true;
     this.contextMenuX = event.clientX;
     this.contextMenuY = event.clientY;
     this.comentarioContextual = comentario;
   }
-  
+
   cerrarContextMenu() {
     this.contextMenuVisible = false;
     this.comentarioContextual = null;
   }
-  
-  responderComentario() {
-    this.comentarioPadreId = this.comentarioContextual?.id;
-    this.respuestaAUsuario = this.comentarioContextual?.usuario?.nombreUsuario || 'Usuario';
-    this.cerrarContextMenu();
-  }
 
   borrarComentario() {
     if (!this.comentarioContextual?.id) return;
-
     this.api.BorrarComentario(this.comentarioContextual.id).subscribe({
       next: () => {
         this.cerrarContextMenu();
-        this.cargarComentarios(); // Recarga tras eliminar
+        this.cargarComentarios();
       },
       error: (err) => console.error('Error eliminando comentario', err)
     });
   }
 
-  scrollAbajo() {
-    setTimeout(() => {
-      const el = document.getElementById('scroll-final');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }, 50);
-  }
-
   editarComentario() {
-    if (this.comentarioContextual?.usuario?.idUsuario !== this.idUsuarioActual) return;
-  
+    if (this.comentarioContextual?.usuario?.idUsuario !== this.idUsuarioActual && !this.hasRole(['ADMINISTRADOR', 'EMPLEADO'])) return;
     this.comentarioEditandoId = this.comentarioContextual.id;
     this.comentarioEditadoTexto = this.comentarioContextual.contenido;
     this.cerrarContextMenu();
   }
-   
+
   guardarEdicionComentario() {
     const id = this.comentarioEditandoId;
     const contenido = this.comentarioEditadoTexto.trim();
-  
     if (!id || !contenido) return;
-  
     const datos = { contenido };
-  
     this.api.EditarComentario(id, datos).subscribe({
       next: () => {
         this.comentarioEditandoId = null;
@@ -177,9 +174,39 @@ export class TemaDetalleComponent implements OnInit  {
       error: (err) => console.error('Error editando comentario', err)
     });
   }
-  
+
+  hasRole(rolesPermitidos: string[]): boolean {
+    const rolesStr = localStorage.getItem('roles');
+    const roles = rolesStr ? JSON.parse(rolesStr) : [];
+    return roles.some((role: string) => {
+      const cleanRole = role.replace('ROLE_', '').toUpperCase();
+      return rolesPermitidos.map(r => r.toUpperCase()).includes(cleanRole);
+    });
+  }
+
+  puedeEditarComentario(comentario: any): boolean {
+    return comentario?.usuario?.idUsuario === this.idUsuarioActual || this.hasRole(['ADMINISTRADOR', 'EMPLEADO']);
+  }
+
+  scrollAbajo() {
+    setTimeout(() => {
+      const el = document.getElementById('scroll-final');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 50);
+  }
+
   cancelarEdicion() {
     this.comentarioEditandoId = null;
     this.comentarioEditadoTexto = '';
+    this.cargarComentarios();
   }
+
+  puedeBorrarComentario(comentario: any): boolean {
+  return (
+    comentario?.usuario?.idUsuario === this.idUsuarioActual ||
+    this.hasRole(['ADMINISTRADOR', 'EMPLEADO', 'MODERADOR'])
+  );
+}
+
+
 }

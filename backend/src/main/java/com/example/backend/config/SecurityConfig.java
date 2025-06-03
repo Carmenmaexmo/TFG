@@ -51,14 +51,14 @@ public class SecurityConfig {
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/vinilos/**").hasAnyRole("CLIENTE", "TRABAJADOR", "ADMINISTRADOR", "MODERADOR")
-                .requestMatchers(HttpMethod.PUT, "/api/usuarios/**").hasAnyRole("CLIENTE", "TRABAJADOR", "ADMINISTRADOR")
-                .requestMatchers(HttpMethod.GET, "/api/usuarios/**").hasAnyRole("CLIENTE", "TRABAJADOR", "ADMINISTRADOR")
+                .requestMatchers(HttpMethod.GET, "/api/vinilos/**").hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR", "MODERADOR")
+                .requestMatchers(HttpMethod.PUT, "/api/usuarios/**").hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR")
+                .requestMatchers(HttpMethod.GET, "/api/usuarios/**").hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR")
                 //Foro
-                .requestMatchers(HttpMethod.GET, "/api/foro").hasAnyRole("CLIENTE", "TRABAJADOR", "ADMINISTRADOR", "MODERADOR")
-                .requestMatchers(HttpMethod.GET, "/api/foro/**").hasAnyRole("CLIENTE", "TRABAJADOR", "ADMINISTRADOR", "MODERADOR")
-                .requestMatchers(HttpMethod.POST, "/api/temas-foro").hasAnyRole("CLIENTE", "TRABAJADOR", "ADMINISTRADOR", "MODERADOR")
-                .requestMatchers(HttpMethod.GET, "/api/direcciones-envio/**").hasAnyRole("CLIENTE", "TRABAJADOR", "ADMINISTRADOR", "MODERADOR")
+                .requestMatchers(HttpMethod.GET, "/api/foro").hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR", "MODERADOR")
+                .requestMatchers(HttpMethod.GET, "/api/foro/**").hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR", "MODERADOR")
+                .requestMatchers(HttpMethod.POST, "/api/temas-foro").hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR", "MODERADOR")
+                .requestMatchers(HttpMethod.GET, "/api/direcciones-envio/**").hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR", "MODERADOR")
                 .anyRequest().authenticated()
             )
             // 🔥 INSERTAMOS el filtro ANTES del UsernamePasswordAuthenticationFilter

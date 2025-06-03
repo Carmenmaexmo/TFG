@@ -171,15 +171,16 @@ export class ApiService {
   }
 
   // ---------- BLOQUEOS FORO ----------
+
   getBloqueosForo(): Observable<any[]> {
     return this.http.get<any[]>(`${this.base}/api/bloqueos-foro`);
-  }
+    }
 
-  crearBloqueoForo(bloqueo: any): Observable<any> {
+  crearBloqueo(bloqueo: any): Observable<any> {
     return this.http.post(`${this.base}/api/bloqueos-foro`, bloqueo);
   }
 
-  eliminarBloqueoForo(id: number): Observable<any> {
+  eliminarBloqueo(id: number): Observable<any> {
     return this.http.delete(`${this.base}/api/bloqueos-foro/${id}`);
   }
 
@@ -188,12 +189,8 @@ export class ApiService {
     return this.http.put(`${this.base}/api/temas-foro/${id}`, data);
   }
 
-  borrarTema(id: number): Observable<any> {
-    return this.http.delete(`${this.base}/api/temas-foro/${id}`);
-  }
-
-  borrarComentario(id: number): Observable<any> {
-    return this.http.delete(`${this.base}/api/comentarios-foro/${id}`);
+  eliminarTema(id: number): Observable<any> {
+      return this.http.delete(`${this.base}/api/temas-foro/${id}`);
   }
 
   /**

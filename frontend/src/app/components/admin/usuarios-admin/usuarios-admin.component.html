@@ -1,12 +1,14 @@
 <div class="admin-panel">
     <h2>👥 Gestión de Usuarios</h2>
-  
+
     <!-- Buscador -->
     <input type="text" [(ngModel)]="filtro" placeholder="Buscar por cualquier campo..." class="search-input" />
   
     <button class="btn-create" (click)="mostrarFormularioCrear = !mostrarFormularioCrear">
       <i class="bi bi-plus-circle"></i> Crear Nuevo Usuario
     </button>
+
+     <button class="btn-bloqueados" (click)="scrollABloqueados()">Ver Usuarios Bloqueados ⬇️</button>
   
     <!-- Formulario crear nuevo usuario -->
     <div *ngIf="mostrarFormularioCrear" class="form-crear">
@@ -73,7 +75,6 @@
         </div>
       </div>
       
-  
     <!-- Tabla de usuarios -->
     <div class="table-container">
       <table class="admin-table">
@@ -170,10 +171,56 @@
               <button class="icon-button red" (click)="eliminarUsuario(user.idUsuario)">
                 <i class="bi bi-trash-fill"></i>
               </button>
+              <button class="icon-button yellow" (click)="toggleBloqueo(user)">
+                <i [ngClass]="{
+                  'bi bi-lock-fill': !estaBloqueado(user),
+                  'bi bi-unlock-fill': estaBloqueado(user)
+                }"></i>
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
+
+       <div class="bloqueos-panel">
+        <h3>🔒 Usuarios Bloqueados</h3>
+        <input type="text" [(ngModel)]="filtroBloqueados" placeholder="Buscar bloqueado..." class="search-input" />
+        <div *ngIf="bloqueadosFiltrados.length === 0" class="vacio">
+          No hay usuarios bloqueados actualmente.
+        </div>
+        <table *ngIf="bloqueadosFiltrados.length > 0" class="bloqueos-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Usuario</th>
+              <th>Fecha Bloqueo</th>
+              <th>Motivo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let b of bloqueadosFiltrados">
+              <td>{{ b.usuario?.idUsuario }}</td>
+              <td>{{ b.usuario?.nombreUsuario }}</td>
+              <td>{{ b.fechaBloqueo | date: 'short' }}</td>
+              <td>{{ b.motivo }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div id="bloqueados-section"></div>
+      </div>
+
+      <!-- MODAL BLOQUEO USUARIO -->
+      <div class="modal-overlay" *ngIf="mostrarModalBloqueo">
+        <div class="modal">
+          <h3>🔒 Bloquear usuario: {{ usuarioParaBloquear?.nombreUsuario }}</h3>
+          <label>Motivo:</label>
+          <textarea [(ngModel)]="motivoBloqueo" placeholder="Escribe el motivo del bloqueo..."></textarea>
+          <div class="modal-actions">
+            <button class="btn-cancel" (click)="cerrarModalBloqueo()">Cancelar</button>
+            <button class="btn-confirm" (click)="confirmarBloqueo()">Confirmar</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   
