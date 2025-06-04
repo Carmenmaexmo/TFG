@@ -41,7 +41,7 @@
     </div>
 </div>
 
-<!-- ✅ MODAL ELIMINAR -->
+<!--MODAL ELIMINAR -->
 <div class="modal-overlay" *ngIf="mostrarModalEliminar">
     <div class="modal-content">
         <h3>❗ Confirmar eliminación</h3>
@@ -52,3 +52,16 @@
         </div>
     </div>
 </div>
+
+<!-- MODAL BLOQUEO USUARIO -->
+<div class="modal-overlay" *ngIf="mostrarModalBloqueado">
+  <div class="modal-content">
+    <h3>❌Acceso denegado</h3>
+    <p>No tienes permitido acceder al foro.</p>
+    <p><strong>Motivo:</strong> {{ bloqueoUsuario?.motivo }}</p>
+    <div class="modal-buttons">
+      <button class="btn-cancel" (click)="volverAlInicio()">Volver al inicio</button>
+    </div>
+  </div>
+</div>
+

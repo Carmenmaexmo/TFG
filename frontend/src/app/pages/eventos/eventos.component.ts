@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 export class EventosComponent implements OnInit {
   eventos: any[] = [];
   eventosOriginales: any[] = [];
-  sentidoOrden: 'asc' | 'desc' = 'asc';
+ sentidoOrden: 'asc' | 'desc' | 'proximos' | '' = '';
 
   constructor(private api: ApiService, private route: ActivatedRoute, private router: Router) {}
 
@@ -57,11 +57,27 @@ export class EventosComponent implements OnInit {
     this.router.navigate(['/eventos']);  // Navega sin el parámetro ?q
   }
 
-  ordenarEventos(): void {
-    this.eventos.sort((a, b) => {
-      const fechaA = new Date(a.fechaInicio).getTime();
-      const fechaB = new Date(b.fechaInicio).getTime();
-      return this.sentidoOrden === 'asc' ? fechaA - fechaB : fechaB - fechaA;
-    });
+ ordenarEventos(): void {
+  const hoy = new Date().getTime();
+
+  if (this.sentidoOrden === 'asc') {
+    this.eventos = [...this.eventosOriginales].sort((a, b) =>
+      new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime()
+    );
+  } else if (this.sentidoOrden === 'desc') {
+    this.eventos = [...this.eventosOriginales].sort((a, b) =>
+      new Date(b.fechaInicio).getTime() - new Date(a.fechaInicio).getTime()
+    );
+  } else if (this.sentidoOrden === 'proximos') {
+    this.eventos = this.eventosOriginales
+      .filter(e => new Date(e.fecha_fin).getTime() >= hoy)
+      .sort((a, b) =>
+        new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime()
+      );
+  } else {
+    // Si es "Seleccionar", muestra todos los eventos sin orden
+    this.eventos = [...this.eventosOriginales];
   }
+}
+
 }

@@ -13,8 +13,11 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       // Mostrar modal si NO está logueado
       Swal.fire({
-        title: '🔐 Acceso restringido',
-        html: '<b>Debes iniciar sesión para continuar</b><br><small>Inicia sesión para comprar vinilos y acceder al contenido</small>',
+        title: '<span style="font-family:\'Segoe UI\', Roboto, sans-serif;">🔐 Acceso restringido</span>',
+        html: `<div style="font-family:'Segoe UI', Roboto, sans-serif;">
+                 <strong>Debes iniciar sesión para continuar</strong><br>
+                 <small>Inicia sesión para comprar vinilos y acceder al contenido</small>
+               </div>`,
         icon: 'warning',
         confirmButtonText: 'Ir al login',
         confirmButtonColor: '#fcd34d',
@@ -22,8 +25,6 @@ export class AuthGuard implements CanActivate {
         color: '#f8f8f8',
         customClass: {
           popup: 'rounded-3xl shadow-lg',
-          title: 'text-lg font-semibold',
-          htmlContainer: 'text-sm',
           confirmButton: 'text-black font-medium px-4 py-2'
         }
       }).then(() => {

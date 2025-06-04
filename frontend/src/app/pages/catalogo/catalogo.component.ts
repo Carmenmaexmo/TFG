@@ -5,6 +5,7 @@ import { ApiService } from '../../services/api.service';
 import { CarritoService } from '../../services/carrito.service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -125,6 +126,26 @@ export class CatalogoComponent implements OnInit {
   }
   
   aniadirAlCarrito(producto: any) {
+    const token = localStorage.getItem('token');
+  if (!token) {
+    Swal.fire({
+      title: 'Para añadir al carrito debes iniciar sesión',
+      icon: 'warning',
+      confirmButtonText: 'Ir al login',
+      confirmButtonColor: '#fcd34d',
+      background: '#1c1c1e',
+      color: '#f8f8f8',
+      customClass: {
+        popup: 'rounded-3xl shadow-lg',
+        title: 'text-lg font-semibold',
+        htmlContainer: 'text-sm',
+        confirmButton: 'text-black font-medium px-4 py-2'
+      }
+    }).then(() => {
+      this.router.navigate(['/login']);
+    });
+    return;
+  }
     this.carrito.aniadir(producto);
   }
 

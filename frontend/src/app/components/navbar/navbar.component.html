@@ -12,13 +12,14 @@
       <!-- LOGO -->
       <div class="logo">
         <a routerLink="/">
-          <i class="bi bi-vinyl-fill"></i> <span class="brand-name">VinylRevolution</span>
+          <img src="assets/logoweb.png" alt="Vinyl Revolution Logo" class="logo-img" />
+          <span class="brand-name">VinylRevolution</span>
         </a>
       </div>
-  
+
       <!-- ENLACES -->
       <nav class="nav-links">
-        <a routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
+        <a routerLink="/catalogo">Catálogo</a>
         <a routerLink="/eventos" routerLinkActive="active">Eventos</a>
         <a routerLink="/foros" routerLinkActive="active">Foro</a>
           <ng-container *ngIf="hasRole(['ADMINISTRADOR', 'EMPLEADO'])">

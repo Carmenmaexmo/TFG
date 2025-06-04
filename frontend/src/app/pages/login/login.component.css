@@ -7,7 +7,7 @@ body, input, button, label, h1, h2, h3, p, a {
 .login-section {
   padding: 4rem 1rem 6rem;
   background-color: #f9f9f9;
-  min-height: calc(100vh - 70px); /* Resta la altura de la navbar aprox. */
+  min-height: auto;
   display: flex;
   justify-content: center;
   align-items: flex-start;

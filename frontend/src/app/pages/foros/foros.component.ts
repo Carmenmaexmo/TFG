@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
     selector: 'app-foros',
@@ -18,34 +19,36 @@ export class ForosComponent implements OnInit {
     temasOriginal: any[] = [];
     terminoBusqueda: string = '';
     editarTemaActivoId: number | null = null;
-
+    bloqueoUsuario: any = null;
+    mostrarModalBloqueado: boolean = false;
     mostrarModalEliminar = false;
     temaAEliminar: any = null;
 
     constructor(private api: ApiService, private router: Router, private route: ActivatedRoute) {}
 
     ngOnInit(): void {
-        this.api.getForo().subscribe({
-            next: (res) => {
-                this.foro = res[0];
-                if (this.foro?.id) {
-                    this.api.getTemas(this.foro.id).subscribe({
-                        next: temas => {
-                            console.log('Temas cargados:', temas);
-                            this.temasOriginal = temas;
-                            this.temas = this.filtrarTemas(this.temasOriginal, this.terminoBusqueda);
-                        },
-                        error: err => console.error('Error cargando temas:', err)
-                    });
-                }
-            },
-            error: err => console.error('Error cargando foro:', err)
-        });
+      const idUsuario = Number(localStorage.getItem('idUsuario'));
 
-        this.route.queryParams.subscribe(params => {
-            this.terminoBusqueda = (params['q'] || '').toLowerCase();
+      this.api.getBloqueosForo().subscribe({
+        next: bloqueos => {
+          const bloqueo = bloqueos.find((b: any) => b.usuario?.idUsuario === idUsuario);
+          if (bloqueo) {
+            this.bloqueoUsuario = bloqueo;
+            this.mostrarModalBloqueado = true;
+          } else {
             this.cargarForoYTemas();
-        });
+          }
+        },
+        error: err => console.error('Error verificando bloqueos:', err)
+      });
+
+      this.route.queryParams.subscribe(params => {
+        this.terminoBusqueda = (params['q'] || '').toLowerCase();
+      });
+    }
+
+    volverAlInicio() {
+      this.router.navigate(['/']);
     }
 
     verComentarios(idTema: number) {
@@ -139,15 +142,44 @@ export class ForosComponent implements OnInit {
     }
 
     confirmarEliminar() {
-        if (this.temaAEliminar) {
-            this.api.eliminarTema(this.temaAEliminar.id).subscribe({
-                next: () => {
-                    this.temas = this.temas.filter(t => t.id !== this.temaAEliminar.id);
-                    this.cerrarModalEliminar();
-                },
-                error: err => console.error('Error al eliminar tema:', err)
+      if (this.temaAEliminar) {
+        this.api.eliminarTema(this.temaAEliminar.id).subscribe({
+          next: () => {
+            this.temas = this.temas.filter(t => t.id !== this.temaAEliminar.id);
+            this.cerrarModalEliminar();
+          },
+          error: err => {
+          this.cerrarModalEliminar();
+
+          console.error('Error al eliminar tema:', err);
+
+          const mensaje = err.error?.message?.toLowerCase?.() || '';
+          
+          if (
+            (err.status === 401 || err.status === 403 || err.status === 409) &&
+            (mensaje.includes('comentarios') || mensaje === '' || typeof err.error === 'string')
+          ) {
+          Swal.fire({
+            icon: 'error',
+            title: '<span style="font-family:\'Segoe UI\', \'Roboto\', sans-serif; font-weight:600;">No se puede eliminar</span>',
+            html: '<p style="font-family:\'Segoe UI\', \'Roboto\', sans-serif;">Este tema tiene comentarios y no puede ser eliminado.</p>',
+            confirmButtonColor: '#fcd34d',
+            customClass: {
+              popup: 'rounded-3xl shadow-lg',
+              confirmButton: 'text-black font-medium px-4 py-2'
+            }
+          });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error inesperado',
+              text: 'Ocurrió un error al intentar eliminar el tema.',
+              confirmButtonColor: '#fcd34d'
             });
+          }
         }
+        });
+      }
     }
 
     cerrarModalEliminar() {

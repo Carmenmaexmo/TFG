@@ -160,7 +160,7 @@
                         <label *ngFor="let p of proveedoresFiltrados" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                           <div>
                             <input type="radio" name="proveedor" [value]="p.id" [(ngModel)]="nuevoVinilo.idProveedor" />
-                            {{ p.nombre }} ({{ p.email }}) - {{ p.direccion }}
+                            {{ p.nombre }} ({{ p.email }},) - {{ p.direccion }}
                           </div>
                           <div class="btn-group btn-group-sm">
                             <button class="btn btn-outline-primary" (click)="editarProveedor(p)">✏️</button>

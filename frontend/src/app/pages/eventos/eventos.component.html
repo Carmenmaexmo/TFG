@@ -5,8 +5,9 @@
     <label for="orden">Ordenar por fecha:</label>
     <select id="orden" [(ngModel)]="sentidoOrden" (ngModelChange)="ordenarEventos()">
       <option value="">Seleccionar</option>
-      <option value="asc">📅 Mas antoguios primero</option>
-      <option value="desc">⏳ Mas recientes primero</option>
+      <option value="asc">📅 Más antiguos primero</option>
+      <option value="desc">⏳ Publicados recientemente</option>
+      <option value="proximos">🚀 Próximos eventos</option>
     </select>
   </div>
   
