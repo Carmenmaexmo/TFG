@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
 </head>
-<body>
-
-    
+<body> 
     <div class="catalogo-container">
         <div class="catalogo-header sticky-header">
           <h2>Catálogo</h2>
@@ -33,6 +31,7 @@
             <div class="filtro-categoria" (click)="categoriaActiva = 'artista'">Artista <span>&rarr;</span></div>
             <div class="filtro-categoria" (click)="categoriaActiva = 'genero'">Género <span>&rarr;</span></div>
             <div class="filtro-categoria" (click)="categoriaActiva = 'precio'">Precio <span>&rarr;</span></div>
+            <div class="filtro-categoria" *ngIf="rolAdminOEmpleado()" (click)="categoriaActiva = 'proveedor'">Proveedor <span>&rarr;</span></div>
           </div>
       
         <!-- ARTISTAS -->
@@ -58,7 +57,19 @@
             {{ genero }}
             </label>
         </div>
-    
+
+        <!-- PROVEEDORES (solo visible para admin o empleado) -->
+        <div class="filtro-detalle" *ngIf="categoriaActiva === 'proveedor' && rolAdminOEmpleado()">
+          <div class="volver" (click)="categoriaActiva = null">&larr; Proveedor</div>
+          <label *ngFor="let prov of proveedores">
+            <input type="checkbox"
+                  [value]="prov.id"
+                  [checked]="selectedProveedores.includes(prov.id)"
+                  (change)="toggleSeleccionProveedor(prov.id)" />
+            {{ prov.nombre }}
+          </label>
+        </div>
+
        <!-- PRECIO -->
         <div class="filtro-detalle" *ngIf="categoriaActiva === 'precio'">
             <div class="volver" (click)="categoriaActiva = null">← Volver a categorías</div>
@@ -88,21 +99,26 @@
           </div>
           
         <div class="catalogo-grid">
-            <div class="producto-card" *ngFor="let p of vinilosPaginados">
+        <div class="producto-card" *ngFor="let p of vinilosPaginados" (click)="verDetalleVinilo(p.id)">
               <img [src]="p.imagen || 'assets/placeholder-vinilo.jpg'" [alt]="p.titulo" />
               <h3 class="titulo">{{ p.titulo }}</h3>
               <p class="sub">{{ p.artista }} · {{ p.genero }}</p>
-              <p class="precio">{{ p.precio | currency: 'EUR' }}</p>
-              <button class="btn-aniadir" (click)="aniadirAlCarrito(p)">
+              <p class="precio">{{ p.precio |  number:'1.2-2'}} €</p>
+              <!-- Mostrar botón solo si hay stock -->
+              <button *ngIf="p.stock > 0" class="btn-aniadir" (click)="aniadirAlCarrito(p)">
                 <i class="bi bi-cart3"></i> Añadir
               </button>
+              <!-- Mostrar mensaje si no hay stock -->
+              <div *ngIf="p.stock === 0" class="sin-stock-alert">
+                ❌ Sin stock disponible
+              </div>
               <div *ngIf="rolAdminOEmpleado()" class="admin-buttons mt-2">
-                <button class="btn btn-eliminar btn-sm" (click)="eliminarVinilo(p)">
-                  🗑 Eliminar
-                </button>
-                <button class="btn btn-editar btn-sm" (click)="editarVinilo(p)">
-                  ✏️ Editar
-                </button>
+              <button class="btn btn-eliminar btn-sm" (click)="eliminarVinilo(p); $event.stopPropagation()">
+                🗑 Eliminar
+              </button>
+              <button class="btn btn-editar btn-sm" (click)="editarVinilo(p); $event.stopPropagation()">
+                ✏️ Editar
+              </button>
               </div>                       
             </div>
           </div>          

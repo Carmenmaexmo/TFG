@@ -121,14 +121,30 @@ public class PedidoServiceImpl implements PedidoService {
 
         // 1) estado
         if (dto.getEstado() != null) {
-            String estadoNorm = dto.getEstado().trim().toUpperCase();
-            if (!ESTADOS_VALIDOS.contains(estadoNorm)) {
-                throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Estado inválido. Debe ser uno de " + ESTADOS_VALIDOS
-                );
+        String estadoNorm = dto.getEstado().trim().toUpperCase();
+        if (!ESTADOS_VALIDOS.contains(estadoNorm)) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Estado inválido. Debe ser uno de " + ESTADOS_VALIDOS
+            );
+        }
+
+        // Verificamos si el estado nuevo es ENVIADO o ENTREGADO y el anterior no lo era
+        boolean actualizarStock = 
+            (estadoNorm.equals("ENVIADO") || estadoNorm.equals("ENTREGADO")) &&
+            !(pedido.getEstado().equals("ENVIADO") || pedido.getEstado().equals("ENTREGADO"));
+
+        pedido.setEstado(estadoNorm);
+
+        // Restar stock SOLO si cambia a ENVIADO/ENTREGADO
+        if (actualizarStock) {
+            for (DetallePedido detalle : pedido.getDetalles()) {
+                Vinilo vinilo = detalle.getVinilo();
+                int nuevaCantidad = vinilo.getStock() - detalle.getCantidad();
+                vinilo.setStock(Math.max(nuevaCantidad, 0));
+                viniloRepository.save(vinilo);
             }
-            pedido.setEstado(estadoNorm);
+        }
         }
 
         // 2) fechaPedido

@@ -24,13 +24,19 @@ export class TemaDetalleComponent implements OnInit, OnDestroy {
   idUsuarioActual: number = Number(localStorage.getItem('idUsuario'));
   comentarioEditandoId: number | null = null;
   comentarioEditadoTexto: string = '';
+  terminoBusqueda: string = '';
 
   constructor(private route: ActivatedRoute, private api: ApiService, private router: Router) {}
-
+ 
   ngOnInit(): void {
     this.temaId = Number(this.route.snapshot.paramMap.get('id'));
+
+    this.route.queryParams.subscribe(params => {
+      this.terminoBusqueda = (params['q'] || '').toLowerCase();
+      this.cargarComentarios();
+    });
+
     document.addEventListener('click', () => this.cerrarContextMenu());
-    if (this.temaId) this.cargarComentarios();
   }
 
   ngOnDestroy(): void {
@@ -41,7 +47,8 @@ export class TemaDetalleComponent implements OnInit, OnDestroy {
     this.api.getComentarios(this.temaId).subscribe({
       next: (res) => {
         const jerarquicos = this.construirJerarquia(res);
-        this.comentariosJerarquicos = this.marcarColapsos(jerarquicos);
+        const marcados = this.marcarColapsos(jerarquicos);
+        this.comentariosJerarquicos = this.filtrarComentariosRecursivo(marcados, this.terminoBusqueda);
       },
       error: (err) => console.error('Error al cargar comentarios:', err)
     });
@@ -107,21 +114,20 @@ export class TemaDetalleComponent implements OnInit, OnDestroy {
     }, 50);
   }
 
-responderComentario() {
-  this.comentarioPadreId = this.comentarioContextual?.id;
-  this.respuestaAUsuario = this.comentarioContextual?.usuario?.nombreUsuario || 'Usuario';
-  this.cerrarContextMenu();
+  responderComentario() {
+    this.comentarioPadreId = this.comentarioContextual?.id;
+    this.respuestaAUsuario = this.comentarioContextual?.usuario?.nombreUsuario || 'Usuario';
+    this.cerrarContextMenu();
 
-  // ⚠ NUEVO: scroll al textarea al fondo
-  setTimeout(() => {
-    const textarea = document.getElementById('nuevo-comentario-textarea');
-    if (textarea) {
-      textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      (textarea as HTMLTextAreaElement).focus();
-    }
-  }, 100);
-}
-
+    // ⚠ NUEVO: scroll al textarea al fondo
+    setTimeout(() => {
+      const textarea = document.getElementById('nuevo-comentario-textarea');
+      if (textarea) {
+        textarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        (textarea as HTMLTextAreaElement).focus();
+      }
+    }, 100);
+  }
 
   cancelarRespuesta() {
     this.comentarioPadreId = null;
@@ -206,7 +212,34 @@ responderComentario() {
     comentario?.usuario?.idUsuario === this.idUsuarioActual ||
     this.hasRole(['ADMINISTRADOR', 'EMPLEADO', 'MODERADOR'])
   );
-}
+  }
 
+  filtrarComentariosRecursivo(comentarios: any[], termino: string): any[] {
+    if (!termino.trim()) return comentarios;
+
+    const buscar = termino.toLowerCase();
+
+    return comentarios.reduce((acumulador: any[], comentario: any) => {
+      const contenido = comentario.contenido?.toLowerCase?.() || '';
+      const usuario = comentario.usuario?.nombreUsuario?.toLowerCase?.() || '';
+      const fecha = comentario.fechaComentario?.toLowerCase?.() || '';
+
+      const coincide =
+        contenido.includes(buscar) ||
+        usuario.includes(buscar) ||
+        fecha.includes(buscar);
+
+      const respuestasFiltradas = this.filtrarComentariosRecursivo(comentario.respuestas || [], termino);
+
+      if (coincide || respuestasFiltradas.length > 0) {
+        acumulador.push({
+          ...comentario,
+          respuestas: respuestasFiltradas
+        });
+      }
+
+      return acumulador;
+    }, []);
+  }
 
 }

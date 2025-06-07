@@ -302,5 +302,68 @@
   background-color: #e0b933;
 }
 
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.paginacion button {
+  background-color: #fcd34d;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.paginacion button:disabled {
+  background-color: #e5e5e5;
+  color: #999;
+  cursor: not-allowed;
+}
 
 
+
+
+.foro-form-editar {
+  margin-bottom: 1rem;
+  max-width: 600px;
+}
+
+.foro-form-editar input,
+.foro-form-editar textarea {
+  width: 100%;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.acciones-edicion {
+  display: flex;
+  gap: 1rem;
+}
+
+.acciones-edicion .btn {
+  padding: 0.4rem 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+.btn-edit {
+  background-color: #fcd34d;
+  border: none;
+  color: black;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 18px;
+  cursor: pointer;
+}
+.btn-edit:hover {
+  background-color: #fbbf24;
+}

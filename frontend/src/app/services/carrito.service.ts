@@ -7,9 +7,10 @@ import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
 export class CarritoService {
+  private base = 'http://localhost:8080';
   private carrito: any[] = [];
   private carrito$ = new BehaviorSubject<any[]>([]);
-  private base = 'http://localhost:8080';
+  mostrarSlide = false;
 
   constructor(private http: HttpClient, private apiService: ApiService) {
     const guardado = localStorage.getItem('carrito');

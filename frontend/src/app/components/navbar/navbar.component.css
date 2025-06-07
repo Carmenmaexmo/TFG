@@ -400,6 +400,522 @@ body {
   flex-direction: column;
   gap: 0.4rem;
 }
- 
-  
-  
+
+/* Responsive navbar */
+.navbar-toggler {
+  background: none;
+  border: none;
+  color: #fcd34d;
+  font-size: 2rem;
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .navbar-toggler {
+    display: block;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    width: 100%;
+    display: none;
+    background-color: #1c1c1e;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    padding: 1rem;
+    z-index: 999;
+  }
+
+  .nav-links.menu-open {
+    display: flex;
+  }
+
+  .nav-links a {
+    margin: 0.5rem 0;
+  }
+
+  .nav-icons,
+  .user-area {
+    margin-top: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Estilos generales del navbar desplegable */
+.navbar-toggler {
+  background: none;
+  border: none;
+  color: #fcd34d;
+  font-size: 2rem;
+  display: none;
+}
+
+/* Añadir margen inferior al navbar para que no pise contenido */
+.main-navbar {
+  margin-bottom: 1rem;
+}
+
+/* Responsive para pantallas más pequeñas */
+@media (max-width: 992px) {
+  .navbar-toggler {
+    display: block;
+  }
+
+  .navbar-container {
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background-color: #1c1c1e;
+    padding: 1rem 0.5rem;
+    z-index: 1001;
+  }
+
+  .nav-links.menu-open {
+    display: flex;
+    position: relative;
+  }
+
+  .nav-links a {
+    margin: 0.5rem 1rem;
+  }
+
+  .nav-icons,
+  .user-area {
+    margin-top: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    padding-left: 1rem;
+  }
+
+  /* Ajustes para evitar que el slide carrito tape el contenido */
+  .slide-carrito {
+    width: 100%;
+    max-width: 360px;
+    right: 0;
+  }
+
+  .search-input {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+}
+
+/* Fila superior: logo + nombre + hamburguesa */
+.navbar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Fila inferior: lupa, carrito, usuario */
+.navbar-icons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+@media (max-width: 992px) {
+  .navbar-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    display: none;
+    background-color: #1c1c1e;
+    padding: 1rem 0.5rem;
+    width: 100%;
+  }
+
+  .nav-links.menu-open {
+    display: flex;
+  }
+
+  .nav-links a {
+    margin: 0.5rem 1rem;
+  }
+
+  .navbar-icons {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .nav-icons {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .search-input {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .user-area {
+    justify-content: flex-end;
+    width: auto;
+  }
+}
+/* Corrige la posición del número sobre el carrito */
+.cart-count {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* Contenedor de iconos y usuario alineados en una misma fila */
+.navbar-icons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: 100%;
+  padding: 0 1rem;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+/* Agrupa lupa y carrito */
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+  flex: 1;
+}
+
+/* Alinea user-area a la derecha */
+.user-area {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+/* Campo de búsqueda ocupa todo el ancho solo cuando se muestra */
+.search-input {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+/* 🛒 Que el número rojo esté fijo encima del carrito SIEMPRE */
+.carrito-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cart-icon {
+  position: relative;
+  font-size: 1.5rem;
+}
+
+.cart-count {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 50%;
+  z-index: 10;
+}
+
+/* 📐 Fila con lupa + carrito + usuario */
+.navbar-icons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: 100%;
+  padding: 0 1rem;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+/* 🔍 y 🛒 agrupados a la izquierda */
+.nav-icons {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-shrink: 0;
+}
+
+/* 👤 Usuario completamente a la derecha */
+.user-area {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 993px) {
+  .main-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+  }
+
+  .navbar-top {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+
+  .nav-links {
+    display: flex !important;
+    flex: 2;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    position: static;
+    padding: 0;
+    background: none;
+  }
+
+  .navbar-icons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-end;
+    flex: 1;
+    margin-top: 0; /* elimina margen vertical de móvil */
+    padding: 0;
+  }
+
+  .nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .user-area {
+    margin-left: 1rem;
+  }
+
+  .navbar-toggler {
+    display: none !important; /* oculta hamburguesa */
+  }
+
+  .search-input {
+    width: 200px;
+    margin-top: 0;
+  }
+}
+
+@media (min-width: 993px) {
+  .main-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+  }
+
+  .navbar-top {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-shrink: 0;
+  }
+
+  .nav-links {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    position: static;
+    padding: 0;
+    background: none;
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+
+  .navbar-icons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 0;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+
+  .search-input {
+    width: 180px;
+    margin-top: 0;
+  }
+
+  .user-area {
+    margin-left: 1rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .navbar-toggler {
+    display: none !important;
+  }
+}
+@media (min-width: 993px) and (max-width: 1140px) {
+  .search-input {
+    width: 140px;
+  }
+
+  .brand-name {
+    font-size: 1.4rem;
+  }
+
+  .logo-img {
+    height: 70px;
+  }
+
+  .admin-btn {
+    font-size: 1rem;
+    padding: 0.3rem 0.8rem;
+  }
+}
+
+@media (min-width: 993px) and (max-width: 1250px) {
+  .navbar-icons {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .nav-icons {
+    flex-wrap: nowrap;
+    flex-grow: 1;
+    justify-content: flex-end;
+  }
+
+  .search-input {
+    width: 140px;
+    max-width: 100%;
+    margin-top: 0;
+  }
+
+  .brand-name {
+    font-size: 1.5rem;
+  }
+
+  .logo-img {
+    height: 70px;
+  }
+
+  .admin-btn {
+    font-size: 1rem;
+    padding: 0.3rem 0.8rem;
+  }
+}
+@media (min-width: 993px) and (max-width: 1250px) {
+  .navbar-icons {
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .nav-icons {
+    flex-wrap: nowrap;
+    gap: 1rem;
+  }
+
+  .search-input {
+    width: 130px;
+    max-width: 100%;
+    margin-top: 0;
+  }
+
+  .admin-dropdown {
+    margin-left: 0.5rem;
+  }
+
+  .nav-links {
+    gap: 1.5rem;
+  }
+
+  .brand-name {
+    font-size: 1.4rem;
+  }
+
+  .logo-img {
+    height: 70px;
+  }
+
+  .admin-btn {
+    font-size: 1rem;
+    padding: 0.3rem 0.8rem;
+  }
+}
+@media (min-width: 993px) and (max-width: 1250px) {
+  .navbar-container {
+    flex-wrap: wrap;
+  }
+
+  .nav-links {
+    flex: 100%;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+
+  .navbar-icons {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .nav-icons {
+    flex-wrap: nowrap;
+    flex-grow: 1;
+    justify-content: flex-end;
+  }
+
+  .search-input {
+    width: 140px;
+    max-width: 100%;
+    margin-top: 0;
+  }
+
+  .brand-name {
+    font-size: 1.4rem;
+  }
+
+  .logo-img {
+    height: 70px;
+  }
+
+  .admin-btn {
+    font-size: 1rem;
+    padding: 0.3rem 0.8rem;
+  }
+}

@@ -11,22 +11,23 @@
     </select>
   </div>
   
-    <div *ngFor="let evento of eventos" 
+    <div *ngFor="let evento of eventosPaginados" 
     [ngClass]="{ 'evento-pasado': esPasado(evento.fecha_fin), 'evento-futuro': !esPasado(evento.fecha_fin) }" 
     class="evento-card">
-    
- <h4>🎤 {{ evento.titulo }}</h4>
-
- <p>📍 <i>{{ evento.lugar }}</i></p>
- <p>🎶 {{ evento.descripcion }}</p>
-
- <p>🗓️ <strong>Inicio:</strong> {{ evento.fechaInicio | date:'fullDate' }} - {{ evento.fechaInicio | date:'shortTime' }}</p>
- <p>⏳ <strong>Fin:</strong> {{ evento.fecha_fin | date:'fullDate' }} - {{ evento.fecha_fin | date:'shortTime' }}</p>
-
-</div>
-<div *ngIf="eventos.length === 0" class="alert alert-warning text-center">
-    No se encontraron eventos para esta búsqueda.
-  </div>
+      <h4>🎤 {{ evento.titulo }}</h4>
+      <p>📍 <i>{{ evento.lugar }}</i></p>
+      <p>🎶 {{ evento.descripcion }}</p>
+      <p>🗓️ <strong>Inicio:</strong> {{ evento.fechaInicio | date:'fullDate' }} - {{ evento.fechaInicio | date:'shortTime' }}</p>
+      <p>⏳ <strong>Fin:</strong> {{ evento.fecha_fin | date:'fullDate' }} - {{ evento.fecha_fin | date:'shortTime' }}</p>
+    </div>
+    <div class="paginacion" *ngIf="totalPaginas > 1">
+      <button (click)="paginaActual = paginaActual - 1" [disabled]="paginaActual === 1">Anterior</button>
+      <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <button (click)="paginaActual = paginaActual + 1" [disabled]="paginaActual === totalPaginas">Siguiente</button>
+    </div>
+    <div *ngIf="eventos.length === 0" class="alert alert-warning text-center">
+        No se encontraron eventos para esta búsqueda.
+    </div>
   
   </div>
   

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
 import { CarritoService } from '../../services/carrito.service';
+import { UiService } from '../../services/ui.service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -25,6 +26,7 @@ export class CatalogoComponent implements OnInit {
 
   selectedArtistas: string[] = [];
   selectedGeneros: string[] = [];
+  selectedProveedores: number[] = [];
   precioMin: number | null = null;
   precioMax: number | null = null;
   
@@ -36,7 +38,8 @@ export class CatalogoComponent implements OnInit {
   busquedaActiva: string | null = null;
 
   mostrarFiltros = false;
-  categoriaActiva: 'artista' | 'genero' | 'precio' | null = null;
+
+  categoriaActiva: 'artista' | 'genero' | 'precio' | 'proveedor' | null = null;
 
   mostrarFormularioVinilo = false;
   mostrarFormProveedor = false;
@@ -73,7 +76,7 @@ export class CatalogoComponent implements OnInit {
     telefono: ''
   };
 
-  constructor(private api: ApiService, private carrito: CarritoService, private route: ActivatedRoute, private router: Router) {}
+  constructor(private api: ApiService, private carrito: CarritoService, private route: ActivatedRoute, private router: Router, private ui: UiService) {}
   @ViewChild('gridContainer') gridContainerRef!: ElementRef;
   ngOnInit(): void {
     this.api.getVinilos().subscribe({
@@ -147,22 +150,33 @@ export class CatalogoComponent implements OnInit {
     return;
   }
     this.carrito.aniadir(producto);
+    this.ui.mostrarCarrito();
   }
 
-  aplicarFiltros() {
-    this.productos = this.productosOriginales.filter(p => {
-      const artistaFiltro = this.selectedArtistas.length === 0 || this.selectedArtistas.includes(`${p.artista} (${this.contar(p.artista, 'artista')})`);
-      const generoFiltro = this.selectedGeneros.length === 0 || this.selectedGeneros.includes(`${p.genero} (${this.contar(p.genero, 'genero')})`);
-      const precioFiltro =
-        (!this.precioMin || p.precio >= this.precioMin) &&
-        (!this.precioMax || p.precio <= this.precioMax);
-  
-      return artistaFiltro && generoFiltro && precioFiltro;
-    });
-  
-    this.mostrarFiltros = false;
-    this.categoriaActiva = null;
+ aplicarFiltros() {
+  this.productos = this.productosOriginales.filter(p => {
+    const artistaFiltro =
+      this.selectedArtistas.length === 0 ||
+      this.selectedArtistas.includes(`${p.artista} (${this.contar(p.artista, 'artista')})`);
+
+    const generoFiltro =
+      this.selectedGeneros.length === 0 ||
+      this.selectedGeneros.includes(`${p.genero} (${this.contar(p.genero, 'genero')})`);
+
+    const precioFiltro =
+      (!this.precioMin || p.precio >= this.precioMin) &&
+      (!this.precioMax || p.precio <= this.precioMax);
+
+    const proveedorFiltro =
+      this.selectedProveedores.length === 0 || this.selectedProveedores.includes(p.proveedor?.id);
+
+    return artistaFiltro && generoFiltro && precioFiltro && proveedorFiltro;
+  });
+
+  this.mostrarFiltros = false;
+  this.categoriaActiva = null;
   }
+
   
 
   eliminarFiltros() {
@@ -216,6 +230,16 @@ export class CatalogoComponent implements OnInit {
       p.genero.toLowerCase().includes(termino)
     );
   }
+
+  toggleSeleccionProveedor(id: number) {
+  const index = this.selectedProveedores.indexOf(id);
+  if (index === -1) {
+    this.selectedProveedores.push(id);
+  } else {
+    this.selectedProveedores.splice(index, 1);
+  }
+  }
+
   
   limpiarBusqueda() {
     this.router.navigate(['/catalogo']);  // Navega sin el parámetro ?q
@@ -476,7 +500,8 @@ export class CatalogoComponent implements OnInit {
     };
   }
   
-  
-  
+  verDetalleVinilo(id: number) {
+  this.router.navigate(['/vinilo', id]);
+  }
 
 }

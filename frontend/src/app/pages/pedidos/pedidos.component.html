@@ -3,9 +3,9 @@
   
     <div *ngIf="pedidos.length === 0" class="mensaje-vacio">No tienes pedidos aún.</div>
   
-    <div *ngFor="let pedido of pedidos" class="pedido-card">
+    <div *ngFor="let pedido of pedidosPaginados" class="pedido-card">
       <div class="pedido-header">
-        <h3>Pedido #{{ pedido.id }}</h3>
+        <h3>Pedido</h3>
         <span class="estado-badge" [ngClass]="pedido.estado.toLowerCase()">{{ pedido.estado }}</span>
       </div>
   
@@ -25,6 +25,7 @@
               <td class="vinilo-info">
                 <img [src]="item.vinilo?.imagen || 'assets/placeholder-vinilo.jpg'" alt="Vinilo" />
                 <span>{{ item.vinilo?.titulo || 'Vinilo desconocido' }}</span>
+                <span *ngIf="item.vinilo?.artista">-{{ item.vinilo?.artista }}</span>
               </td>                  
               <td>{{ item.cantidad }}</td>
               <td>{{ item.precio | currency:'EUR' }}</td>
@@ -49,5 +50,11 @@
         <button (click)="cancelarPedido(pedido)">Cancelar pedido</button>
       </div>      
     </div>
+    <div class="paginacion">
+      <button (click)="cambiarPagina(paginaActual - 1)" [disabled]="paginaActual === 1">Anterior</button>
+      <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <button (click)="cambiarPagina(paginaActual + 1)" [disabled]="paginaActual === totalPaginas">Siguiente</button>
+    </div>
+
   </div>
   

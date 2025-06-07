@@ -16,5 +16,6 @@ public class ViniloDTO {
     private String imagen;
     private Integer stock;
     private String descripcion;
+    private ProveedorDTO proveedor;
 }
 

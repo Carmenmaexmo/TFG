@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CarritoService } from '../../services/carrito.service';
+import { UiService } from '../../services/ui.service';
 
 @Component({
   selector: 'app-navbar',
@@ -18,13 +19,16 @@ export class NavbarComponent {
   carritoContenido: any[] = [];
   mostrarCarritoSlide = false;
   adminDropdownOpen: boolean = false;
+  navAbierto: boolean = false;
+  menuAbierto: boolean = false;
 
-
-
-  constructor(private router: Router, private carrito: CarritoService) {
+  constructor(private router: Router, private carrito: CarritoService, private uiService: UiService) {
     this.carrito.getCarritoObservable().subscribe(c => {
       this.carritoContenido = c;             
       this.carritoCantidad = c.length;
+    });
+    this.uiService.carritoVisible$.subscribe(visible => {
+      this.mostrarCarritoSlide = visible;
     });
   }
   lastUser = '';
@@ -51,8 +55,8 @@ export class NavbarComponent {
 
   logout() {
     this.carrito.guardarCarritoEnServidor().subscribe({
-      next: () => console.log('✅ Carrito guardado al cerrar sesión'),
-      error: err => console.error('❌ Error guardando carrito al cerrar sesión', err),
+      next: () => console.log(' Carrito guardado al cerrar sesión'),
+      error: err => console.error(' Error guardando carrito al cerrar sesión', err),
       complete: () => {
         localStorage.clear();
         this.carrito.vaciar();
@@ -79,9 +83,9 @@ export class NavbarComponent {
 
   onSearch() {
     const query = this.searchTerm.trim();
-    const currentUrl = this.router.url.split('?')[0];  // ignora query params
+    const currentUrl = this.router.url.split('?')[0];  
   
-    // Define a helper para navegar con o sin término de búsqueda
+  
     const navegar = (ruta: string) => {
       this.router.navigate([ruta], {
         queryParams: query ? { q: query } : {},
@@ -95,15 +99,20 @@ export class NavbarComponent {
       navegar('/eventos');
     } else if (currentUrl.includes('/foros')) {
       navegar('/foros');
+    } else if (currentUrl.includes('/temas')) {
+     navegar(currentUrl);
+    }
+    else if (currentUrl.includes('/pedidos')) {
+      navegar(currentUrl);
     } else {
       console.log('🔍 Buscador no soportado en esta ruta');
     }
-  
-    this.searchVisible = false;
+    if (!query) {
+      this.searchVisible = false;
+    }
+
   }
   
-  
-
   toggleCarrito() {
     this.mostrarCarritoSlide = !this.mostrarCarritoSlide;
   }  
@@ -131,6 +140,9 @@ export class NavbarComponent {
     this.mostrarCarritoSlide = false; // cierra el carrito
     this.router.navigate(['/pago']);  // navega a /pago
   }
-  
+
+  abrirCarrito() {
+  this.mostrarCarritoSlide = true;
+  }
 
 }

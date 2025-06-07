@@ -64,6 +64,10 @@ export class ApiService {
     return this.http.get<any[]>(`${this.base}/api/vinilos`);
   }
 
+  getViniloPorId(id: number): Observable<any> {
+    return this.http.get<any>(`${this.base}/api/vinilos/${id}`);
+  }
+
   // ---------- PEDIDOS ----------
   getPedidosPorUsuario(): Observable<any[]> {
     return this.http.get<any[]>(`${this.base}/api/pedidos/por-usuario/${localStorage.getItem('idUsuario')}`);
@@ -119,6 +123,13 @@ export class ApiService {
    */
   getForo(): Observable<any> {
     return this.http.get<any>(`${this.base}/api/foros`);
+  }
+
+  /**
+   * Actualiza el foro principal.
+   */
+  actualizarForo(id: number, datos: any): Observable<any> {
+    return this.http.put(`${this.base}/api/foros/${id}`, datos);
   }
 
   /**
@@ -215,6 +226,13 @@ export class ApiService {
   }
 
   /**
+   * Actualizar dirección.
+   */
+  actualizarDireccion(id: number, datos: any): Observable<any> {
+    return this.http.put(`${this.base}/api/direcciones-envio/${id}`, datos);
+    }
+
+  /**
    * Guardar un nuevo pedido.
    */
   crearPedido(datos: any): Observable<any> {
@@ -288,4 +306,7 @@ export class ApiService {
 
   }
 
+  getProveedorPorId(id: number): Observable<any> {
+    return this.http.get<any>(`${this.base}/api/proveedores/${id}`);
+  }
 }

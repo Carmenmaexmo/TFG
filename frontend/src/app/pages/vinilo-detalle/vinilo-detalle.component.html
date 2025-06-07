@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="btn-volver" (click)="volver()">
+  ← Volver
+</div>
+
+<!-- CONTENEDOR PRINCIPAL DEL VINILO -->
+<div class="detalle-vinilo" *ngIf="vinilo">
+  <!-- Imagen -->
+  <div class="detalle-imagen">
+    <img [src]="vinilo.imagen || 'assets/placeholder-vinilo.jpg'" [alt]="vinilo.titulo" />
+  </div>
+
+  <!-- Info -->
+  <div class="detalle-info">
+    <h2>{{ vinilo.titulo }}</h2>
+    <p class="artista">{{ vinilo.artista }}</p>
+    <p class="genero">Género: {{ vinilo.genero }}</p>
+    <p class="descripcion">{{ vinilo.descripcion }}</p>
+    <p class="precio">{{ vinilo.precio | number:'1.2-2' }} €</p>
+
+    <p class="envio-gratis">🚚 Envío gratuito a partir de 20 €</p>
+
+    <button class="btn btn-warning mt-3" (click)="aniadirAlCarrito()">
+      <i class="bi bi-cart3"></i> Añadir al carrito
+    </button>
+  </div>
+</div>
+
+<!-- CONTENEDOR DE DATOS DEL PROVEEDOR -->
+<div *ngIf="esAdminOEmpleado()" class="proveedor-card">
+  <h4>📦 Detalles del proveedor</h4>
+  <div class="tabla-proveedor">
+    <div class="fila">
+      <div class="celda etiqueta">Nombre</div>
+      <div class="celda">{{ proveedor?.nombre }}</div>
+    </div>
+    <div class="fila">
+      <div class="celda etiqueta">Email</div>
+      <div class="celda">{{ proveedor?.email }}</div>
+    </div>
+    <div class="fila">
+      <div class="celda etiqueta">Teléfono</div>
+      <div class="celda">{{ proveedor?.telefono }}</div>
+    </div>
+    <div class="fila">
+      <div class="celda etiqueta">Dirección</div>
+      <div class="celda">{{ proveedor?.direccion }}</div>
+    </div>
+    <div class="fila">
+      <div class="celda etiqueta">Stock disponible</div>
+      <div class="celda">{{ vinilo.stock }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- SUGERENCIAS -->
+<div class="sugerencias" *ngIf="vinilosSugeridos.length > 0">
+  <h3>También te puede interesar</h3>
+  <div class="carrusel">
+    <div class="vinilo-item" *ngFor="let v of vinilosSugeridos" (click)="verDetalleVinilo(v.id)">
+      <img [src]="v.imagen || 'assets/placeholder-vinilo.jpg'" [alt]="v.titulo">
+      <div class="titulo">{{ v.titulo }}</div>
+      <div class="precio">{{ v.precio | number:'1.2-2' }} €</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

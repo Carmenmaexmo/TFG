@@ -17,6 +17,8 @@ export class PagoComponent {
   mostrarFormularioDireccion: boolean = false;
   ciudadesFiltradas: string[] = [];
   mensajeError: string | null = null;
+  direccionEditandoId: number | null = null;
+
 
   ciudadesEspaña: string[] = [
     "Álava", "Albacete", "Alicante", "Almería", "Asturias", "Ávila", "Badajoz",
@@ -38,6 +40,18 @@ export class PagoComponent {
     telefono: ''
   };
 
+  editarDireccion(dir: any) {
+  this.mostrarFormularioDireccion = true;
+  this.direccionEditandoId = dir.id;
+  this.nuevaDireccionObj = {
+    ciudad: dir.ciudad,
+    codigoPostal: dir.codigoPostal,
+    direccion: dir.direccion,
+    telefono: dir.telefono
+  };
+  }
+
+
   tarjeta = {
     nombre: '',
     numero: '',
@@ -45,7 +59,7 @@ export class PagoComponent {
     cvv: ''
   };
 
-  constructor(private api: ApiService, private carrito: CarritoService, private router: Router) {}
+  constructor(private api: ApiService, public carrito: CarritoService, private router: Router) {}
 
   ngOnInit() {
     const idUsuario = Number(localStorage.getItem('idUsuario'));
@@ -196,14 +210,59 @@ export class PagoComponent {
       detalles
     };
   
-    this.api.crearPedido(nuevoPedido).subscribe({
-      next: () => {
-        this.carrito.vaciar();
-        this.router.navigate(['/pedidos']);
-      },
-      error: err => console.error('Error creando pedido', err)
-    });
+  this.api.crearPedido(nuevoPedido).subscribe({
+    next: () => {
+      this.carrito.vaciar();  // 🔁 ya vacía localmente
+      this.carrito.guardarCarritoEnServidor().subscribe({
+        next: () => this.router.navigate(['/pedidos']),
+        error: err => {
+          console.error('Error vaciando carrito en servidor', err);
+          this.router.navigate(['/pedidos']);  // redirige igual aunque falle
+        }
+      });
+    },
+    error: err => console.error('Error creando pedido', err)
+  });
+
   }  
-  
+
+  actualizarDireccion() {
+  const idUsuario = Number(localStorage.getItem('idUsuario'));
+  const { ciudad, codigoPostal, direccion, telefono } = this.nuevaDireccionObj;
+
+  const actualizada = {
+    id: this.direccionEditandoId!,
+    ciudad,
+    codigoPostal,
+    direccion,
+    telefono,
+    idUsuario
+  };
+
+  this.api.actualizarDireccion(actualizada.id!, actualizada).subscribe({
+    next: (res: any) => {
+      const index = this.direcciones.findIndex(d => d.id === actualizada.id);
+      if (index !== -1) {
+        this.direcciones[index] = res;
+      }
+
+      this.direccionEditandoId = null;
+      this.nuevaDireccionObj = { ciudad: '', codigoPostal: '', direccion: '', telefono: '' };
+      this.mostrarFormularioDireccion = false;
+    },
+    error: (err: any) => {
+      console.error('Error actualizando dirección', err);
+    }
+  });
+  }
+
+  cancelarFormularioDireccion() {
+  this.mostrarFormularioDireccion = false;
+  this.direccionEditandoId = null;
+  this.nuevaDireccionObj = { ciudad: '', codigoPostal: '', direccion: '', telefono: '' };
+  }
+
+
+
   
 }

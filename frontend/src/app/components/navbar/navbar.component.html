@@ -8,75 +8,77 @@
 </head>
 <body>
   <header class="main-navbar">
-    <div class="navbar-container">
-      <!-- LOGO -->
-      <div class="logo">
-        <a routerLink="/">
-          <img src="assets/logoweb.png" alt="Vinyl Revolution Logo" class="logo-img" />
-          <span class="brand-name">VinylRevolution</span>
-        </a>
-      </div>
+<div class="navbar-top">
+  <!-- LOGO Y NOMBRE -->
+  <div class="logo">
+    <a routerLink="/">
+      <img src="assets/logoweb.png" alt="Vinyl Revolution Logo" class="logo-img" />
+      <span class="brand-name">VinylRevolution</span>
+    </a>
+  </div>
 
-      <!-- ENLACES -->
-      <nav class="nav-links">
-        <a routerLink="/catalogo">Catálogo</a>
-        <a routerLink="/eventos" routerLinkActive="active">Eventos</a>
-        <a routerLink="/foros" routerLinkActive="active">Foro</a>
-          <ng-container *ngIf="hasRole(['ADMINISTRADOR', 'EMPLEADO'])">
-            <div class="admin-dropdown" (mouseenter)="adminDropdownOpen = true" (mouseleave)="adminDropdownOpen = false">
-              <a class="dropdown-toggle">Administración ▾</a>
-              <div class="dropdown-content" *ngIf="adminDropdownOpen">
-                <a routerLink="/admin/usuarios" routerLinkActive="active" class="dropdown-link">Gestionar Usuarios</a>
-                <a routerLink="/admin/pedidos" routerLinkActive="active" class="dropdown-link">Gestionar Pedidos</a>
-                <a routerLink="/admin/eventos" routerLinkActive="active" class="dropdown-link">Gestionar Eventos</a>
-              </div>
-            </div>
-          </ng-container>
-      </nav>
-  
-      <!-- ICONOS DERECHA -->
-      <div class="nav-icons">
-        <i class="bi bi-search search-icon" (click)="toggleSearch()"></i>
-  
-        <!-- ICONO CARRITO -->
-        <div class="carrito-wrapper">
-          <i class="bi bi-cart3 cart-icon" (click)="toggleCarrito()">
-            <span *ngIf="carritoCantidad > 0" class="cart-count">{{ carritoCantidad }}</span>
-          </i>
-        </div>
-  
-        <!-- BUSCADOR -->
-        <input *ngIf="searchVisible"
-               type="text"
-               placeholder="Buscar..."
-               class="search-input"
-               [(ngModel)]="searchTerm"
-               (keydown.enter)="onSearch()" />
-      </div>
-  
-      <!-- USUARIO -->
-      <div class="user-area">
-        <ng-container *ngIf="!isLogged(); else logueado">
-          <a class="btn btn-outline-light" routerLink="/login">Login</a>
-        </ng-container>
-  
-        <ng-template #logueado>
-          <div class="user-dropdown"
-               (mouseenter)="dropdownOpen = true"
-               (mouseleave)="dropdownOpen = false">
-            <button class="btn admin-btn">{{ getUsername() }}</button>
-            <div class="dropdown-content" *ngIf="dropdownOpen">
-              <a routerLink="/perfil" class="dropdown-link">Mi Perfil</a>
-              <a routerLink="/pedidos" class="dropdown-link">Mis Pedidos</a>
-              <button (click)="logout()" class="dropdown-button">Cerrar sesión</button>
-            </div>
-          </div>
-        </ng-template>
+  <!-- HAMBURGUESA -->
+  <button class="navbar-toggler" type="button" (click)="menuAbierto = !menuAbierto">
+    <i class="bi bi-list"></i>
+  </button>
+</div>
+
+<!-- MENÚ DE NAVEGACIÓN DESPLEGABLE -->
+<nav class="nav-links" [class.menu-open]="menuAbierto">
+  <a routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
+  <a routerLink="/eventos" routerLinkActive="active">Eventos</a>
+  <a routerLink="/foros" routerLinkActive="active">Foro</a>
+  <ng-container *ngIf="hasRole(['ADMINISTRADOR', 'EMPLEADO'])">
+    <div class="admin-dropdown" (mouseenter)="adminDropdownOpen = true" (mouseleave)="adminDropdownOpen = false">
+      <a class="dropdown-toggle">Administración ▾</a>
+      <div class="dropdown-content" *ngIf="adminDropdownOpen">
+        <a routerLink="/admin/usuarios" class="dropdown-link">Gestionar Usuarios</a>
+        <a routerLink="/admin/pedidos" class="dropdown-link">Gestionar Pedidos</a>
+        <a routerLink="/admin/eventos" class="dropdown-link">Gestionar Eventos</a>
       </div>
     </div>
-  </header>
+  </ng-container>
+</nav>
+
+<!-- ICONOS: LUPA, CARRITO, USUARIO -->
+<div class="navbar-icons">
+  <div class="nav-icons">
+    <i class="bi bi-search search-icon" (click)="toggleSearch()"></i>
+    <div class="carrito-wrapper">
+      <i class="bi bi-cart3 cart-icon" (click)="toggleCarrito()">
+        <span *ngIf="carritoCantidad > 0" class="cart-count">{{ carritoCantidad }}</span>
+      </i>
+    </div>
+    <input *ngIf="searchVisible"
+          type="text"
+          placeholder="Buscar..."
+          class="search-input"
+          [(ngModel)]="searchTerm"
+          (keydown.enter)="onSearch()" />
+  </div>
+
+  <div class="user-area">
+    <ng-container *ngIf="!isLogged(); else logueado">
+      <a class="btn btn-outline-light" routerLink="/login">Login</a>
+    </ng-container>
+
+    <ng-template #logueado>
+      <div class="user-dropdown" (mouseenter)="dropdownOpen = true" (mouseleave)="dropdownOpen = false">
+        <button class="btn admin-btn">{{ getUsername() }}</button>
+        <div class="dropdown-content" *ngIf="dropdownOpen">
+          <a routerLink="/perfil" class="dropdown-link">Mi Perfil</a>
+          <a routerLink="/pedidos" class="dropdown-link">Mis Pedidos</a>
+          <button (click)="logout()" class="dropdown-button">Cerrar sesión</button>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+</header>
+
   
-  <!-- ✅ SLIDE CARRITO FUERA DEL WRAPPER PARA EVITAR CONFLICTOS -->
+  <!-- CARRITO -->
   <div class="slide-carrito-overlay" *ngIf="mostrarCarritoSlide" (click)="toggleCarrito()"></div>
   
   <div class="slide-carrito" *ngIf="mostrarCarritoSlide">

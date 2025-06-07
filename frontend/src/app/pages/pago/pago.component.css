@@ -1,243 +1,162 @@
-/* Tipografía general elegante */
 .pago-wrapper {
-    background: #fff;
-    max-width: 600px;
-    margin: 3rem auto;
-    padding: 2rem 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    font-family: 'Inter', sans-serif;
-    color: #222;
-  }
-  
-  .pago-wrapper h2 {
-    font-size: 1.8rem;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    color: #111;
-    font-weight: 600;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  label {
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    display: block;
-  }
-  
-  .direcciones-personalizadas {
-    margin-bottom: 1rem;
-  }
-  
-  .item-direccion {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #f5f5f5;
-    border: 1px solid #ddd;
-    padding: 0.7rem 1rem;
-    border-radius: 8px;
-    margin-bottom: 0.5rem;
-  }
-  
-  .item-direccion input[type="radio"] {
-    margin-right: 0.5rem;
-  }
-  
-  .btn-eliminar {
-    background: none;
-    border: none;
-    color: #ff4444;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  .btn-eliminar:hover {
-    transform: scale(1.1);
-  }
-  
-  .enlace-anadir {
-    display: inline-block;
-    color: #d4af37;
-    font-weight: 500;
-    cursor: pointer;
-    margin-bottom: 1.2rem;
-  }
-  .enlace-anadir:hover {
-    text-decoration: underline;
-  }
-  
-  .nueva-direccion {
-    margin-bottom: 2rem;
-    padding: 1rem;
-    background: #fcfcfc;
-    border: 1px solid #eee;
-    border-radius: 10px;
-  }
-  
-  .campo {
-    margin-bottom: 1rem;
-  }
-  
-  .campo input {
-    width: 100%;
-    padding: 0.6rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 1rem;
-  }
-  
-  .campo input.invalido {
-    border-color: red;
-  }
-  
-  .sugerencias {
-    list-style: none;
-    margin-top: 0.3rem;
-    padding: 0;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    max-height: 150px;
-    overflow-y: auto;
-  }
-  
-  .sugerencias li {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-  }
-  .sugerencias li:hover {
-    background-color: #f1f1f1;
-  }
-  
-  .mensaje-error {
-    font-size: 0.85rem;
-    color: red;
-    margin-top: 0.2rem;
-  }
-  
-  .metodos-pago {
-    display: flex;
-    gap: 2rem;
-    margin: 1rem 0;
-    align-items: center;
-    justify-content: flex-start;
-  }
-  
-  .metodos-pago input[type="radio"] {
-    margin-right: 0.5rem;
-  }
-  
-  .metodos-pago label {
-    display: flex;
-    align-items: center;
-    font-weight: 500;
-    color: #333;
-  }
-  
-  .form-tarjeta input {
-    margin-bottom: 0.7rem;
-    padding: 0.6rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    width: 100%;
-  }
-  
-  .fila-tarjeta {
-    display: flex;
-    gap: 1rem;
-  }
-  
-  .fila-tarjeta input {
-    flex: 1;
-  }
-  
-  .btn-pagar-final {
-    margin-top: 1.5rem;
-    width: 100%;
-    padding: 0.9rem;
-    background: #f0c432;
-    color: #111;
-    font-weight: 600;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background 0.3s ease;
-  }
-  .btn-pagar-final:disabled {
-    background: #ccc;
-    color: #666;
-    cursor: not-allowed;
-  }
-  .btn-pagar-final:hover:not(:disabled) {
-    background: #c99c2e;
-  }
-  
-/* Aplica la fuente Inter a todo */
-.pago-wrapper {
-    font-family: 'Inter', sans-serif;
-  }
-  
-  /* Estilo visual moderno del botón "Añadir nueva dirección" */
-  .enlace-anadir {
-    display: inline-block;
-    margin: 1rem 0;
-    color: #f8d14f;
-    font-weight: 500;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    font-size: 0.95rem;
-  }
-  .enlace-anadir:hover {
-    color: #eec231;
-    text-decoration: underline;
-  }
-  
-  /* Contenedor de botones */
-  .nueva-direccion button {
-    margin-top: 0.7rem;
-    padding: 0.6rem 1.2rem;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 0.9rem;
-  }
-  
-  /* Botón guardar dorado */
-  .nueva-direccion button:first-of-type {
-    background-color: #ecc649;
-    color: #111;
-    margin-right: 0.5rem;
-  }
-  .nueva-direccion button:first-of-type:hover {
-    background-color: #c19e2f;
-  }
-  
-  /* Botón cancelar gris claro */
-  .nueva-direccion button.cancelar {
-    background-color: #f1f1f1;
-    color: #555;
-    border: 1px solid #ccc;
-  }
-  .nueva-direccion button.cancelar:hover {
-    background-color: #e2e2e2;
-  }
-  
-  .mensaje-error-superior {
-    background-color: #ffe5e5;
-    color: #d20000;
-    padding: 12px 16px;
-    border-radius: 6px;
-    font-weight: 500;
-    font-family: 'Inter', sans-serif;
-    margin-bottom: 16px;
-    border: 1px solid #d20000;
-    animation: fadeOut 0.5s ease-in-out forwards;
-  }
-  
+  font-family: 'Inter', sans-serif;
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.07);
+}
 
-  
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+section {
+  margin-bottom: 2.5rem;
+}
+
+.resumen-carrito .carrito-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1rem;
+}
+
+.carrito-item img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-right: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.carrito-item .info {
+  flex: 1;
+}
+
+.total-carrito {
+  text-align: right;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+}
+
+.bloque-direcciones .item-direccion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9f9f9;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 0.5rem;
+}
+
+.acciones-direccion button {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+
+.enlace-anadir {
+  color: #007bff;
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 0.5rem;
+}
+
+.nueva-direccion input {
+  width: 100%;
+  margin-bottom: 0.7rem;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.acciones-formulario {
+  display: flex;
+  justify-content: space-between;
+}
+
+.acciones-formulario button {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #222;
+  color: #fff;
+}
+
+.acciones-formulario .cancelar {
+  background-color: #999;
+}
+
+.bloque-pago label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-tarjeta input {
+  width: 100%;
+  margin-bottom: 0.7rem;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.fila-tarjeta {
+  display: flex;
+  gap: 1rem;
+}
+
+.fila-tarjeta input {
+  flex: 1;
+}
+
+.btn-pagar-final {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  background-color: #1a8917;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-pagar-final:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.mensaje-error {
+  color: red;
+  font-size: 0.875rem;
+}
+
+.sugerencias {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: white;
+}
+
+.sugerencias li {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.sugerencias li:hover {
+  background-color: #f0f0f0;
+}

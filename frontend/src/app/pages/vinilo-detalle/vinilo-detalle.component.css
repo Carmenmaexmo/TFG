@@ -1,0 +1,212 @@
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: #fafafa;
+  color: #1c1c1e;
+}
+
+.btn-volver {
+  margin: 2rem 3rem;
+  padding: 0.7rem 1.6rem;
+  background-color: #111;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: background 0.3s;
+  font-size: 1rem;
+}
+.btn-volver:hover {
+  background-color: #333;
+}
+
+.detalle-vinilo {
+  display: flex;
+  gap: 4rem;
+  padding: 4rem;
+  background-color: #fff;
+  margin: 0 auto;
+  border-radius: 20px;
+  max-width: 1300px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  align-items: center;
+}
+.detalle-imagen img {
+  width: 480px;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+.detalle-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.detalle-info h2 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+.artista, .genero, .descripcion {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  color: #444;
+}
+.precio {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 1rem 0;
+}
+.envio-gratis {
+  color: #16a34a;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+button.btn-warning {
+  background-color: #facc15;
+  color: #1c1c1e;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  padding: 0.9rem 1.7rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+  transition: background 0.3s ease;
+}
+button.btn-warning:hover {
+  background-color: #fbbf24;
+}
+
+.proveedor-card {
+  max-width: 1300px;
+  margin: 2.5rem auto;
+  padding: 2.2rem 2.5rem;
+  background-color: #fffbea;
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  font-size: 1.05rem;
+}
+.proveedor-card h4 {
+  margin-bottom: 1.6rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #7c3aed;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.proveedor-card h4 i {
+  font-size: 1.1rem;
+  color: #d97706;
+}
+.tabla-proveedor {
+  width: 100%;
+  border-collapse: collapse;
+}
+.tabla-proveedor .fila {
+  display: flex;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+.tabla-proveedor .fila:last-child {
+  border-bottom: none;
+}
+.tabla-proveedor .celda {
+  flex: 1;
+  padding: 0.3rem 0.5rem;
+}
+.tabla-proveedor .etiqueta {
+  font-weight: 600;
+  color: #444;
+  flex: 0.6;
+}
+
+.sugerencias {
+  margin: 3rem 1rem;
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  font-family: 'Outfit', sans-serif;
+}
+
+.sugerencias h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+  color: #1c1c1e;
+}
+
+/* Contenedor tipo carrusel horizontal */
+.carrusel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  gap: 1.5rem;
+  padding: 0 1rem;
+}
+
+.carrusel::-webkit-scrollbar {
+  height: 8px;
+}
+.carrusel::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
+}
+
+/* Cada vinilo */
+
+.vinilo-item:hover {
+  transform: translateY(-6px);
+}
+
+.vinilo-item {
+  flex: 0 0 180px;
+  height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  scroll-snap-align: start;
+  background-color: #fdfdfd;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  text-align: center;
+  padding: 1rem 0.7rem;
+  box-sizing: border-box;
+}
+
+.vinilo-item img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.vinilo-item .titulo {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1c1c1e;
+  margin-bottom: 0.3rem;
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.vinilo-item .precio {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #d62828;
+}
+

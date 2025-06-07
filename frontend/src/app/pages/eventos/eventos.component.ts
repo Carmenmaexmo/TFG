@@ -14,7 +14,10 @@ import { Router } from '@angular/router';
 export class EventosComponent implements OnInit {
   eventos: any[] = [];
   eventosOriginales: any[] = [];
- sentidoOrden: 'asc' | 'desc' | 'proximos' | '' = '';
+  sentidoOrden: 'asc' | 'desc' | 'proximos' | '' = '';
+  paginaActual: number = 1;
+  eventosPorPagina: number = 6;
+
 
   constructor(private api: ApiService, private route: ActivatedRoute, private router: Router) {}
 
@@ -59,25 +62,34 @@ export class EventosComponent implements OnInit {
 
  ordenarEventos(): void {
   const hoy = new Date().getTime();
-
-  if (this.sentidoOrden === 'asc') {
-    this.eventos = [...this.eventosOriginales].sort((a, b) =>
-      new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime()
-    );
-  } else if (this.sentidoOrden === 'desc') {
-    this.eventos = [...this.eventosOriginales].sort((a, b) =>
-      new Date(b.fechaInicio).getTime() - new Date(a.fechaInicio).getTime()
-    );
-  } else if (this.sentidoOrden === 'proximos') {
-    this.eventos = this.eventosOriginales
-      .filter(e => new Date(e.fecha_fin).getTime() >= hoy)
-      .sort((a, b) =>
+    if (this.sentidoOrden === 'asc') {
+      this.eventos = [...this.eventosOriginales].sort((a, b) =>
         new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime()
       );
-  } else {
-    // Si es "Seleccionar", muestra todos los eventos sin orden
-    this.eventos = [...this.eventosOriginales];
+    } else if (this.sentidoOrden === 'desc') {
+      this.eventos = [...this.eventosOriginales].sort((a, b) =>
+        new Date(b.fechaInicio).getTime() - new Date(a.fechaInicio).getTime()
+      );
+    } else if (this.sentidoOrden === 'proximos') {
+      this.eventos = this.eventosOriginales
+        .filter(e => new Date(e.fecha_fin).getTime() >= hoy)
+        .sort((a, b) =>
+          new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime()
+        );
+    } else {
+      // Si es "Seleccionar", muestra todos los eventos sin orden
+      this.eventos = [...this.eventosOriginales];
+    }
   }
-}
+
+  get eventosPaginados(): any[] {
+  const inicio = (this.paginaActual - 1) * this.eventosPorPagina;
+  const fin = inicio + this.eventosPorPagina;
+  return this.eventos.slice(inicio, fin);
+  }
+
+  get totalPaginas(): number {
+    return Math.ceil(this.eventos.length / this.eventosPorPagina);
+  }
 
 }

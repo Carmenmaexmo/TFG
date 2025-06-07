@@ -1,7 +1,24 @@
 <div class="foro-wrapper">
-    <h2 class="foro-titulo">💬 {{ foro?.nombre }}</h2>
-    <p class="foro-descripcion">{{ foro?.descripcion }}</p>
+   <!-- Encabezado del foro con edición -->
+    <div class="foro-header">
+      <!-- Vista normal -->
+      <div *ngIf="!modoEdicionForo">
+        <h2 class="foro-titulo">💬 {{ foro?.nombre }}</h2>
+        <p class="foro-descripcion">{{ foro?.descripcion }}</p>
+        <button *ngIf="puedeEditarForo()" class="btn-edit" (click)="activarEdicionForo()">✏️ Editar foro</button>
+      </div>
 
+      <!-- Modo edición -->
+      <div *ngIf="modoEdicionForo" class="foro-form-editar">
+        <input type="text" [(ngModel)]="foro.nombre" class="form-control" placeholder="Nuevo nombre del foro" />
+        <textarea [(ngModel)]="foro.descripcion" class="form-control" rows="3" placeholder="Nueva descripción del foro"></textarea>
+        <div class="acciones-edicion">
+          <button class="btn btn-success" (click)="guardarForoEditado()">💾 Guardar cambios</button>
+          <button class="btn btn-secondary" (click)="modoEdicionForo = false">❌ Cancelar</button>
+        </div>
+      </div>
+    </div>
+    
     <h3 class="temas-titulo">Temas en discusión</h3>
 
     <button class="btn-crear-tema" (click)="mostrarFormulario = !mostrarFormulario">
@@ -16,7 +33,7 @@
     </div>
 
     <div class="temas-lista">
-        <div *ngFor="let tema of temas" class="tema-card">
+       <div *ngFor="let tema of temasPaginados" class="tema-card">
             <div *ngIf="editarTemaActivoId !== tema.id">
                 <h4>📝 {{ tema.titulo }}</h4>
                 <p>{{ tema.contenido }}</p>
@@ -33,6 +50,11 @@
                 <button class="guardar" (click)="guardarEdicionTema(tema); $event.stopPropagation()">💾 Guardar</button>
                 <button class="cancelar" (click)="cancelarEdicion(); $event.stopPropagation()">❌ Cancelar</button>
             </div>
+        </div>
+        <div class="paginacion" *ngIf="totalPaginas > 1">
+          <button (click)="paginaActual = paginaActual - 1" [disabled]="paginaActual === 1">Anterior</button>
+          <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+          <button (click)="paginaActual = paginaActual + 1" [disabled]="paginaActual === totalPaginas">Siguiente</button>
         </div>
     </div>
 

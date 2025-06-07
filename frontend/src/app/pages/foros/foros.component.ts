@@ -23,6 +23,9 @@ export class ForosComponent implements OnInit {
     mostrarModalBloqueado: boolean = false;
     mostrarModalEliminar = false;
     temaAEliminar: any = null;
+    paginaActual: number = 1;
+    temasPorPagina: number = 6; 
+    modoEdicionForo: boolean = false;
 
     constructor(private api: ApiService, private router: Router, private route: ActivatedRoute) {}
 
@@ -42,8 +45,14 @@ export class ForosComponent implements OnInit {
         error: err => console.error('Error verificando bloqueos:', err)
       });
 
+      // Escuchar cambios en ?q y actualizar lista de temas
       this.route.queryParams.subscribe(params => {
         this.terminoBusqueda = (params['q'] || '').toLowerCase();
+
+        //Si ya tengo los temas cargados, aplicar filtro directamente
+        if (this.temasOriginal.length > 0) {
+          this.temas = this.filtrarTemas(this.temasOriginal, this.terminoBusqueda);
+        }
       });
     }
 
@@ -208,4 +217,51 @@ export class ForosComponent implements OnInit {
     puedeEliminarTema(tema: any): boolean {
         return this.hasRole(['ADMINISTRADOR', 'EMPLEADO']) || this.esCreadorTema(tema);
     }
+
+    get temasPaginados(): any[] {
+    const inicio = (this.paginaActual - 1) * this.temasPorPagina;
+    const fin = inicio + this.temasPorPagina;
+    return this.temas.slice(inicio, fin);
+    }
+
+    get totalPaginas(): number {
+      return Math.ceil(this.temas.length / this.temasPorPagina);
+    }
+
+    puedeEditarForo(): boolean {
+    return this.hasRole(['ADMINISTRADOR', 'EMPLEADO']);
+    }
+
+   activarEdicionForo() {
+  if (this.puedeEditarForo()) {
+    this.modoEdicionForo = true;
+  }
+}
+
+guardarForoEditado() {
+  if (!this.foro.nombre.trim() || !this.foro.descripcion.trim()) {
+    this.modoEdicionForo = false;
+    return;
+  }
+
+  this.api.actualizarForo(this.foro.id, {
+    nombre: this.foro.nombre,
+    descripcion: this.foro.descripcion
+  }).subscribe({
+    next: () => {
+      this.modoEdicionForo = false;
+    },
+    error: err => {
+      console.error('Error actualizando foro:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo actualizar el foro.',
+        confirmButtonColor: '#fcd34d'
+      });
+    }
+  });
+  }
+
+
 }
