@@ -293,6 +293,12 @@
   background-color: #e0b219;
 }
 
+.error-msg {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
 
 
 

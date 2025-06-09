@@ -1,29 +1,24 @@
+// Servicio encargado de la gestión de pedidos, incluyendo validaciones,
+// asociación con usuario, dirección y vinilos, así como lógica de stock.
 package com.example.backend.service.impl;
 
-import com.example.backend.dto.PedidoCreateDTO;
-import com.example.backend.dto.PedidoDTO;
-import com.example.backend.dto.PedidoUpdateDTO;
-import com.example.backend.dto.DetallePedidoCreateDTO;
-import com.example.backend.dto.DetallePedidoUpsertDTO;
+import com.example.backend.dto.*;
 import com.example.backend.model.*;
 import com.example.backend.mapper.PedidoMapper;
 import com.example.backend.repository.*;
 import com.example.backend.service.PedidoService;
-import lombok.RequiredArgsConstructor;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Service
-@RequiredArgsConstructor
+@Service // Define este componente como servicio de Spring
+@RequiredArgsConstructor // Inyección automática de dependencias vía constructor
 public class PedidoServiceImpl implements PedidoService {
 
     private final PedidoRepository pedidoRepository;
@@ -33,13 +28,18 @@ public class PedidoServiceImpl implements PedidoService {
     private final PedidoMapper pedidoMapper;
     private final DetallePedidoRepository detallePedidoRepository;
 
+    // Conjunto de estados válidos que puede tener un pedido
     private static final Set<String> ESTADOS_VALIDOS = Set.of(
         "PENDIENTE", "ENVIADO", "ENTREGADO", "CANCELADO"
     );
 
+    /**
+     * Crea un nuevo pedido, validando datos de usuario, dirección,
+     * estado, fecha, total y vinilos del detalle.
+     */
     @Override
     public PedidoDTO create(PedidoCreateDTO dto) {
-        // 1) Validación del estado
+        // Validación del estado del pedido
         if (dto.getEstado() == null || dto.getEstado().isBlank()) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "El estado del pedido es obligatorio"
@@ -48,12 +48,11 @@ public class PedidoServiceImpl implements PedidoService {
         String estadoNorm = dto.getEstado().trim().toUpperCase();
         if (!ESTADOS_VALIDOS.contains(estadoNorm)) {
             throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Estado inválido. Debe ser uno de " + ESTADOS_VALIDOS
+                HttpStatus.BAD_REQUEST, "Estado inválido. Debe ser uno de " + ESTADOS_VALIDOS
             );
         }
 
-        // 2) Validación de fecha y total
+        // Validación de fecha y total
         if (dto.getFechaPedido() == null) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "La fecha de pedido es obligatoria"
@@ -65,17 +64,14 @@ public class PedidoServiceImpl implements PedidoService {
             );
         }
 
-        // 3) Validación de referencias
+        // Validación de relaciones
         Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
-            .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Usuario no encontrado"
-            ));
-        DireccionEnvio direccion = direccionEnvioRepository.findById(dto.getIdDireccionEnvio())
-            .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Dirección de envío no encontrada"
-            ));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
-        // 4) Crear y guardar cabecera
+        DireccionEnvio direccion = direccionEnvioRepository.findById(dto.getIdDireccionEnvio())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Dirección de envío no encontrada"));
+
+        // Crear y guardar pedido (cabecera)
         Pedido pedido = new Pedido();
         pedido.setUsuario(usuario);
         pedido.setDireccionEnvio(direccion);
@@ -84,19 +80,17 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setTotal(dto.getTotal());
         Pedido pedidoGuardado = pedidoRepository.save(pedido);
 
-        // 5) Crear y guardar detalles
+        // Crear y guardar los detalles del pedido
         List<DetallePedido> detalles = new ArrayList<>();
         for (DetallePedidoCreateDTO item : dto.getDetalles()) {
             if (item.getCantidad() == null || item.getCantidad() < 1) {
                 throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Cada detalle debe tener cantidad ≥ 1"
+                    HttpStatus.BAD_REQUEST, "Cada detalle debe tener cantidad ≥ 1"
                 );
             }
             Vinilo vinilo = viniloRepository.findById(item.getIdVinilo())
                 .orElseThrow(() -> new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Vinilo con id " + item.getIdVinilo() + " no encontrado"
+                    HttpStatus.NOT_FOUND, "Vinilo con id " + item.getIdVinilo() + " no encontrado"
                 ));
 
             DetallePedido det = new DetallePedido();
@@ -107,11 +101,15 @@ public class PedidoServiceImpl implements PedidoService {
             detalles.add(det);
         }
         detallePedidoRepository.saveAll(detalles);
-
         pedidoGuardado.setDetalles(detalles);
+
         return pedidoMapper.toDTO(pedidoGuardado);
     }
 
+    /**
+     * Actualiza datos del pedido, incluyendo estado (con lógica de stock),
+     * fecha, total, usuario, dirección y detalles.
+     */
     @Override
     public PedidoDTO update(Long id, PedidoUpdateDTO dto) {
         Pedido pedido = pedidoRepository.findById(id)
@@ -119,102 +117,88 @@ public class PedidoServiceImpl implements PedidoService {
                 HttpStatus.NOT_FOUND, "Pedido no encontrado"
             ));
 
-        // 1) estado
+        // Actualizar estado y gestionar stock si cambia a ENVIADO o ENTREGADO
         if (dto.getEstado() != null) {
-        String estadoNorm = dto.getEstado().trim().toUpperCase();
-        if (!ESTADOS_VALIDOS.contains(estadoNorm)) {
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Estado inválido. Debe ser uno de " + ESTADOS_VALIDOS
-            );
-        }
+            String estadoNorm = dto.getEstado().trim().toUpperCase();
+            if (!ESTADOS_VALIDOS.contains(estadoNorm)) {
+                throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Estado inválido. Debe ser uno de " + ESTADOS_VALIDOS
+                );
+            }
 
-        // Verificamos si el estado nuevo es ENVIADO o ENTREGADO y el anterior no lo era
-        boolean actualizarStock = 
-            (estadoNorm.equals("ENVIADO") || estadoNorm.equals("ENTREGADO")) &&
-            !(pedido.getEstado().equals("ENVIADO") || pedido.getEstado().equals("ENTREGADO"));
+            boolean actualizarStock = 
+                (estadoNorm.equals("ENVIADO") || estadoNorm.equals("ENTREGADO")) &&
+                !(pedido.getEstado().equals("ENVIADO") || pedido.getEstado().equals("ENTREGADO"));
 
-        pedido.setEstado(estadoNorm);
+            pedido.setEstado(estadoNorm);
 
-        // Restar stock SOLO si cambia a ENVIADO/ENTREGADO
-        if (actualizarStock) {
-            for (DetallePedido detalle : pedido.getDetalles()) {
-                Vinilo vinilo = detalle.getVinilo();
-                int nuevaCantidad = vinilo.getStock() - detalle.getCantidad();
-                vinilo.setStock(Math.max(nuevaCantidad, 0));
-                viniloRepository.save(vinilo);
+            if (actualizarStock) {
+                for (DetallePedido detalle : pedido.getDetalles()) {
+                    Vinilo vinilo = detalle.getVinilo();
+                    int nuevaCantidad = vinilo.getStock() - detalle.getCantidad();
+                    vinilo.setStock(Math.max(nuevaCantidad, 0)); // Evita stock negativo
+                    viniloRepository.save(vinilo);
+                }
             }
         }
-        }
 
-        // 2) fechaPedido
+        // Actualizar fecha
         if (dto.getFechaPedido() != null) {
             pedido.setFechaPedido(dto.getFechaPedido());
         }
 
-        // 3) total
+        // Actualizar total
         if (dto.getTotal() != null) {
             if (dto.getTotal() <= 0) {
-                throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "El total debe ser un número mayor que 0"
-                );
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El total debe ser mayor que 0");
             }
             pedido.setTotal(dto.getTotal());
         }
 
-        // 4) usuario (relación)
-        if (dto.getIdUsuario() != null
-            && !dto.getIdUsuario().equals(pedido.getUsuario().getIdUsuario())) {
+        // Actualizar usuario (si se cambia)
+        if (dto.getIdUsuario() != null &&
+            !dto.getIdUsuario().equals(pedido.getUsuario().getIdUsuario())) {
             Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
-                .orElseThrow(() -> new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Usuario no encontrado"
-                ));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
             pedido.setUsuario(usuario);
         }
 
-        // 5) dirección de envío (relación)
-        if (dto.getIdDireccionEnvio() != null
-            && !dto.getIdDireccionEnvio().equals(pedido.getDireccionEnvio().getId())) {
+        // Actualizar dirección de envío
+        if (dto.getIdDireccionEnvio() != null &&
+            !dto.getIdDireccionEnvio().equals(pedido.getDireccionEnvio().getId())) {
             DireccionEnvio direccion = direccionEnvioRepository.findById(dto.getIdDireccionEnvio())
-                .orElseThrow(() -> new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Dirección de envío no encontrada"
-                ));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Dirección de envío no encontrada"));
             pedido.setDireccionEnvio(direccion);
         }
 
-        // 6) detalles sólo si vienen
+        // Actualizar detalles (si vienen)
         if (dto.getDetalles() != null) {
             Map<Long, DetallePedido> existentes = pedido.getDetalles().stream()
                 .collect(Collectors.toMap(DetallePedido::getId, Function.identity()));
-            List<DetallePedido> fusionados = new ArrayList<>();
 
+            List<DetallePedido> fusionados = new ArrayList<>();
             for (DetallePedidoUpsertDTO d : dto.getDetalles()) {
                 if (d.getId() != null && existentes.containsKey(d.getId())) {
+                    // Actualizar cantidad de detalle existente
                     DetallePedido vieja = existentes.get(d.getId());
                     if (d.getCantidad() < 1) {
-                        throw new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST,
-                            "Cantidad de detalle debe ser ≥ 1"
-                        );
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Cantidad de detalle debe ser ≥ 1");
                     }
                     vieja.setCantidad(d.getCantidad());
                     fusionados.add(vieja);
                 } else {
+                    // Crear nuevo detalle
                     Vinilo vinilo = viniloRepository.findById(d.getIdVinilo())
                         .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.NOT_FOUND,
-                            "Vinilo con id " + d.getIdVinilo() + " no encontrado"
-                        ));
+                            HttpStatus.NOT_FOUND, "Vinilo con id " + d.getIdVinilo() + " no encontrado"));
+                    if (d.getCantidad() < 1) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "Cantidad de detalle debe ser ≥ 1");
+                    }
                     DetallePedido nueva = new DetallePedido();
                     nueva.setPedido(pedido);
                     nueva.setVinilo(vinilo);
-                    if (d.getCantidad() < 1) {
-                        throw new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST,
-                            "Cantidad de detalle debe ser ≥ 1"
-                        );
-                    }
                     nueva.setCantidad(d.getCantidad());
                     fusionados.add(nueva);
                 }
@@ -224,21 +208,25 @@ public class PedidoServiceImpl implements PedidoService {
             detallePedidoRepository.saveAll(fusionados);
         }
 
-        // 7) guardar cambios en la cabecera
+        // Guardar cabecera
         pedidoRepository.save(pedido);
         return pedidoMapper.toDTO(pedido);
     }
 
+    /**
+     * Elimina un pedido si existe.
+     */
     @Override
     public void delete(Long id) {
         if (!pedidoRepository.existsById(id)) {
-            throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Pedido no existe"
-            );
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido no existe");
         }
         pedidoRepository.deleteById(id);
     }
 
+    /**
+     * Devuelve todos los pedidos existentes.
+     */
     @Override
     public List<PedidoDTO> findAll() {
         return pedidoRepository.findAll().stream()
@@ -246,6 +234,9 @@ public class PedidoServiceImpl implements PedidoService {
                 .toList();
     }
 
+    /**
+     * Busca un pedido por su ID.
+     */
     @Override
     public PedidoDTO findById(Long id) {
         Pedido p = pedidoRepository.findById(id)
@@ -255,15 +246,17 @@ public class PedidoServiceImpl implements PedidoService {
         return pedidoMapper.toDTO(p);
     }
 
-
+    /**
+     * Devuelve todos los pedidos realizados por un usuario.
+     */
     @Override
     public List<PedidoDTO> findByUsuario(Long idUsuario) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Usuario no encontrado"));
     
         return pedidoRepository.findByUsuario(usuario).stream()
             .map(pedidoMapper::toDTO)
             .collect(Collectors.toList());
-    }    
-    
+    }
 }

@@ -105,7 +105,7 @@
               <p class="sub">{{ p.artista }} · {{ p.genero }}</p>
               <p class="precio">{{ p.precio |  number:'1.2-2'}} €</p>
               <!-- Mostrar botón solo si hay stock -->
-              <button *ngIf="p.stock > 0" class="btn-aniadir" (click)="aniadirAlCarrito(p)">
+              <button *ngIf="p.stock > 0" class="btn-aniadir" (click)="aniadirAlCarrito(p); $event.stopPropagation()">
                 <i class="bi bi-cart3"></i> Añadir
               </button>
               <!-- Mostrar mensaje si no hay stock -->

@@ -2,16 +2,42 @@ package com.example.backend.dto;
 
 import lombok.*;
 
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+/**
+ * DTO para la actualización de los datos de un usuario.
+ * Permite modificar tanto información personal como de autenticación,
+ * rol y carrito del usuario.
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UsuarioUpdateDTO {
-    private String nombreUsuario; 
-    private String nombre;      
-    private String apellidos;     
-    private String email;         
-    private String password;    
-    private String telefono;     
-    private String dni;           
-    private String rol;      
-    private String carrito;    
+
+    /** Nombre de usuario (puede ser modificado si se permite) */
+    private String nombreUsuario;
+
+    /** Nombre real del usuario */
+    private String nombre;
+
+    /** Apellidos del usuario */
+    private String apellidos;
+
+    /** Correo electrónico del usuario */
+    private String email;
+
+    /** Nueva contraseña del usuario (si aplica) */
+    private String password;
+
+    /** Teléfono de contacto del usuario */
+    private String telefono;
+
+    /** Documento nacional de identidad */
+    private String dni;
+
+    /** Rol actualizado del usuario (CLIENTE, ADMINISTRADOR, etc.) */
+    private String rol;
+
+    /** Carrito representado como JSON (productos en el carrito) */
+    private String carrito;
 }

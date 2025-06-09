@@ -89,12 +89,11 @@
       </div>
     </div>
   </section>
-
-  <button 
+    <button 
     class="btn-pagar-final"
-    [disabled]="!direccionSeleccionada || !metodoPago || (metodoPago === 'tarjeta' && (!datosTarjetaCompletos() || !esNombreTitularValido()))"
+    [disabled]="!puedeConfirmarPago"
     (click)="confirmarPago()"
   >
-   Confirmar Pago
+    Confirmar Pago
   </button>
 </div>

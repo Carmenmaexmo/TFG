@@ -1,4 +1,4 @@
-// src/main/java/com/example/backend/service/impl/EventoServiceImpl.java
+// Implementación del servicio de eventos, con validaciones estrictas y control de lógica de negocio.
 package com.example.backend.service.impl;
 
 import com.example.backend.dto.EventoCreateDTO;
@@ -8,6 +8,7 @@ import com.example.backend.model.Evento;
 import com.example.backend.mapper.EventoMapper;
 import com.example.backend.repository.EventoRepository;
 import com.example.backend.service.EventoService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -16,13 +17,16 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
+@Service // Marca esta clase como un servicio gestionado por Spring
+@RequiredArgsConstructor // Lombok genera el constructor con todos los campos final
 public class EventoServiceImpl implements EventoService {
 
     private final EventoRepository eventoRepository;
     private final EventoMapper eventoMapper;
 
+    /**
+     * Devuelve todos los eventos disponibles en la base de datos.
+     */
     @Override
     public List<EventoDTO> findAll() {
         return eventoRepository.findAll()
@@ -31,6 +35,9 @@ public class EventoServiceImpl implements EventoService {
                 .toList();
     }
 
+    /**
+     * Busca un evento por su ID. Lanza 404 si no se encuentra.
+     */
     @Override
     public EventoDTO findById(Long id) {
         Evento ev = eventoRepository.findById(id)
@@ -40,16 +47,19 @@ public class EventoServiceImpl implements EventoService {
         return eventoMapper.toDTO(ev);
     }
 
+    /**
+     * Crea un nuevo evento validando título, fechas, lugar y unicidad.
+     */
     @Override
     public EventoDTO create(EventoCreateDTO dto) {
-        // 1) Validar título
+        // Validación del título
         if (dto.getTitulo() == null || dto.getTitulo().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                 "El título es obligatorio");
         }
         String titulo = dto.getTitulo().trim();
 
-        // 2) Validar fechas
+        // Validación de fechas
         LocalDateTime inicio = dto.getFechaInicio();
         LocalDateTime fin    = dto.getFecha_fin();
         if (inicio == null) {
@@ -69,20 +79,20 @@ public class EventoServiceImpl implements EventoService {
                 "La fecha de fin debe ser posterior a la de inicio");
         }
 
-        // 3) Validar lugar
+        // Validación del lugar
         if (dto.getLugar() == null || dto.getLugar().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                 "El lugar es obligatorio");
         }
         String lugar = dto.getLugar().trim();
 
-        // 4) Unicidad: mismo título y hora de inicio
+        // Comprobación de unicidad: mismo título y misma hora
         if (eventoRepository.existsByTituloAndFechaInicio(titulo, inicio)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                 "Ya existe un evento con ese título a esa hora de inicio");
         }
 
-        // 5) Persistir
+        // Persistencia del evento
         Evento ev = eventoMapper.fromCreateDTO(dto);
         ev.setFechaInicio(inicio);
         ev.setFecha_fin(fin);
@@ -91,6 +101,9 @@ public class EventoServiceImpl implements EventoService {
         return eventoMapper.toDTO(eventoRepository.save(ev));
     }
 
+    /**
+     * Actualiza un evento existente de forma parcial, con validaciones consistentes.
+     */
     @Override
     public EventoDTO update(Long id, EventoUpdateDTO dto) {
         Evento ev = eventoRepository.findById(id)
@@ -98,13 +111,14 @@ public class EventoServiceImpl implements EventoService {
                 HttpStatus.NOT_FOUND, "Evento no encontrado"
             ));
 
-        // Título (si viene)
+        // Actualizar título si viene
         if (dto.getTitulo() != null) {
             String t = dto.getTitulo().trim();
             if (t.isBlank()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "El título no puede estar vacío");
             }
+            // Comprobar si otro evento ya tiene ese título en esa fecha
             if (!t.equals(ev.getTitulo())
                 && eventoRepository.existsByTituloAndFechaInicio(t, ev.getFechaInicio())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -113,12 +127,12 @@ public class EventoServiceImpl implements EventoService {
             ev.setTitulo(t);
         }
 
-        // Descripción
+        // Actualizar descripción
         if (dto.getDescripcion() != null) {
             ev.setDescripcion(dto.getDescripcion().trim());
         }
 
-        // Fecha de inicio
+        // Actualizar fecha de inicio
         if (dto.getFechaInicio() != null) {
             LocalDateTime ni = dto.getFechaInicio();
             if (ni.isBefore(LocalDateTime.now())) {
@@ -128,7 +142,7 @@ public class EventoServiceImpl implements EventoService {
             ev.setFechaInicio(ni);
         }
 
-        // Fecha de fin
+        // Actualizar fecha de fin
         if (dto.getFecha_fin() != null) {
             LocalDateTime nf = dto.getFecha_fin();
             LocalDateTime actualInicio = ev.getFechaInicio();
@@ -139,7 +153,7 @@ public class EventoServiceImpl implements EventoService {
             ev.setFecha_fin(nf);
         }
 
-        // Lugar
+        // Actualizar lugar
         if (dto.getLugar() != null) {
             String l = dto.getLugar().trim();
             if (l.isBlank()) {
@@ -149,9 +163,13 @@ public class EventoServiceImpl implements EventoService {
             ev.setLugar(l);
         }
 
+        // Guardar los cambios
         return eventoMapper.toDTO(eventoRepository.save(ev));
     }
 
+    /**
+     * Elimina un evento por ID si existe, lanza 404 en caso contrario.
+     */
     @Override
     public void delete(Long id) {
         if (!eventoRepository.existsById(id)) {

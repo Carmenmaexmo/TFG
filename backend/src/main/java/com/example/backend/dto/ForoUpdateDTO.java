@@ -1,10 +1,17 @@
-// src/main/java/com/example/backend/dto/ForoUpdateDTO.java
 package com.example.backend.dto;
 
 import lombok.Data;
 
+/**
+ * DTO para la actualización de un foro existente.
+ * Permite modificar el nombre y la descripción del foro.
+ */
 @Data
 public class ForoUpdateDTO {
-    private String nombre;   
-    private String descripcion; 
+
+    /** Nuevo nombre del foro */
+    private String nombre;
+
+    /** Nueva descripción del foro */
+    private String descripcion;
 }

@@ -25,10 +25,22 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
-            throws ServletException, IOException {
-                System.out.println("🔥 AuthTokenFilter ACTIVADO para " + req.getMethod() + " " + req.getRequestURI());
+    protected void doFilterInternal(HttpServletRequest req,
+                                    HttpServletResponse res,
+                                    FilterChain chain) throws ServletException, IOException {
+        String path = req.getRequestURI();
+        System.out.println("Petición interceptada: " + path);
 
+        // Evita que Swagger pase por el filtro
+       if (path.startsWith("/v3/api-docs") ||
+            path.startsWith("/swagger-ui") ||
+            path.startsWith("/swagger-resources") ||
+            path.startsWith("/webjars") ||
+            path.equals("/swagger-ui.html") ||
+            path.equals("/error")) {
+            chain.doFilter(req, res);
+            return;
+        }
 
         String header = req.getHeader("Authorization");
 
@@ -44,17 +56,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                         .toList();
 
                 var userDetails = userDetailsService.loadUserByUsername(username);
-                // Esta línea es innecesaria si no usas userDetails por ID:
 
-                var auth = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+                var auth = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, authorities);
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
-                
 
-                System.out.println("Token recibido: " + token);
-                System.out.println("Usuario autenticado: " + username);
-                System.out.println("Authorities: " + auth.getAuthorities());
-
-    
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }

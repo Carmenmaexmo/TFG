@@ -12,37 +12,57 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./tema-detalle.component.css']
 })
 export class TemaDetalleComponent implements OnInit, OnDestroy {
+  // Lista de comentarios organizados jerárquicamente
   comentariosJerarquicos: any[] = [];
+
+  // ID del tema actual
   temaId: number = 0;
+
+  // Contenido del nuevo comentario a enviar
   nuevoComentario: string = '';
+
+  // ID del comentario al que se está respondiendo, si aplica
   comentarioPadreId: number | null = null;
+
+  // Variables para el menú contextual de acciones
   contextMenuVisible: boolean = false;
   contextMenuX: number = 0;
   contextMenuY: number = 0;
   comentarioContextual: any = null;
+
+  // Nombre del usuario al que se responde, para mostrar en UI
   respuestaAUsuario: string = '';
+
+  // ID del usuario actual (extraído del localStorage)
   idUsuarioActual: number = Number(localStorage.getItem('idUsuario'));
+
+  // ID del comentario que se está editando y su nuevo contenido
   comentarioEditandoId: number | null = null;
   comentarioEditadoTexto: string = '';
+
+  // Término de búsqueda para filtrar comentarios
   terminoBusqueda: string = '';
 
   constructor(private route: ActivatedRoute, private api: ApiService, private router: Router) {}
- 
+
+  // Carga inicial del componente
   ngOnInit(): void {
     this.temaId = Number(this.route.snapshot.paramMap.get('id'));
-
     this.route.queryParams.subscribe(params => {
       this.terminoBusqueda = (params['q'] || '').toLowerCase();
       this.cargarComentarios();
     });
 
+    // Escuchar clics globales para cerrar el menú contextual
     document.addEventListener('click', () => this.cerrarContextMenu());
   }
 
+  // Eliminación de listeners para evitar fugas de memoria
   ngOnDestroy(): void {
     document.removeEventListener('click', () => this.cerrarContextMenu());
   }
 
+  // Cargar los comentarios del tema desde la API y procesarlos
   cargarComentarios(): void {
     this.api.getComentarios(this.temaId).subscribe({
       next: (res) => {
@@ -54,6 +74,7 @@ export class TemaDetalleComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Construir jerarquía padre-hijo a partir de los comentarios planos
   construirJerarquia(comentarios: any[]): any[] {
     const mapa = new Map<number, any>();
     comentarios.forEach(c => mapa.set(c.id, { ...c, respuestas: [], mostrarRespuestas: false }));
@@ -71,6 +92,7 @@ export class TemaDetalleComponent implements OnInit, OnDestroy {
     return jerarquia;
   }
 
+  // Añadir propiedad de colapso por defecto a cada comentario
   marcarColapsos(lista: any[]): any[] {
     return lista.map(c => ({
       ...c,
@@ -79,14 +101,17 @@ export class TemaDetalleComponent implements OnInit, OnDestroy {
     }));
   }
 
+  // Alternar visibilidad de respuestas de un comentario
   toggleRespuestas(comentario: any) {
     comentario.mostrarRespuestas = !comentario.mostrarRespuestas;
   }
 
+  // Redirigir a la vista general del foro
   volverAForo() {
     this.router.navigate(['/foros']);
   }
 
+  // Enviar un nuevo comentario (respuesta o raíz)
   enviarComentario() {
     if (!this.nuevoComentario.trim()) return;
     const comentario = {
@@ -107,6 +132,7 @@ export class TemaDetalleComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Desplazar vista hacia el formulario de comentarios
   scrollAlFormulario() {
     setTimeout(() => {
       const el = document.getElementById('formulario-comentario');
@@ -114,12 +140,12 @@ export class TemaDetalleComponent implements OnInit, OnDestroy {
     }, 50);
   }
 
+  // Preparar estado para responder a un comentario concreto
   responderComentario() {
     this.comentarioPadreId = this.comentarioContextual?.id;
     this.respuestaAUsuario = this.comentarioContextual?.usuario?.nombreUsuario || 'Usuario';
     this.cerrarContextMenu();
 
-    // ⚠ NUEVO: scroll al textarea al fondo
     setTimeout(() => {
       const textarea = document.getElementById('nuevo-comentario-textarea');
       if (textarea) {
@@ -129,11 +155,13 @@ export class TemaDetalleComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
+  // Cancelar el modo respuesta
   cancelarRespuesta() {
     this.comentarioPadreId = null;
     this.respuestaAUsuario = '';
   }
 
+  // Mostrar menú contextual en clic derecho sobre comentario
   onRightClick(event: MouseEvent, comentario: any) {
     event.stopPropagation();
     event.preventDefault();
@@ -143,11 +171,13 @@ export class TemaDetalleComponent implements OnInit, OnDestroy {
     this.comentarioContextual = comentario;
   }
 
+  // Ocultar menú contextual
   cerrarContextMenu() {
     this.contextMenuVisible = false;
     this.comentarioContextual = null;
   }
 
+  // Borrar el comentario seleccionado en el menú contextual
   borrarComentario() {
     if (!this.comentarioContextual?.id) return;
     this.api.BorrarComentario(this.comentarioContextual.id).subscribe({
@@ -159,6 +189,7 @@ export class TemaDetalleComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Preparar comentario para su edición
   editarComentario() {
     if (this.comentarioContextual?.usuario?.idUsuario !== this.idUsuarioActual && !this.hasRole(['ADMINISTRADOR', 'EMPLEADO'])) return;
     this.comentarioEditandoId = this.comentarioContextual.id;
@@ -166,12 +197,12 @@ export class TemaDetalleComponent implements OnInit, OnDestroy {
     this.cerrarContextMenu();
   }
 
+  // Guardar cambios al editar un comentario
   guardarEdicionComentario() {
     const id = this.comentarioEditandoId;
     const contenido = this.comentarioEditadoTexto.trim();
     if (!id || !contenido) return;
-    const datos = { contenido };
-    this.api.EditarComentario(id, datos).subscribe({
+    this.api.EditarComentario(id, { contenido }).subscribe({
       next: () => {
         this.comentarioEditandoId = null;
         this.comentarioEditadoTexto = '';
@@ -181,6 +212,7 @@ export class TemaDetalleComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Verificar si el usuario actual tiene uno de los roles indicados
   hasRole(rolesPermitidos: string[]): boolean {
     const rolesStr = localStorage.getItem('roles');
     const roles = rolesStr ? JSON.parse(rolesStr) : [];
@@ -190,10 +222,12 @@ export class TemaDetalleComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Validar si un comentario puede ser editado por el usuario actual
   puedeEditarComentario(comentario: any): boolean {
     return comentario?.usuario?.idUsuario === this.idUsuarioActual || this.hasRole(['ADMINISTRADOR', 'EMPLEADO']);
   }
 
+  // Desplazar vista hacia la parte inferior
   scrollAbajo() {
     setTimeout(() => {
       const el = document.getElementById('scroll-final');
@@ -201,19 +235,22 @@ export class TemaDetalleComponent implements OnInit, OnDestroy {
     }, 50);
   }
 
+  // Cancelar edición de comentario
   cancelarEdicion() {
     this.comentarioEditandoId = null;
     this.comentarioEditadoTexto = '';
     this.cargarComentarios();
   }
 
+  // Validar si un comentario puede ser borrado por el usuario actual
   puedeBorrarComentario(comentario: any): boolean {
-  return (
-    comentario?.usuario?.idUsuario === this.idUsuarioActual ||
-    this.hasRole(['ADMINISTRADOR', 'EMPLEADO', 'MODERADOR'])
-  );
+    return (
+      comentario?.usuario?.idUsuario === this.idUsuarioActual ||
+      this.hasRole(['ADMINISTRADOR', 'EMPLEADO', 'MODERADOR'])
+    );
   }
 
+  // Filtro recursivo de comentarios y sus respuestas por término de búsqueda
   filtrarComentariosRecursivo(comentarios: any[], termino: string): any[] {
     if (!termino.trim()) return comentarios;
 

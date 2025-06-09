@@ -13,10 +13,13 @@ import Swal from 'sweetalert2';
     styleUrls: ['./foros.component.css']
 })
 export class ForosComponent implements OnInit {
+    // Datos del foro y lista de temas
     foro: any = null;
     temas: any[] = [];
-    mostrarFormulario: boolean = false;
     temasOriginal: any[] = [];
+
+    // Estados del componente
+    mostrarFormulario: boolean = false;
     terminoBusqueda: string = '';
     editarTemaActivoId: number | null = null;
     bloqueoUsuario: any = null;
@@ -24,57 +27,60 @@ export class ForosComponent implements OnInit {
     mostrarModalEliminar = false;
     temaAEliminar: any = null;
     paginaActual: number = 1;
-    temasPorPagina: number = 6; 
+    temasPorPagina: number = 6;
     modoEdicionForo: boolean = false;
 
     constructor(private api: ApiService, private router: Router, private route: ActivatedRoute) {}
 
     ngOnInit(): void {
-      const idUsuario = Number(localStorage.getItem('idUsuario'));
+        // Obtener ID de usuario desde el localStorage
+        const idUsuario = Number(localStorage.getItem('idUsuario'));
 
-      this.api.getBloqueosForo().subscribe({
-        next: bloqueos => {
-          const bloqueo = bloqueos.find((b: any) => b.usuario?.idUsuario === idUsuario);
-          if (bloqueo) {
-            this.bloqueoUsuario = bloqueo;
-            this.mostrarModalBloqueado = true;
-          } else {
-            this.cargarForoYTemas();
-          }
-        },
-        error: err => console.error('Error verificando bloqueos:', err)
-      });
+        // Comprobar si el usuario está bloqueado del foro
+        this.api.getBloqueosForo().subscribe({
+            next: bloqueos => {
+                const bloqueo = bloqueos.find((b: any) => b.usuario?.idUsuario === idUsuario);
+                if (bloqueo) {
+                    this.bloqueoUsuario = bloqueo;
+                    this.mostrarModalBloqueado = true;
+                } else {
+                    this.cargarForoYTemas();
+                }
+            },
+            error: err => console.error('Error verificando bloqueos:', err)
+        });
 
-      // Escuchar cambios en ?q y actualizar lista de temas
-      this.route.queryParams.subscribe(params => {
-        this.terminoBusqueda = (params['q'] || '').toLowerCase();
-
-        //Si ya tengo los temas cargados, aplicar filtro directamente
-        if (this.temasOriginal.length > 0) {
-          this.temas = this.filtrarTemas(this.temasOriginal, this.terminoBusqueda);
-        }
-      });
+        // Escuchar cambios en los parámetros de búsqueda (?q)
+        this.route.queryParams.subscribe(params => {
+            this.terminoBusqueda = (params['q'] || '').toLowerCase();
+            if (this.temasOriginal.length > 0) {
+                this.temas = this.filtrarTemas(this.temasOriginal, this.terminoBusqueda);
+            }
+        });
     }
 
+    // Navegar al inicio
     volverAlInicio() {
-      this.router.navigate(['/']);
+        this.router.navigate(['/']);
     }
 
+    // Ir a los comentarios de un tema específico
     verComentarios(idTema: number) {
         this.router.navigate(['/temas', idTema]);
     }
 
+    // Modelo de datos para la creación de un nuevo tema
     nuevoTema = {
         titulo: '',
         contenido: ''
     };
 
+    // Crear un nuevo tema en el foro
     crearTema() {
         const foroId = this.foro?.id;
         const idUsuario = Number(localStorage.getItem('idUsuario'));
 
         if (!foroId || !this.nuevoTema.titulo.trim() || !this.nuevoTema.contenido.trim()) {
-            alert('Completa todos los campos');
             return;
         }
 
@@ -95,6 +101,7 @@ export class ForosComponent implements OnInit {
         });
     }
 
+    // Cargar el foro y sus temas asociados
     cargarForoYTemas() {
         this.api.getForo().subscribe({
             next: (res) => {
@@ -102,7 +109,6 @@ export class ForosComponent implements OnInit {
                 if (this.foro?.id) {
                     this.api.getTemas(this.foro.id).subscribe({
                         next: temas => {
-                            console.log('Temas cargados:', temas);
                             this.temasOriginal = temas;
                             this.temas = this.filtrarTemas(this.temasOriginal, this.terminoBusqueda);
                         },
@@ -114,6 +120,7 @@ export class ForosComponent implements OnInit {
         });
     }
 
+    // Filtrar lista de temas por término de búsqueda
     filtrarTemas(lista: any[], termino: string): any[] {
         if (!termino) return lista;
         return lista.filter(t =>
@@ -122,80 +129,69 @@ export class ForosComponent implements OnInit {
         );
     }
 
+    // Activar modo edición para un tema
     activarEdicionTema(id: number) {
         this.editarTemaActivoId = id;
     }
 
+    // Guardar cambios en un tema editado
     guardarEdicionTema(tema: any) {
         if (!tema.titulo.trim() || !tema.contenido.trim()) {
-            alert('Los campos no pueden estar vacíos.');
             return;
         }
         this.api.actualizarTema(tema.id, tema).subscribe({
             next: actualizado => {
                 Object.assign(tema, actualizado);
                 this.editarTemaActivoId = null;
-                alert('Tema actualizado.');
             },
             error: err => console.error('Error al actualizar tema:', err)
         });
     }
 
+    // Cancelar edición del tema
     cancelarEdicion() {
         this.editarTemaActivoId = null;
     }
 
+    // Mostrar modal de confirmación para eliminar tema
     abrirModalEliminar(tema: any) {
         this.temaAEliminar = tema;
         this.mostrarModalEliminar = true;
     }
 
-    confirmarEliminar() {
-      if (this.temaAEliminar) {
-        this.api.eliminarTema(this.temaAEliminar.id).subscribe({
-          next: () => {
-            this.temas = this.temas.filter(t => t.id !== this.temaAEliminar.id);
-            this.cerrarModalEliminar();
-          },
-          error: err => {
-          this.cerrarModalEliminar();
+    // Confirmar eliminación del tema
+   confirmarEliminar() {
+    if (!this.temaAEliminar) return;
 
-          console.error('Error al eliminar tema:', err);
+    this.api.eliminarTema(this.temaAEliminar.id).subscribe({
+      next: () => {
+        this.temas = this.temas.filter(t => t.id !== this.temaAEliminar.id);
+        this.cerrarModalEliminar();
+      },
+      error: err => {
+        this.cerrarModalEliminar();
 
-          const mensaje = err.error?.message?.toLowerCase?.() || '';
-          
-          if (
-            (err.status === 401 || err.status === 403 || err.status === 409) &&
-            (mensaje.includes('comentarios') || mensaje === '' || typeof err.error === 'string')
-          ) {
-          Swal.fire({
-            icon: 'error',
-            title: '<span style="font-family:\'Segoe UI\', \'Roboto\', sans-serif; font-weight:600;">No se puede eliminar</span>',
-            html: '<p style="font-family:\'Segoe UI\', \'Roboto\', sans-serif;">Este tema tiene comentarios y no puede ser eliminado.</p>',
-            confirmButtonColor: '#fcd34d',
-            customClass: {
-              popup: 'rounded-3xl shadow-lg',
-              confirmButton: 'text-black font-medium px-4 py-2'
-            }
-          });
-          } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error inesperado',
-              text: 'Ocurrió un error al intentar eliminar el tema.',
-              confirmButtonColor: '#fcd34d'
-            });
+        Swal.fire({
+          icon: 'error',
+          title: 'No se puede eliminar',
+          html: 'Este tema tiene comentarios y no puede ser eliminado.',
+          confirmButtonColor: '#fcd34d',
+          customClass: {
+            popup: 'rounded-3xl shadow-lg',
+            confirmButton: 'text-black font-medium px-4 py-2'
           }
-        }
         });
       }
-    }
+    });
+  }
 
+    // Cierra el modal de eliminación
     cerrarModalEliminar() {
         this.temaAEliminar = null;
         this.mostrarModalEliminar = false;
     }
 
+    // Comprueba si el usuario tiene alguno de los roles permitidos
     hasRole(rolesPermitidos: string[]): boolean {
         const rolesStr = localStorage.getItem('roles');
         const roles = rolesStr ? JSON.parse(rolesStr) : [];
@@ -205,63 +201,69 @@ export class ForosComponent implements OnInit {
         });
     }
 
+    // Verifica si el usuario actual es el creador del tema
     esCreadorTema(tema: any): boolean {
         const idUsuario = Number(localStorage.getItem('idUsuario'));
         return tema.usuario?.idUsuario === idUsuario;
     }
 
+    // Verifica si el usuario puede editar un tema
     puedeEditarTema(tema: any): boolean {
         return this.hasRole(['ADMINISTRADOR', 'EMPLEADO']) || this.esCreadorTema(tema);
     }
 
+    // Verifica si el usuario puede eliminar un tema
     puedeEliminarTema(tema: any): boolean {
         return this.hasRole(['ADMINISTRADOR', 'EMPLEADO']) || this.esCreadorTema(tema);
     }
 
+    // Devuelve los temas visibles en la página actual
     get temasPaginados(): any[] {
-    const inicio = (this.paginaActual - 1) * this.temasPorPagina;
-    const fin = inicio + this.temasPorPagina;
-    return this.temas.slice(inicio, fin);
+        const inicio = (this.paginaActual - 1) * this.temasPorPagina;
+        const fin = inicio + this.temasPorPagina;
+        return this.temas.slice(inicio, fin);
     }
 
+    // Calcula el número total de páginas de temas
     get totalPaginas(): number {
-      return Math.ceil(this.temas.length / this.temasPorPagina);
+        return Math.ceil(this.temas.length / this.temasPorPagina);
     }
 
+    // Verifica si el usuario puede editar los datos del foro
     puedeEditarForo(): boolean {
-    return this.hasRole(['ADMINISTRADOR', 'EMPLEADO']);
+        return this.hasRole(['ADMINISTRADOR', 'EMPLEADO']);
     }
 
-   activarEdicionForo() {
-  if (this.puedeEditarForo()) {
-    this.modoEdicionForo = true;
-  }
-}
-
-guardarForoEditado() {
-  if (!this.foro.nombre.trim() || !this.foro.descripcion.trim()) {
-    this.modoEdicionForo = false;
-    return;
-  }
-
-  this.api.actualizarForo(this.foro.id, {
-    nombre: this.foro.nombre,
-    descripcion: this.foro.descripcion
-  }).subscribe({
-    next: () => {
-      this.modoEdicionForo = false;
-    },
-    error: err => {
-      console.error('Error actualizando foro:', err);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'No se pudo actualizar el foro.',
-        confirmButtonColor: '#fcd34d'
-      });
+    // Activa el modo edición del foro si el usuario tiene permiso
+    activarEdicionForo() {
+        if (this.puedeEditarForo()) {
+            this.modoEdicionForo = true;
+        }
     }
-  });
-  }
 
+    // Guarda los cambios realizados en los datos del foro
+    guardarForoEditado() {
+        if (!this.foro.nombre.trim() || !this.foro.descripcion.trim()) {
+            this.modoEdicionForo = false;
+            return;
+        }
 
+        this.api.actualizarForo(this.foro.id, {
+            nombre: this.foro.nombre,
+            descripcion: this.foro.descripcion
+        }).subscribe({
+            next: () => {
+                this.modoEdicionForo = false;
+            },
+            error: err => {
+                console.error('Error actualizando foro:', err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo actualizar el foro.',
+                    confirmButtonColor: '#fcd34d'
+                });
+            }
+        });
+    }
 }

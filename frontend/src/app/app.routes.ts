@@ -8,7 +8,7 @@ export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent) },
   { path: 'registro', loadComponent: () => import('./pages/registro/registro.component').then(m => m.RegistroComponent) },
   { path: 'catalogo', loadComponent: () => import('./pages/catalogo/catalogo.component').then(m => m.CatalogoComponent) },
-  { path: 'vinilo/:id', loadComponent: () => import('./pages/vinilo-detalle/vinilo-detalle.component').then(m => m.ViniloDetalleComponent), canActivate: [AuthGuard] },
+  { path: 'vinilo/:id', loadComponent: () => import('./pages/vinilo-detalle/vinilo-detalle.component').then(m => m.ViniloDetalleComponent)},
   { path: 'perfil', loadComponent: () => import('./pages/perfil/perfil.component').then(m => m.PerfilComponent), canActivate: [AuthGuard] },
   { path: 'pedidos', loadComponent: () => import('./pages/pedidos/pedidos.component').then(m => m.PedidosComponent), canActivate: [AuthGuard] },
   { path: 'eventos', loadComponent: () => import('./pages/eventos/eventos.component').then(m => m.EventosComponent), canActivate: [AuthGuard] },

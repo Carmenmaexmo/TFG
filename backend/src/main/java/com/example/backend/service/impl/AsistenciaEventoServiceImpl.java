@@ -1,4 +1,4 @@
-// src/main/java/com/example/backend/service/impl/AsistenciaEventoServiceImpl.java
+// Implementación del servicio de gestión de asistencias a eventos.
 package com.example.backend.service.impl;
 
 import com.example.backend.dto.AsistenciaEventoCreateDTO;
@@ -21,16 +21,26 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-@Service
-@Transactional // ← Para que funcione la transacción los metodos publicos
-@RequiredArgsConstructor
+@Service // Marca esta clase como componente de servicio para Spring.
+@Transactional // Asegura que los métodos públicos se ejecuten dentro de una transacción.
+@RequiredArgsConstructor // Genera constructor con todos los campos final (inyección automática).
 public class AsistenciaEventoServiceImpl implements AsistenciaEventoService {
 
+    // Repositorio de asistencias a eventos
     private final AsistenciaEventoRepository asistenciaRepo;
+
+    // Repositorio de usuarios
     private final UsuarioRepository usuarioRepo;
+
+    // Repositorio de eventos
     private final EventoRepository eventoRepo;
+
+    // Mapper para convertir entre entidades y DTOs
     private final AsistenciaEventoMapper asistenciaMapper;
 
+    /**
+     * Obtiene todas las asistencias registradas en la base de datos.
+     */
     @Override
     public List<AsistenciaEventoDTO> findAll() {
         return asistenciaRepo.findAll()
@@ -39,6 +49,9 @@ public class AsistenciaEventoServiceImpl implements AsistenciaEventoService {
             .toList();
     }
 
+    /**
+     * Busca una asistencia por su ID. Lanza 404 si no existe.
+     */
     @Override
     public AsistenciaEventoDTO findById(Long id) {
         AsistenciaEvento ae = asistenciaRepo.findById(id)
@@ -48,27 +61,35 @@ public class AsistenciaEventoServiceImpl implements AsistenciaEventoService {
         return asistenciaMapper.toDTO(ae);
     }
 
+    /**
+     * Devuelve todas las asistencias asociadas a un evento específico.
+     */
     @Override
     public List<AsistenciaEventoDTO> findByEvento(Long idEvento) {
         return asistenciaRepo.findByEventoId(idEvento).stream()
             .map(asistenciaMapper::toDTO)
             .toList();
-            
     }
 
+    /**
+     * Crea una nueva asistencia, validando que el usuario y el evento existan
+     * y que no exista ya una asistencia duplicada.
+     */
     @Override
     public AsistenciaEventoDTO create(AsistenciaEventoCreateDTO dto) {
-        // 1) Validar usuario y evento
+        // Validación de usuario
         Usuario usuario = usuarioRepo.findById(dto.getIdUsuario())
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Usuario no encontrado"
             ));
+
+        // Validación de evento
         Evento evento = eventoRepo.findById(dto.getIdEvento())
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Evento no encontrado"
             ));
 
-        // 2) Evitar duplicados
+        // Verificación de duplicidad
         boolean existe = asistenciaRepo
             .existsByUsuarioAndEvento(usuario, evento);
         if (existe) {
@@ -78,27 +99,32 @@ public class AsistenciaEventoServiceImpl implements AsistenciaEventoService {
             );
         }
 
-        // 3) Crear entidad
+        // Creación de la entidad AsistenciaEvento
         AsistenciaEvento ae = AsistenciaEvento.builder()
             .usuario(usuario)
             .evento(evento)
             .confirmado(dto.getConfirmado() != null && dto.getConfirmado())
             .build();
 
-        // 4) Guardar y devolver DTO
+        // Guardar en base de datos y devolver el DTO correspondiente
         return asistenciaMapper.toDTO(
             asistenciaRepo.save(ae)
         );
     }
 
+    /**
+     * Actualiza parcialmente una asistencia existente. Se pueden modificar usuario,
+     * evento y estado de confirmación si se proporcionan en el DTO.
+     */
     @Override
     public AsistenciaEventoDTO update(Long id, AsistenciaEventoUpdateDTO dto) {
+        // Buscar asistencia por ID
         AsistenciaEvento ae = asistenciaRepo.findById(id)
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Asistencia no encontrada"
             ));
 
-        // 1) Usuario (opcional)
+        // Actualizar usuario si se proporciona
         if (dto.getIdUsuario() != null &&
             !dto.getIdUsuario().equals(ae.getUsuario().getIdUsuario())) {
             Usuario u = usuarioRepo.findById(dto.getIdUsuario())
@@ -108,7 +134,7 @@ public class AsistenciaEventoServiceImpl implements AsistenciaEventoService {
             ae.setUsuario(u);
         }
 
-        // 2) Evento (opcional)
+        // Actualizar evento si se proporciona
         if (dto.getIdEvento() != null &&
             !dto.getIdEvento().equals(ae.getEvento().getId())) {
             Evento e = eventoRepo.findById(dto.getIdEvento())
@@ -118,17 +144,20 @@ public class AsistenciaEventoServiceImpl implements AsistenciaEventoService {
             ae.setEvento(e);
         }
 
-        // 3) Confirmación (opcional)
+        // Actualizar confirmación si se proporciona
         if (dto.getConfirmado() != null) {
             ae.setConfirmado(dto.getConfirmado());
         }
 
-        // 4) Guardar y devolver DTO
+        // Guardar cambios y devolver el DTO actualizado
         return asistenciaMapper.toDTO(
             asistenciaRepo.save(ae)
         );
     }
 
+    /**
+     * Elimina una asistencia si existe. Lanza 404 si no se encuentra.
+     */
     @Override
     public void delete(Long id) {
         if (!asistenciaRepo.existsById(id)) {
@@ -139,6 +168,9 @@ public class AsistenciaEventoServiceImpl implements AsistenciaEventoService {
         asistenciaRepo.deleteById(id);
     }
 
+    /**
+     * Marca una asistencia como confirmada.
+     */
     @Override
     public AsistenciaEventoDTO confirmar(Long id) {
         AsistenciaEvento ae = asistenciaRepo.findById(id)

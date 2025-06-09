@@ -1,4 +1,5 @@
-// src/main/java/com/example/backend/service/impl/ForoServiceImpl.java
+// Implementación del servicio de gestión de foros.
+// Se encarga de operaciones CRUD sobre foros con validaciones de negocio.
 package com.example.backend.service.impl;
 
 import com.example.backend.dto.ForoCreateDTO;
@@ -8,21 +9,24 @@ import com.example.backend.model.Foro;
 import com.example.backend.mapper.ForoMapper;
 import com.example.backend.repository.ForoRepository;
 import com.example.backend.service.ForoService;
-import lombok.RequiredArgsConstructor;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
+@Service // Define esta clase como un servicio de Spring
+@RequiredArgsConstructor // Genera constructor con los campos final para inyección de dependencias
 public class ForoServiceImpl implements ForoService {
 
     private final ForoRepository foroRepo;
     private final ForoMapper foroMapper;
 
+    /**
+     * Devuelve una lista de todos los foros del sistema.
+     */
     @Override
     public List<ForoDTO> findAll() {
         return foroRepo.findAll()
@@ -31,6 +35,9 @@ public class ForoServiceImpl implements ForoService {
                 .toList();
     }
 
+    /**
+     * Busca un foro por su ID. Lanza excepción si no existe.
+     */
     @Override
     public ForoDTO findById(Long id) {
         Foro foro = foroRepo.findById(id)
@@ -38,9 +45,12 @@ public class ForoServiceImpl implements ForoService {
         return foroMapper.toDTO(foro);
     }
 
+    /**
+     * Crea un nuevo foro. Valida nombre único y descripción obligatoria.
+     */
     @Override
     public ForoDTO create(ForoCreateDTO dto) {
-        // 1) Nombre obligatorio y no duplicado
+        // 1) Validar nombre obligatorio y no duplicado
         if (dto.getNombre() == null || dto.getNombre().isBlank()) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "El nombre del foro es obligatorio"
@@ -53,20 +63,23 @@ public class ForoServiceImpl implements ForoService {
             );
         }
 
-        // 2) Descripción obligatoria
+        // 2) Validar descripción obligatoria
         if (dto.getDescripcion() == null || dto.getDescripcion().isBlank()) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "La descripción es obligatoria"
             );
         }
 
-        // 3) Crear y guardar
+        // 3) Crear y guardar el foro
         Foro foro = foroMapper.fromCreateDTO(dto);
-        foro.setNombre(nombreTrim);
+        foro.setNombre(nombreTrim); // Normaliza el nombre sin espacios
         Foro guardado = foroRepo.save(foro);
         return foroMapper.toDTO(guardado);
     }
 
+    /**
+     * Actualiza los datos de un foro existente. Soporta actualizaciones parciales.
+     */
     @Override
     public ForoDTO update(Long id, ForoUpdateDTO dto) {
         Foro foro = foroRepo.findById(id)
@@ -74,7 +87,7 @@ public class ForoServiceImpl implements ForoService {
                 HttpStatus.NOT_FOUND, "Foro no encontrado"
             ));
 
-        // 1) Nombre (si viene en el DTO)
+        // 1) Actualizar nombre si se proporciona
         if (dto.getNombre() != null) {
             String nombreTrim = dto.getNombre().trim();
             if (nombreTrim.isEmpty()) {
@@ -82,6 +95,7 @@ public class ForoServiceImpl implements ForoService {
                     HttpStatus.BAD_REQUEST, "El nombre no puede estar vacío"
                 );
             }
+            // Verifica que no esté usando un nombre ya existente (distinto al suyo)
             if (!nombreTrim.equals(foro.getNombre()) && foroRepo.existsByNombre(nombreTrim)) {
                 throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Ya existe un foro con ese nombre"
@@ -90,7 +104,7 @@ public class ForoServiceImpl implements ForoService {
             foro.setNombre(nombreTrim);
         }
 
-        // 2) Descripción (si viene en el DTO)
+        // 2) Actualizar descripción si se proporciona
         if (dto.getDescripcion() != null) {
             String descTrim = dto.getDescripcion().trim();
             if (descTrim.isEmpty()) {
@@ -101,10 +115,14 @@ public class ForoServiceImpl implements ForoService {
             foro.setDescripcion(descTrim);
         }
 
+        // Guardar cambios
         Foro actualizado = foroRepo.save(foro);
         return foroMapper.toDTO(actualizado);
     }
 
+    /**
+     * Elimina un foro por su ID sin validaciones adicionales.
+     */
     @Override
     public void delete(Long id) {
         foroRepo.deleteById(id);

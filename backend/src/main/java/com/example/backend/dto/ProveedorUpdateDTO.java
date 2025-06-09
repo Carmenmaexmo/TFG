@@ -2,10 +2,26 @@ package com.example.backend.dto;
 
 import lombok.*;
 
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+/**
+ * DTO para la actualización de los datos de un proveedor.
+ * Permite modificar el nombre, correo, teléfono y dirección del proveedor.
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ProveedorUpdateDTO {
-    private String nombre;   
-    private String email;     
-    private String telefono; 
-    private String direccion; 
+
+    /** Nuevo nombre del proveedor */
+    private String nombre;
+
+    /** Nuevo correo electrónico del proveedor */
+    private String email;
+
+    /** Nuevo teléfono de contacto del proveedor */
+    private String telefono;
+
+    /** Nueva dirección física del proveedor */
+    private String direccion;
 }

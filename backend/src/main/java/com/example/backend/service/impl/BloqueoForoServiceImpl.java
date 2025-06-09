@@ -1,4 +1,4 @@
-// src/main/java/com/example/backend/service/impl/BloqueoForoServiceImpl.java
+// Implementación del servicio de gestión de bloqueos de usuarios en foros
 package com.example.backend.service.impl;
 
 import com.example.backend.dto.BloqueoForoCreateDTO;
@@ -12,16 +12,16 @@ import com.example.backend.repository.BloqueoForoRepository;
 import com.example.backend.repository.ForoRepository;
 import com.example.backend.repository.UsuarioRepository;
 import com.example.backend.service.BloqueoForoService;
-import lombok.RequiredArgsConstructor;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
+@Service // Marca esta clase como un servicio gestionado por Spring
+@RequiredArgsConstructor // Inyección de dependencias automática a través de constructor
 public class BloqueoForoServiceImpl implements BloqueoForoService {
 
     private final BloqueoForoRepository bloqueoRepo;
@@ -29,6 +29,9 @@ public class BloqueoForoServiceImpl implements BloqueoForoService {
     private final ForoRepository foroRepo;
     private final BloqueoForoMapper bloqueoMapper;
 
+    /**
+     * Devuelve la lista completa de bloqueos en el sistema.
+     */
     @Override
     public List<BloqueoForoDTO> findAll() {
         return bloqueoRepo.findAll()
@@ -37,41 +40,49 @@ public class BloqueoForoServiceImpl implements BloqueoForoService {
                 .toList();
     }
 
+    /**
+     * Busca un bloqueo específico por ID. Lanza excepción si no existe.
+     */
     @Override
     public BloqueoForoDTO findById(Long id) {
         BloqueoForo b = bloqueoRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Bloqueo no encontrado"));
         return bloqueoMapper.toDTO(b);
     }
-@Override
+
+    /**
+     * Crea un nuevo registro de bloqueo para un usuario en un foro.
+     * Valida usuario, foro, motivo y evita duplicados.
+     */
+    @Override
     public BloqueoForoDTO create(BloqueoForoCreateDTO dto) {
-        // 1) Validar usuario
+        // 1) Validación del usuario
         Usuario usuario = usuarioRepo.findById(dto.getIdUsuario())
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Usuario no encontrado"
             ));
 
-        // 2) Validar foro
+        // 2) Validación del foro
         Foro foro = foroRepo.findById(dto.getIdForo())
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Foro no encontrado"
             ));
 
-        // 3) Validar motivo
+        // 3) Validación del motivo
         if (dto.getMotivo() == null || dto.getMotivo().isBlank()) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "El motivo es obligatorio"
             );
         }
 
-        // 4) Evitar duplicados (mismo usuario en mismo foro)
+        // 4) Comprobación de bloqueo duplicado
         if (bloqueoRepo.existsByUsuarioAndForo(usuario, foro)) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "Usuario ya bloqueado en este foro"
             );
         }
 
-        // 5) Mapear, asignar relaciones y guardar
+        // 5) Crear entidad, asignar relaciones y guardar
         BloqueoForo bloque = bloqueoMapper.fromCreateDTO(dto);
         bloque.setUsuario(usuario);
         bloque.setMotivo(dto.getMotivo());
@@ -84,7 +95,10 @@ public class BloqueoForoServiceImpl implements BloqueoForoService {
         );
     }
 
-
+    /**
+     * Actualiza los datos de un bloqueo existente. Permite modificar
+     * motivo, usuario o foro si son distintos y válidos.
+     */
     @Override
     public BloqueoForoDTO update(Long id, BloqueoForoUpdateDTO dto) {
         BloqueoForo b = bloqueoRepo.findById(id)
@@ -92,7 +106,7 @@ public class BloqueoForoServiceImpl implements BloqueoForoService {
                 HttpStatus.NOT_FOUND, "Bloqueo no encontrado"
             ));
 
-        // motivo (opcional)
+        // Actualización del motivo si se proporciona
         if (dto.getMotivo() != null) {
             if (dto.getMotivo().isBlank()) {
                 throw new ResponseStatusException(
@@ -102,7 +116,7 @@ public class BloqueoForoServiceImpl implements BloqueoForoService {
             b.setMotivo(dto.getMotivo());
         }
 
-        // cambiar usuario (opcional)
+        // Cambio de usuario si es distinto al actual
         if (dto.getIdUsuario() != null &&
             !dto.getIdUsuario().equals(b.getUsuario().getIdUsuario())) {
             Usuario usuario = usuarioRepo.findById(dto.getIdUsuario())
@@ -117,7 +131,7 @@ public class BloqueoForoServiceImpl implements BloqueoForoService {
             b.setUsuario(usuario);
         }
 
-        // cambiar foro (opcional)
+        // Cambio de foro si es distinto al actual
         if (dto.getIdForo() != null &&
             !dto.getIdForo().equals(b.getForo().getId())) {
             Foro foro = foroRepo.findById(dto.getIdForo())
@@ -135,7 +149,9 @@ public class BloqueoForoServiceImpl implements BloqueoForoService {
         return bloqueoMapper.toDTO(bloqueoRepo.save(b));
     }
 
-
+    /**
+     * Elimina un bloqueo por su ID. No lanza excepción si no existe.
+     */
     @Override
     public void delete(Long id) {
         bloqueoRepo.deleteById(id);

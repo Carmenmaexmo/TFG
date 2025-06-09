@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { RouterModule, RouterOutlet } from '@angular/router';
-import { NavbarComponent } from '../navbar/navbar.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-footer',
-  imports: [RouterOutlet, NavbarComponent, FooterComponent, RouterModule],
+  standalone: true, // Si estás usando componentes standalone (sin módulo), debes declararlo así.
+  imports: [RouterModule], // Puedes incluir RouterModule si usas [routerLink] en el HTML.
   templateUrl: './footer.component.html',
-  styleUrl: './footer.component.css'
+  styleUrls: ['./footer.component.css'] // Corrección: debe ser styleUrls, no styleUrl.
 })
 export class FooterComponent {
 

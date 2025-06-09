@@ -1,14 +1,13 @@
+// Servicio que gestiona la lógica de negocio relacionada con los vinilos.
+// Incluye operaciones CRUD, validaciones específicas y control de duplicados por proveedor.
 package com.example.backend.service.impl;
 
-import com.example.backend.dto.ViniloDTO;
-import com.example.backend.dto.ViniloUpdateDTO;
-import com.example.backend.dto.ViniloCreateDTO;
-import com.example.backend.model.Proveedor;
-import com.example.backend.model.Vinilo;
+import com.example.backend.dto.*;
+import com.example.backend.model.*;
 import com.example.backend.mapper.ViniloMapper;
-import com.example.backend.repository.ProveedorRepository;
-import com.example.backend.repository.ViniloRepository;
+import com.example.backend.repository.*;
 import com.example.backend.service.ViniloService;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -18,13 +17,16 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor // Genera el constructor con todos los campos final inyectados automáticamente
 public class ViniloServiceImpl implements ViniloService {
 
     private final ViniloRepository viniloRepository;
     private final ProveedorRepository proveedorRepository;
     private final ViniloMapper viniloMapper;
 
+    /**
+     * Recupera todos los vinilos del sistema y los transforma a DTOs.
+     */
     @Override
     public List<ViniloDTO> findAll() {
         return viniloRepository.findAll()
@@ -33,6 +35,9 @@ public class ViniloServiceImpl implements ViniloService {
                 .toList();
     }
 
+    /**
+     * Busca un vinilo por su ID. Lanza excepción si no existe.
+     */
     @Override
     public ViniloDTO findById(Long id) {
         Vinilo v = viniloRepository.findById(id)
@@ -42,15 +47,18 @@ public class ViniloServiceImpl implements ViniloService {
         return viniloMapper.toDTO(v);
     }
 
+    /**
+     * Crea un nuevo vinilo tras validar todos los campos requeridos y evitar duplicados por proveedor.
+     */
     @Override
     public ViniloDTO create(ViniloCreateDTO dto) {
-        // 1) Proveedor existe
+        // 1) Comprobar existencia del proveedor
         Proveedor proveedor = proveedorRepository.findById(dto.getIdProveedor())
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Proveedor no encontrado"
             ));
 
-        // 2) Título válido y no duplicado
+        // 2) Validar título (no vacío y no duplicado para ese proveedor)
         String titulo = dto.getTitulo().trim();
         if (titulo.isEmpty()) {
             throw new ResponseStatusException(
@@ -64,21 +72,21 @@ public class ViniloServiceImpl implements ViniloService {
             );
         }
 
-        // 3) Precio positivo
+        // 3) Validar precio
         if (dto.getPrecio() == null || dto.getPrecio() <= 0) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "El precio debe ser un valor positivo"
             );
         }
 
-        // 4) Stock no negativo
+        // 4) Validar stock
         if (dto.getStock() == null || dto.getStock() < 0) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "El stock no puede ser negativo"
             );
         }
 
-        // 5) Mapea, asigna proveedor y guarda
+        // 5) Mapear DTO a entidad, asignar proveedor y guardar
         Vinilo v = viniloMapper.fromCreateDTO(dto);
         v.setTitulo(titulo);
         v.setProveedor(proveedor);
@@ -87,20 +95,25 @@ public class ViniloServiceImpl implements ViniloService {
         return viniloMapper.toDTO(saved);
     }
 
+    /**
+     * Actualiza un vinilo existente con datos provenientes de un DTO.
+     * Valida cada campo si se incluye en el DTO, y gestiona cambios de proveedor y duplicados.
+     */
     @Override
     public ViniloDTO update(Long id, ViniloUpdateDTO dto) {
-        // 1) Recupera el vinilo existente
+        // 1) Buscar vinilo
         Vinilo v = viniloRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Vinilo no encontrado"
             ));
 
-        // 2) Si cambian título o proveedor, chequea duplicado y asigna
+        // 2) Validar cambio de título o proveedor y evitar duplicados
         boolean cambioTitulo = dto.getTitulo() != null && !dto.getTitulo().trim().equals(v.getTitulo());
-        boolean cambioProv   = dto.getIdProveedor() != null && !dto.getIdProveedor().equals(v.getProveedor().getId());
+        boolean cambioProv = dto.getIdProveedor() != null && !dto.getIdProveedor().equals(v.getProveedor().getId());
+
         if (cambioTitulo || cambioProv) {
             String nuevoTitulo = cambioTitulo ? dto.getTitulo().trim() : v.getTitulo();
-            Long   nuevoProvId = cambioProv   ? dto.getIdProveedor()    : v.getProveedor().getId();
+            Long nuevoProvId = cambioProv ? dto.getIdProveedor() : v.getProveedor().getId();
 
             if (viniloRepository.existsByTituloAndProveedorIdAndIdNot(nuevoTitulo, nuevoProvId, id)) {
                 throw new ResponseStatusException(
@@ -109,9 +122,8 @@ public class ViniloServiceImpl implements ViniloService {
                 );
             }
 
-            // asigna título
             v.setTitulo(nuevoTitulo);
-            // asigna proveedor
+
             Proveedor proveedor = proveedorRepository.findById(nuevoProvId)
                 .orElseThrow(() -> new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Proveedor no encontrado"
@@ -119,17 +131,16 @@ public class ViniloServiceImpl implements ViniloService {
             v.setProveedor(proveedor);
         }
 
-        // 3) Artista
+        // 3) Actualizar campos opcionales si están presentes en el DTO
+
         if (dto.getArtista() != null) {
             v.setArtista(dto.getArtista().trim());
         }
 
-        // 4) Género
         if (dto.getGenero() != null) {
             v.setGenero(dto.getGenero().trim());
         }
 
-        // 5) Precio
         if (dto.getPrecio() != null) {
             if (dto.getPrecio() <= 0) {
                 throw new ResponseStatusException(
@@ -139,7 +150,6 @@ public class ViniloServiceImpl implements ViniloService {
             v.setPrecio(dto.getPrecio());
         }
 
-        // 6) Stock
         if (dto.getStock() != null) {
             if (dto.getStock() < 0) {
                 throw new ResponseStatusException(
@@ -149,21 +159,22 @@ public class ViniloServiceImpl implements ViniloService {
             v.setStock(dto.getStock());
         }
 
-        // 7) Imagen
         if (dto.getImagen() != null) {
             v.setImagen(dto.getImagen().trim());
         }
 
-        // 8) Descripción
         if (dto.getDescripcion() != null) {
             v.setDescripcion(dto.getDescripcion().trim());
         }
 
-        // 9) Guarda y devuelve
+        // 4) Guardar cambios
         Vinilo updated = viniloRepository.save(v);
         return viniloMapper.toDTO(updated);
     }
 
+    /**
+     * Elimina un vinilo si existe. Si no, lanza excepción.
+     */
     @Override
     public void delete(Long id) {
         if (!viniloRepository.existsById(id)) {

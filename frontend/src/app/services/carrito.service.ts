@@ -1,34 +1,45 @@
-import { switchMap, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
 export class CarritoService {
-  private base = 'http://localhost:8080';
-  private carrito: any[] = [];
-  private carrito$ = new BehaviorSubject<any[]>([]);
-  mostrarSlide = false;
+  private base = 'http://localhost:8080'; // URL base para llamadas directas (caso cargarCarritoDelServidor)
+  private carrito: any[] = []; // Lista local de productos en el carrito
+  private carrito$ = new BehaviorSubject<any[]>([]); // Observable para reaccionar a cambios en el carrito
+  mostrarSlide = false; // Controla si se muestra el slide del carrito
 
   constructor(private http: HttpClient, private apiService: ApiService) {
+    // Si hay un carrito en localStorage, cargarlo
     const guardado = localStorage.getItem('carrito');
     if (guardado) {
       this.carrito = JSON.parse(guardado);
       this.carrito$.next(this.carrito);
     }
 
+    // Si hay token, intenta cargar el carrito guardado en el backend
     const token = localStorage.getItem('token');
     if (token) {
       this.cargarCarritoDelServidor();
     }
   }
 
+  // ===========================
+  // MÉTODOS PÚBLICOS
+  // ===========================
+
+  /**
+   * Devuelve el observable del carrito para poder suscribirse a sus cambios.
+   */
   getCarritoObservable() {
     return this.carrito$.asObservable();
   }
 
+  /**
+   * Añade un producto al carrito. Si ya existe, incrementa su cantidad.
+   */
   aniadir(producto: any) {
     const existente = this.carrito.find(p => p.id === producto.id);
     if (existente) {
@@ -39,6 +50,9 @@ export class CarritoService {
     this.actualizar();
   }
 
+  /**
+   * Quita una unidad del producto indicado. Si llega a 0, lo elimina del carrito.
+   */
   quitar(id: number) {
     const index = this.carrito.findIndex(p => p.id === id);
     if (index !== -1) {
@@ -50,44 +64,54 @@ export class CarritoService {
     this.actualizar();
   }
 
+  /**
+   * Elimina completamente un producto del carrito.
+   */
   eliminar(id: number) {
     this.carrito = this.carrito.filter(p => p.id !== id);
     this.actualizar();
   }
 
-  getTotal(): number {
-    return this.carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
-  }  
-
-  getCarrito(): any[] {
-    return this.carrito;
-  }  
-
+  /**
+   * Vacía completamente el carrito.
+   */
   vaciar() {
     this.carrito = [];
     this.actualizar();
   }
 
-  private actualizar() {
-    this.carrito$.next(this.carrito);
-    localStorage.setItem('carrito', JSON.stringify(this.carrito));
-    if (localStorage.getItem('token')) {
-      this.guardarCarritoEnServidor();
-    }
+  /**
+   * Calcula el total en euros del contenido del carrito.
+   */
+  getTotal(): number {
+    return this.carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0);
   }
 
+  /**
+   * Devuelve una copia del array de productos en el carrito.
+   */
+  getCarrito(): any[] {
+    return this.carrito;
+  }
+
+  // ===========================
+  // SINCRONIZACIÓN CON BACKEND
+  // ===========================
+
+  /**
+   * Guarda el estado actual del carrito en el backend, si el usuario está autenticado.
+   */
   guardarCarritoEnServidor() {
     const id = localStorage.getItem('idUsuario');
-    if (!id) return of(null);
-  
+    if (!id) return of(null); // Si no hay sesión, no se guarda
+
     const datosActualizados = {
       carrito: JSON.stringify(this.carrito)
     };
-  
     const rawBody = JSON.stringify(datosActualizados);
 
     console.log('🛒 Guardando carrito en servidor:', rawBody);
-  
+
     return this.apiService.actualizarUsuarioConRawBody(+id, rawBody).pipe(
       catchError(err => {
         console.error('❌ Error guardando carrito en servidor:', err);
@@ -95,8 +119,10 @@ export class CarritoService {
       })
     );
   }
-  
 
+  /**
+   * Carga el carrito almacenado en el backend para el usuario logueado.
+   */
   cargarCarritoDelServidor() {
     const id = localStorage.getItem('idUsuario');
     if (!id) return;
@@ -119,4 +145,19 @@ export class CarritoService {
     });
   }
 
+  // ===========================
+  // ACTUALIZACIÓN INTERNA
+  // ===========================
+
+  /**
+   * Actualiza el observable, guarda en localStorage y sincroniza con el servidor si hay sesión.
+   */
+  private actualizar() {
+    this.carrito$.next(this.carrito);
+    localStorage.setItem('carrito', JSON.stringify(this.carrito));
+
+    if (localStorage.getItem('token')) {
+      this.guardarCarritoEnServidor().subscribe();
+    }
+  }
 }

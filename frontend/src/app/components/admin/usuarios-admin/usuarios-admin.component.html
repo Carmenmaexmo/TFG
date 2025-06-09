@@ -60,15 +60,7 @@
             {{ erroresFormulario['dni'] }}
           </div>
         </div>
-      
-        <div>
-          <select [(ngModel)]="nuevoUsuario.rol">
-            <option *ngFor="let rol of rolesDisponibles" [value]="rol">{{ rol }}</option>
-          </select>
-          <div class="error-msg" *ngIf="erroresFormulario && erroresFormulario['rol']">
-            {{ erroresFormulario['rol'] }}
-          </div>
-        </div>
+
       
         <div style="flex-basis: 100%; text-align: right;">
           <button class="btn-save" (click)="crearUsuario()">Guardar Usuario</button>
@@ -215,6 +207,9 @@
           <h3>🔒 Bloquear usuario: {{ usuarioParaBloquear?.nombreUsuario }}</h3>
           <label>Motivo:</label>
           <textarea [(ngModel)]="motivoBloqueo" placeholder="Escribe el motivo del bloqueo..."></textarea>
+          <div class="error-msg" *ngIf="errorMotivoBloqueo">
+            {{ errorMotivoBloqueo }}
+          </div>
           <div class="modal-actions">
             <button class="btn-cancel" (click)="cerrarModalBloqueo()">Cancelar</button>
             <button class="btn-confirm" (click)="confirmarBloqueo()">Confirmar</button>

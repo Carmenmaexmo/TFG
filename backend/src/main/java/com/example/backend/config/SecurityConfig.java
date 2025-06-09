@@ -22,6 +22,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+
+/**
+ * Configuración principal de seguridad para la aplicación.
+ * Define reglas de autorización, gestión de sesiones, CORS, y filtros JWT.
+ */
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
@@ -38,36 +43,74 @@ public class SecurityConfig {
         this.jwtUtils = jwtUtils;
     }
 
+    /**
+     * Configura el filtro de seguridad HTTP y las reglas de autorización.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-      
-        // 👉 CREA el filtro aquí, con las dependencias que ya tienes
         AuthTokenFilter authTokenFilter = new AuthTokenFilter(jwtUtils, userDetailsService);
-    
+
         http
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf.disable()) // Desactiva CSRF (no es necesario para API REST)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .exceptionHandling(e -> e.authenticationEntryPoint(unauthorizedHandler))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // Permite el acceso a Swagger y OpenAPI
+                .requestMatchers(
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**",
+                    "/swagger-resources/**",
+                    "/webjars/**",
+                    "/swagger-ui.html",
+                    "/error"
+                ).permitAll()
+
+                // Rutas públicas (login y registro)
                 .requestMatchers("/api/auth/**").permitAll()
+
+                // Rutas públicas para visualización de vinilos
                 .requestMatchers(HttpMethod.GET, "/api/vinilos/**").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/api/usuarios/**").hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR")
-                .requestMatchers(HttpMethod.GET, "/api/usuarios/**").hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR")
-                //Foro
-                .requestMatchers(HttpMethod.GET, "/api/foro").hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR", "MODERADOR")
-                .requestMatchers(HttpMethod.GET, "/api/foro/**").hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR", "MODERADOR")
-                .requestMatchers(HttpMethod.POST, "/api/temas-foro").hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR", "MODERADOR")
-                .requestMatchers(HttpMethod.GET, "/api/direcciones-envio/**").hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR", "MODERADOR")
+
+                // Rutas protegidas por roles
+                .requestMatchers("/api/pedidos/**")
+                    .hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR")
+
+                .requestMatchers(HttpMethod.GET, "/api/eventos/**")
+                    .hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR")
+                .requestMatchers("/api/eventos/**")
+                    .hasAnyRole("EMPLEADO", "ADMINISTRADOR")
+
+                .requestMatchers(HttpMethod.GET, "/api/usuarios/**")
+                    .hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR")
+                .requestMatchers(HttpMethod.PUT, "/api/usuarios/**")
+                    .hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR")
+                .requestMatchers(HttpMethod.DELETE, "/api/usuarios/**")
+                    .hasRole("ADMINISTRADOR")
+
+                .requestMatchers(HttpMethod.GET, "/api/foro/**")
+                    .hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR", "MODERADOR")
+                .requestMatchers(HttpMethod.POST, "/api/temas-foro")
+                    .hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR", "MODERADOR")
+                .requestMatchers(HttpMethod.POST, "/api/comentarios")
+                    .hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR", "MODERADOR")
+                .requestMatchers(HttpMethod.DELETE, "/api/comentarios/**")
+                    .hasAnyRole("MODERADOR", "ADMINISTRADOR")
+
+                .requestMatchers("/api/direcciones-envio/**")
+                    .hasAnyRole("CLIENTE", "EMPLEADO", "ADMINISTRADOR")
+
+                // Cualquier otra petición requiere autenticación
                 .anyRequest().authenticated()
             )
-            // 🔥 INSERTAMOS el filtro ANTES del UsernamePasswordAuthenticationFilter
             .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
-    
+
         return http.build();
     }
-    
 
+    /**
+     * Configura el origen y políticas de CORS permitidas.
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
@@ -81,11 +124,17 @@ public class SecurityConfig {
         return source;
     }
 
+    /**
+     * Bean para la gestión de autenticación con Spring Security.
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
+    /**
+     * Codificador de contraseñas usando BCrypt.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
