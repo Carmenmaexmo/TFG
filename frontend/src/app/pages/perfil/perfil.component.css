@@ -105,6 +105,29 @@
     border-color: #ffcc33;
     box-shadow: 0 0 0 2px rgba(255, 204, 51, 0.2);
   }
+
+
+  .alert-danger {
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+  color: #e74c3c; /* rojo claro moderno */
+  background-color: #ffecec;
+  border: 1px solid #e0b4b4;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  margin-bottom: 2rem; /* MÁS separación */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
   
-  
-  
+    .alert-success {
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+  color: #5ee73c; /* rojo claro moderno */
+  background-color: #ecffec;
+  border: 1px solid #bee0b4;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  margin-bottom: 2rem; /* MÁS separación */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}

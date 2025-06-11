@@ -9,8 +9,10 @@
   
     <!-- DATOS -->
     <div class="perfil-datos">
+       <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+            <div *ngIf="success" class="alert alert-success">{{ success }}</div>
         <form *ngIf="editando; else soloVista" class="formulario-perfil">
-            <div class="campo">
+          <div class="campo">
               <label for="nombre"><strong>Nombre:</strong></label>
               <input [(ngModel)]="usuario.nombre" name="nombre" id="nombre" />
             </div>

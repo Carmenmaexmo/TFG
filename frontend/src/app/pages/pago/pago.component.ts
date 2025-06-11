@@ -86,15 +86,16 @@ export class PagoComponent {
   // Guarda una nueva dirección para el usuario, si se cumplen los requisitos
   guardarNuevaDireccion() {
     if (this.direcciones.length >= 5) {
-      alert('Máximo 5 direcciones permitidas');
+      this.mensajeError = 'No se pueden guardar más de 5 direcciones.';
+      setTimeout(() => this.mensajeError = null, 4000);
       return;
-    }    
+    }
     
     const idUsuario = Number(localStorage.getItem('idUsuario'));
     const { ciudad, codigoPostal, direccion, telefono } = this.nuevaDireccionObj;
 
     if (!ciudad || !codigoPostal || !direccion || !telefono) {
-      alert('Todos los campos son obligatorios');
+      this.mensajeError = 'Todos los campos son obligatorios.';
       return;
     }
 

@@ -30,6 +30,8 @@ export class ForosComponent implements OnInit {
     temasPorPagina: number = 6;
     modoEdicionForo: boolean = false;
 
+    mensajeError: string = ''; // Mensaje de error
+
     constructor(private api: ApiService, private router: Router, private route: ActivatedRoute) {}
 
     ngOnInit(): void {
@@ -80,8 +82,11 @@ export class ForosComponent implements OnInit {
         const foroId = this.foro?.id;
         const idUsuario = Number(localStorage.getItem('idUsuario'));
 
+         // Validación: foro cargado y campos obligatorios
         if (!foroId || !this.nuevoTema.titulo.trim() || !this.nuevoTema.contenido.trim()) {
-            return;
+          this.mensajeError = 'Debes rellenar el título y el contenido del tema.';
+          setTimeout(() => this.mensajeError = '', 4000);
+          return;
         }
 
         const tema = {
@@ -136,8 +141,10 @@ export class ForosComponent implements OnInit {
 
     // Guardar cambios en un tema editado
     guardarEdicionTema(tema: any) {
-        if (!tema.titulo.trim() || !tema.contenido.trim()) {
-            return;
+          if (!tema.titulo.trim() || !tema.contenido.trim()) {
+          this.mensajeError = 'El título y el contenido no pueden estar vacíos.';
+          setTimeout(() => this.mensajeError= '', 4000);
+          return;
         }
         this.api.actualizarTema(tema.id, tema).subscribe({
             next: actualizado => {

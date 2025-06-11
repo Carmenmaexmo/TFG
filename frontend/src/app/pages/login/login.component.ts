@@ -28,6 +28,10 @@ export class LoginComponent {
     this.api.login({ nombreUsuario: this.nombreUsuario, password: this.password })
       .subscribe({
         next: (res) => {
+           if (!this.nombreUsuario || !this.password) {
+            this.error = 'Debes introducir usuario y contraseña.';
+          return;
+  }
           // Guardar datos importantes en localStorage
           this.idUsuario = res.idUsuario.toString();
           localStorage.setItem('token', res.token);

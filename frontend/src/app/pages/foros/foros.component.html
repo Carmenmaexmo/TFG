@@ -10,6 +10,9 @@
 
       <!-- Modo edición -->
       <div *ngIf="modoEdicionForo" class="foro-form-editar">
+        <div *ngIf="mensajeError" class="alert alert-danger">
+          {{ mensajeError }}
+        </div>
         <input type="text" [(ngModel)]="foro.nombre" class="form-control" placeholder="Nuevo nombre del foro" />
         <textarea [(ngModel)]="foro.descripcion" class="form-control" rows="3" placeholder="Nueva descripción del foro"></textarea>
         <div class="acciones-edicion">
@@ -18,7 +21,7 @@
         </div>
       </div>
     </div>
-    
+
     <h3 class="temas-titulo">Temas en discusión</h3>
 
     <button class="btn-crear-tema" (click)="mostrarFormulario = !mostrarFormulario">
@@ -26,6 +29,9 @@
     </button>
 
     <div *ngIf="mostrarFormulario" class="form-crear-tema">
+        <div *ngIf="mensajeError" class="alert alert-danger">
+          {{ mensajeError }}
+        </div>
         <input type="text" [(ngModel)]="nuevoTema.titulo" placeholder="Título del tema">
         <textarea [(ngModel)]="nuevoTema.contenido" placeholder="Contenido del tema"></textarea>
         <button (click)="crearTema()">Publicar</button>
