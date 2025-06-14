@@ -188,7 +188,11 @@ export class UsuariosAdminComponent implements OnInit {
       }
 
       if (!mensaje) {
-        alert('Error inesperado al registrar el usuario.');
+        if (err.status === 500) {
+          this.erroresFormulario['dni'] = 'El DNI ya está registrado.';
+        } else {
+          this.erroresFormulario['general'] = 'Error inesperado al registrar el usuario.';
+        }
       }
     }
   });
@@ -221,6 +225,13 @@ export class UsuariosAdminComponent implements OnInit {
     this.userEdit = { ...user };
   }
 
+  // Cancela la edición de un usuario
+  cancelarEdicion() {
+  this.editandoId = null;
+  this.userEdit = {};
+  this.erroresEdicion = {};
+  }
+
   // Guarda los cambios editados para un usuario
   guardarEdicion(user: any) {
     if (!this.validarFormulario(this.userEdit, true)) return;
@@ -232,13 +243,42 @@ export class UsuariosAdminComponent implements OnInit {
       this.erroresEdicion['nombreUsuario'] = 'El nombre de usuario ya existe.';
       return;
     }
+    if (duplicado) {
+      this.erroresEdicion['dni'] = 'El DNI ya está registrado.';
+      return;
+    }
 
-    this.api.actualizarUsuario(user.idUsuario, this.userEdit).subscribe(() => {
-      Object.assign(user, this.userEdit);
-      this.editandoId = null;
-      this.erroresEdicion = {};
-      this.cargarUsuarios();
-    });
+  this.api.actualizarUsuario(user.idUsuario, this.userEdit).subscribe({
+  next: () => {
+    Object.assign(user, this.userEdit);
+    this.editandoId = null;
+    this.erroresEdicion = {};
+    this.cargarUsuarios();
+  },
+  error: (err) => {
+    console.error(`Error actualizando usuario #${user.idUsuario}`, err);
+
+    const mensaje = err.error?.message?.toLowerCase?.() || '';
+
+    if (mensaje.includes('usuario') || mensaje.includes('nombreusuario')) {
+      this.erroresEdicion['nombreUsuario'] = 'El nombre de usuario ya está en uso.';
+    }
+
+    if (mensaje.includes('email')) {
+      this.erroresEdicion['email'] = 'El email ya está registrado.';
+    }
+
+    if (mensaje.includes('dni')) {
+      this.erroresEdicion['dni'] = 'El DNI ya está registrado.';
+    }
+
+    if (!mensaje && err.status === 500) {
+      // Esto te cubre si el backend lanza 500 sin descripción
+      this.erroresEdicion['dni'] = 'El DNI ya está registrado.';
+    }
+  }
+  });
+
   }
 
   // Elimina un usuario tras confirmación

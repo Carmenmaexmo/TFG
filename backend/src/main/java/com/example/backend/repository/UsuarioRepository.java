@@ -44,6 +44,14 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByNombreUsuario(String nombreUsuario);
 
     /**
+     * Verifica si ya existe un usuario con el DNI proporcionado.
+     *
+     * @param dni DNI a verificar.
+     * @return true si existe, false en caso contrario.
+     */
+    boolean existsByDni(String dni);
+
+    /**
      * Verifica si ya existe otro usuario (distinto al especificado por id) con el mismo nombre de usuario.
      * Utilizado para validaciones durante actualizaciones.
      *

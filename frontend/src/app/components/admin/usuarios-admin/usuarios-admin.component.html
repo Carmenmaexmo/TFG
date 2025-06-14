@@ -160,6 +160,9 @@
               <button *ngIf="editandoId === user.idUsuario" class="icon-button green" (click)="guardarEdicion(user)">
                 <i class="bi bi-check-lg"></i>
               </button>
+              <button *ngIf="editandoId === user.idUsuario" class="icon-button orange" (click)="cancelarEdicion()">
+                <i class="bi bi-x-lg"></i>
+              </button>
               <button class="icon-button red" (click)="eliminarUsuario(user.idUsuario)">
                 <i class="bi bi-trash-fill"></i>
               </button>

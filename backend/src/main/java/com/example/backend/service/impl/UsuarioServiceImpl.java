@@ -73,6 +73,10 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "DNI inválido");
         }
 
+        if (usuarioRepository.existsByDni(dni)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "DNI ya registrado");
+        }
+
         String email = dto.getEmail().trim();
         if (!validarEmail(email)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email inválido");
@@ -155,6 +159,9 @@ public class UsuarioServiceImpl implements UsuarioService {
             String dni = dto.getDni().trim().toUpperCase();
             if (!validarDni(dni)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "DNI inválido");
+            }
+            if (usuarioRepository.existsByDni(dni)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "DNI ya registrado");
             }
             u.setDni(dni);
         }
