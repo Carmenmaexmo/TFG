@@ -231,55 +231,78 @@ export class UsuariosAdminComponent implements OnInit {
   this.userEdit = {};
   this.erroresEdicion = {};
   }
-
+ 
   // Guarda los cambios editados para un usuario
   guardarEdicion(user: any) {
-    if (!this.validarFormulario(this.userEdit, true)) return;
+  if (!this.validarFormulario(this.userEdit, true)) return;
 
-    const duplicado = this.usuarios.some(u =>
-      u.idUsuario !== user.idUsuario && u.nombreUsuario === this.userEdit.nombreUsuario
-    );
-    if (duplicado) {
+  const cambios: any = {};
+
+  // Verificar si han cambiado y si hay duplicados
+  if (this.userEdit.nombreUsuario !== user.nombreUsuario) {
+    if (this.usuarios.some(u => u.idUsuario !== user.idUsuario && u.nombreUsuario === this.userEdit.nombreUsuario)) {
       this.erroresEdicion['nombreUsuario'] = 'El nombre de usuario ya existe.';
       return;
     }
-    if (duplicado) {
+    cambios.nombreUsuario = this.userEdit.nombreUsuario;
+  }
+
+  if (this.userEdit.email !== user.email) {
+    if (this.usuarios.some(u => u.idUsuario !== user.idUsuario && u.email === this.userEdit.email)) {
+      this.erroresEdicion['email'] = 'El email ya está registrado.';
+      return;
+    }
+    cambios.email = this.userEdit.email;
+  }
+
+  if (this.userEdit.dni.trim().toUpperCase() !== user.dni.trim().toUpperCase()) {
+    if (this.usuarios.some(u => u.idUsuario !== user.idUsuario && u.dni.trim().toUpperCase() === this.userEdit.dni.trim().toUpperCase())) {
       this.erroresEdicion['dni'] = 'El DNI ya está registrado.';
       return;
     }
-
-  this.api.actualizarUsuario(user.idUsuario, this.userEdit).subscribe({
-  next: () => {
-    Object.assign(user, this.userEdit);
-    this.editandoId = null;
-    this.erroresEdicion = {};
-    this.cargarUsuarios();
-  },
-  error: (err) => {
-    console.error(`Error actualizando usuario #${user.idUsuario}`, err);
-
-    const mensaje = err.error?.message?.toLowerCase?.() || '';
-
-    if (mensaje.includes('usuario') || mensaje.includes('nombreusuario')) {
-      this.erroresEdicion['nombreUsuario'] = 'El nombre de usuario ya está en uso.';
-    }
-
-    if (mensaje.includes('email')) {
-      this.erroresEdicion['email'] = 'El email ya está registrado.';
-    }
-
-    if (mensaje.includes('dni')) {
-      this.erroresEdicion['dni'] = 'El DNI ya está registrado.';
-    }
-
-    if (!mensaje && err.status === 500) {
-      // Esto te cubre si el backend lanza 500 sin descripción
-      this.erroresEdicion['dni'] = 'El DNI ya está registrado.';
-    }
+    cambios.dni = this.userEdit.dni;
   }
+
+  // Comparar y añadir los demás campos aunque no sean únicos
+  if (this.userEdit.nombre !== user.nombre) cambios.nombre = this.userEdit.nombre;
+  if (this.userEdit.apellidos !== user.apellidos) cambios.apellidos = this.userEdit.apellidos;
+  if (this.userEdit.telefono !== user.telefono) cambios.telefono = this.userEdit.telefono;
+  if (this.userEdit.rol !== user.rol) cambios.rol = this.userEdit.rol;
+
+  // Si no hay cambios, cancelar
+  if (Object.keys(cambios).length === 0) {
+    this.cancelarEdicion();
+    return;
+  }
+
+  this.api.actualizarUsuario(user.idUsuario, cambios).subscribe({
+    next: () => {
+      Object.assign(user, this.userEdit);
+      this.editandoId = null;
+      this.erroresEdicion = {};
+      this.cargarUsuarios();
+    },
+    error: (err) => {
+      console.error(`Error actualizando usuario #${user.idUsuario}`, err);
+
+      const mensaje = err.error?.message?.toLowerCase?.() || '';
+
+      if (mensaje.includes('usuario') || mensaje.includes('nombreusuario')) {
+        this.erroresEdicion['nombreUsuario'] = 'El nombre de usuario ya está en uso.';
+      }
+      if (mensaje.includes('email')) {
+        this.erroresEdicion['email'] = 'El email ya está registrado.';
+      }
+      if (mensaje.includes('dni')) {
+        this.erroresEdicion['dni'] = 'El DNI ya está registrado.';
+      }
+      if (!mensaje && err.status === 500) {
+        this.erroresEdicion['dni'] = 'El DNI ya está registrado.';
+      }
+    }
   });
-
   }
+
 
   // Elimina un usuario tras confirmación
   eliminarUsuario(id: number) {
