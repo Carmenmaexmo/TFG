@@ -17,8 +17,8 @@
       <h4>🎤 {{ evento.titulo }}</h4>
       <p>📍 <i>{{ evento.lugar }}</i></p>
       <p>🎶 {{ evento.descripcion }}</p>
-      <p>🗓️ <strong>Inicio:</strong> {{ evento.fechaInicio | date:'fullDate' }} - {{ evento.fechaInicio | date:'shortTime' }}</p>
-      <p>⏳ <strong>Fin:</strong> {{ evento.fecha_fin | date:'fullDate' }} - {{ evento.fecha_fin | date:'shortTime' }}</p>
+      <p>🗓️ <strong>Inicio:</strong> {{ evento.fechaInicio |  date:'fullDate':'':'es' }} - {{ evento.fechaInicio | date:'shortTime' }}</p>
+      <p>⏳ <strong>Fin:</strong> {{ evento.fecha_fin |  date:'fullDate':'':'es' }} - {{ evento.fecha_fin | date:'shortTime' }}</p>
     </div>
     <div class="paginacion" *ngIf="totalPaginas > 1">
       <button (click)="paginaActual = paginaActual - 1" [disabled]="paginaActual === 1">Anterior</button>

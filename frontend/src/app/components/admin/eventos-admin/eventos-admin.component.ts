@@ -137,6 +137,7 @@ export class EventosAdminComponent implements OnInit {
     };
   }
 
+  // Convierte una fecha ISO (2022-10-12T12:00) a una fecha local (2022-10-12T12:00-03:00)
   convertirAFechaLocal(fechaISO: string): string {
     const date = new Date(fechaISO);
     const offset = date.getTimezoneOffset();
@@ -185,8 +186,11 @@ export class EventosAdminComponent implements OnInit {
     });
   }
 
-
-
+  // Cancela la edición de un evento y limpia el modelo
+  cancelarEdicion() {
+    this.editandoId = null;
+    this.eventoEditando = null;
+  }
 
   // Elimina un evento si se confirma la acción
   eliminarEvento(id: number) {

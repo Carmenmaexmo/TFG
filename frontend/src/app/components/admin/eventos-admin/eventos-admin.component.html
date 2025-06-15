@@ -28,34 +28,32 @@
       <td *ngIf="editandoId !== evento.id">{{ evento.titulo }}</td>
       <td *ngIf="editandoId === evento.id">
         <input [(ngModel)]="eventoEditando.titulo" />
-        <div class="error-msg" *ngIf="erroresEventoEdicion[evento.id]['general'] && !evento.titulo">
+       <div class="error-msg" *ngIf="erroresEventoEdicion[evento.id] && erroresEventoEdicion[evento.id]['general'] && !eventoEditando.titulo">
           El título es obligatorio.
         </div>
       </td>
-
       <!-- Fecha Inicio -->
       <td *ngIf="editandoId !== evento.id">{{ evento.fechaInicio | date: 'short' }}</td>
       <td *ngIf="editandoId === evento.id">
       <input type="datetime-local" [(ngModel)]="eventoEditando.fechaInicio" />
-       <div class="error-msg" *ngIf="erroresEventoCrear['fechaInicio']">
-          {{ erroresEventoEdicion[evento.id]['fechaInicio'] }}
-        </div>
-      </td>
+      <div class="error-msg" *ngIf="erroresEventoEdicion[evento.id] && erroresEventoEdicion[evento.id]['fechaInicio']">
+        {{ erroresEventoEdicion[evento.id]['fechaInicio'] }}
+      </div>
 
       <!-- Fecha Fin -->
       <td *ngIf="editandoId !== evento.id">{{ evento.fecha_fin | date: 'short' }}</td>
       <td *ngIf="editandoId === evento.id">
        <input type="datetime-local" [(ngModel)]="eventoEditando.fecha_fin" />
-       <div class="error-msg" *ngIf="erroresEventoCrear['fechaFin']">
-          {{ erroresEventoEdicion[evento.id]['fechaFin'] }}
-        </div>
+      <div class="error-msg" *ngIf="erroresEventoEdicion[evento.id] && erroresEventoEdicion[evento.id]['fechaFin']">
+        {{ erroresEventoEdicion[evento.id]['fechaFin'] }}
+      </div>
       </td>
 
       <!-- Lugar -->
       <td *ngIf="editandoId !== evento.id">{{ evento.lugar }}</td>
       <td *ngIf="editandoId === evento.id">
         <input [(ngModel)]="eventoEditando.lugar" />
-        <div class="error-msg" *ngIf="erroresEventoEdicion[evento.id]['general'] && !evento.lugar">
+        <div class="error-msg" *ngIf="erroresEventoEdicion[evento.id] && erroresEventoEdicion[evento.id]['general'] && !eventoEditando.lugar">
           El lugar es obligatorio.
         </div>
       </td>
@@ -64,7 +62,7 @@
       <td *ngIf="editandoId !== evento.id">{{ evento.descuento }}%</td>
       <td *ngIf="editandoId === evento.id">
         <input type="number" [(ngModel)]="eventoEditando.descuento" min="0" max="100" />
-        <div class="error-msg" *ngIf="erroresEventoEdicion[evento.id]['general'] && (evento.descuento === null || evento.descuento === undefined)">
+        <div class="error-msg" *ngIf="erroresEventoEdicion[evento.id] && erroresEventoEdicion[evento.id]['general'] &&(eventoEditando.descuento === null || eventoEditando.descuento === undefined)">
           El descuento es obligatorio.
         </div>
       </td>
@@ -79,6 +77,9 @@
         </button>
         <button *ngIf="editandoId === evento.id" (click)="guardarEdicion(evento)">
           <i class="bi bi-check-lg"></i>
+        </button>
+        <button *ngIf="editandoId === evento.id" (click)="cancelarEdicion()">
+          <i class="bi bi-x-lg"></i>
         </button>
         <button (click)="eliminarEvento(evento.id)">
           <i class="bi bi-trash-fill"></i>
