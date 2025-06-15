@@ -32,6 +32,11 @@ export class EventosAdminComponent implements OnInit {
 
   // Identificador del evento que se está editando (modo edición)
   editandoId: number | null = null;
+  eventoEditando: any = null;
+
+  //Error de validación para el formulario de creación y edición
+  erroresEventoCrear: { [key: string]: string } = {};
+  erroresEventoEdicion: { [eventoId: number]: { [key: string]: string } } = {};
 
   // Modelo del nuevo evento que se está creando
   nuevoEvento = {
@@ -77,43 +82,111 @@ export class EventosAdminComponent implements OnInit {
 
   // Guarda el nuevo evento en el servidor y lo añade a la lista
   guardarNuevoEvento() {
+    this.erroresEventoCrear = {};
+
+    const { titulo, descripcion, fechaInicio, fecha_fin, lugar, descuento } = this.nuevoEvento;
+
+    if (!titulo || !descripcion || !fechaInicio || !fecha_fin || !lugar || descuento === null) {
+      this.erroresEventoCrear['general'] = 'Todos los campos son obligatorios.';
+      return;
+    }
+
+    const inicio = new Date(fechaInicio);
+    const fin = new Date(fecha_fin);
+    const ahora = new Date();
+
+    if (inicio <= ahora) {
+      this.erroresEventoCrear['fechaInicio'] = 'La fecha de inicio debe ser futura.';
+      return;
+    }
+
+    if (fin <= inicio) {
+      this.erroresEventoCrear['fechaFin'] = 'La fecha de fin debe ser posterior a la de inicio.';
+      return;
+    }
+
     const nuevo = {
       ...this.nuevoEvento,
-      fechaInicio: new Date(this.nuevoEvento.fechaInicio).toISOString().slice(0, 19),
-      fecha_fin: new Date(this.nuevoEvento.fecha_fin).toISOString().slice(0, 19),
-      descuento: this.nuevoEvento.descuento
+      fechaInicio: inicio.toISOString().slice(0, 19),
+      fecha_fin: fin.toISOString().slice(0, 19),
+      descuento
     };
 
-    this.api.crearEvento(nuevo).subscribe(data => {
-      this.eventos.push(data);
-      this.cerrarCrear();
-    }, error => {
-      console.error('Error al crear evento', error);
+    this.api.crearEvento(nuevo).subscribe({
+      next: data => {
+        this.eventos.push(data);
+        this.cerrarCrear();
+      },
+      error: error => {
+        console.error('Error al crear evento', error);
+        this.erroresEventoCrear['general'] = 'No se pudo crear el evento.';
+      }
     });
   }
+
 
   // Activa el modo edición para un evento concreto
   activarEdicion(evento: any) {
     this.editandoId = evento.id;
+    this.erroresEventoEdicion[evento.id] = {};
+
+    this.eventoEditando = {
+      ...evento,
+      fechaInicio: this.convertirAFechaLocal(evento.fechaInicio),
+      fecha_fin: this.convertirAFechaLocal(evento.fecha_fin)
+    };
   }
+
+  convertirAFechaLocal(fechaISO: string): string {
+    const date = new Date(fechaISO);
+    const offset = date.getTimezoneOffset();
+    const local = new Date(date.getTime() - offset * 60 * 1000);
+    return local.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
+  }
+
+
 
   // Guarda los cambios realizados en el evento en edición
   guardarEdicion(evento: any) {
+    const errores: { [key: string]: string } = {};
+    const inicio = new Date(this.eventoEditando.fechaInicio);
+    const fin = new Date(this.eventoEditando.fecha_fin);
+    const ahora = new Date();
+
+    if (!this.eventoEditando.titulo || !this.eventoEditando.lugar || !this.eventoEditando.descripcion || !this.eventoEditando.fechaInicio || !this.eventoEditando.fecha_fin) {
+      errores['general'] = 'Todos los campos son obligatorios.';
+    } else {
+      if (inicio <= ahora) errores['fechaInicio'] = 'La fecha de inicio debe ser futura.';
+      if (fin <= inicio) errores['fechaFin'] = 'La fecha de fin debe ser posterior a la de inicio.';
+    }
+
+    if (Object.keys(errores).length > 0) {
+      this.erroresEventoEdicion[evento.id] = errores;
+      return;
+    }
+
     const actualizado = {
-      titulo: evento.titulo,
-      lugar: evento.lugar,
-      fechaInicio: evento.fechaInicio,
-      fecha_fin: evento.fecha_fin,
-      descripcion: evento.descripcion,
-      descuento: evento.descuento
+      ...this.eventoEditando,
+      fechaInicio: inicio.toISOString().slice(0, 19),
+      fecha_fin: fin.toISOString().slice(0, 19)
     };
 
-    this.api.actualizarEvento(evento.id, actualizado).subscribe(() => {
-      this.editandoId = null;
-    }, error => {
-      console.error('Error al actualizar evento', error);
+    this.api.actualizarEvento(evento.id, actualizado).subscribe({
+      next: () => {
+        Object.assign(evento, actualizado);
+        this.editandoId = null;
+        this.eventoEditando = null;
+        delete this.erroresEventoEdicion[evento.id];
+      },
+      error: error => {
+        console.error('Error al actualizar evento', error);
+        this.erroresEventoEdicion[evento.id] = { general: 'No se pudo actualizar el evento.' };
+      }
     });
   }
+
+
+
 
   // Elimina un evento si se confirma la acción
   eliminarEvento(id: number) {

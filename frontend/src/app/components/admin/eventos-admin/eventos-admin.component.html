@@ -20,51 +20,72 @@
         <th>Acciones</th>
       </tr>
     </thead>
-    <tbody>
-      <tr *ngFor="let evento of eventosFiltrados">
-        <td>{{ evento.id }}</td>
+   <tbody>
+    <tr *ngFor="let evento of eventosFiltrados">
+      <td>{{ evento.id }}</td>
 
-        <td *ngIf="editandoId !== evento.id">{{ evento.titulo }}</td>
-        <td *ngIf="editandoId === evento.id">
-          <input [(ngModel)]="evento.titulo" />
-        </td>
+      <!-- Título -->
+      <td *ngIf="editandoId !== evento.id">{{ evento.titulo }}</td>
+      <td *ngIf="editandoId === evento.id">
+        <input [(ngModel)]="eventoEditando.titulo" />
+        <div class="error-msg" *ngIf="erroresEventoEdicion[evento.id]['general'] && !evento.titulo">
+          El título es obligatorio.
+        </div>
+      </td>
 
-        <td *ngIf="editandoId !== evento.id">{{ evento.fechaInicio | date: 'short' }}</td>
-        <td *ngIf="editandoId === evento.id">
-          <input type="datetime-local" [(ngModel)]="evento.fechaInicio" />
-        </td>
+      <!-- Fecha Inicio -->
+      <td *ngIf="editandoId !== evento.id">{{ evento.fechaInicio | date: 'short' }}</td>
+      <td *ngIf="editandoId === evento.id">
+      <input type="datetime-local" [(ngModel)]="eventoEditando.fechaInicio" />
+       <div class="error-msg" *ngIf="erroresEventoCrear['fechaInicio']">
+          {{ erroresEventoEdicion[evento.id]['fechaInicio'] }}
+        </div>
+      </td>
 
-        <td *ngIf="editandoId !== evento.id">{{ evento.fecha_fin | date: 'short' }}</td>
-        <td *ngIf="editandoId === evento.id">
-          <input type="datetime-local" [(ngModel)]="evento.fecha_fin" />
-        </td>
+      <!-- Fecha Fin -->
+      <td *ngIf="editandoId !== evento.id">{{ evento.fecha_fin | date: 'short' }}</td>
+      <td *ngIf="editandoId === evento.id">
+       <input type="datetime-local" [(ngModel)]="eventoEditando.fecha_fin" />
+       <div class="error-msg" *ngIf="erroresEventoCrear['fechaFin']">
+          {{ erroresEventoEdicion[evento.id]['fechaFin'] }}
+        </div>
+      </td>
 
-        <td *ngIf="editandoId !== evento.id">{{ evento.lugar }}</td>
-        <td *ngIf="editandoId === evento.id">
-          <input [(ngModel)]="evento.lugar" />
-        </td>
+      <!-- Lugar -->
+      <td *ngIf="editandoId !== evento.id">{{ evento.lugar }}</td>
+      <td *ngIf="editandoId === evento.id">
+        <input [(ngModel)]="eventoEditando.lugar" />
+        <div class="error-msg" *ngIf="erroresEventoEdicion[evento.id]['general'] && !evento.lugar">
+          El lugar es obligatorio.
+        </div>
+      </td>
 
-        <td *ngIf="editandoId !== evento.id">{{ evento.descuento }}%</td>
-        <td *ngIf="editandoId === evento.id">
-          <input type="number" [(ngModel)]="evento.descuento" min="0" max="100" />
-        </td>
+      <!-- Descuento -->
+      <td *ngIf="editandoId !== evento.id">{{ evento.descuento }}%</td>
+      <td *ngIf="editandoId === evento.id">
+        <input type="number" [(ngModel)]="eventoEditando.descuento" min="0" max="100" />
+        <div class="error-msg" *ngIf="erroresEventoEdicion[evento.id]['general'] && (evento.descuento === null || evento.descuento === undefined)">
+          El descuento es obligatorio.
+        </div>
+      </td>
 
-        <td class="acciones">
-          <button (click)="verAsistentes(evento)">
-            <i class="bi bi-people-fill"></i>
-          </button>
-          <button *ngIf="editandoId !== evento.id" (click)="activarEdicion(evento)">
-            <i class="bi bi-pencil-fill"></i>
-          </button>
-          <button *ngIf="editandoId === evento.id" (click)="guardarEdicion(evento)">
-            <i class="bi bi-check-lg"></i>
-          </button>
-          <button (click)="eliminarEvento(evento.id)">
-            <i class="bi bi-trash-fill"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
+      <!-- Acciones -->
+      <td class="acciones">
+        <button (click)="verAsistentes(evento)">
+          <i class="bi bi-people-fill"></i>
+        </button>
+        <button *ngIf="editandoId !== evento.id" (click)="activarEdicion(evento)">
+          <i class="bi bi-pencil-fill"></i>
+        </button>
+        <button *ngIf="editandoId === evento.id" (click)="guardarEdicion(evento)">
+          <i class="bi bi-check-lg"></i>
+        </button>
+        <button (click)="eliminarEvento(evento.id)">
+          <i class="bi bi-trash-fill"></i>
+        </button>
+      </td>
+    </tr>
+  </tbody>
   </table>
 
   <!-- Modal Crear Evento -->
@@ -74,11 +95,29 @@
       <h3>Crear Nuevo Evento</h3>
       <form (ngSubmit)="guardarNuevoEvento()">
         <input type="text" [(ngModel)]="nuevoEvento.titulo" name="titulo" placeholder="Título" required />
+         <div class="error-msg" *ngIf="erroresEventoCrear['general'] && !nuevoEvento.titulo">
+          El título es obligatorio.
+        </div>
         <input type="text" [(ngModel)]="nuevoEvento.descripcion" name="descripcion" placeholder="Descripción" required />
+        <div class="error-msg" *ngIf="erroresEventoCrear['general'] && !nuevoEvento.descripcion">
+          La descripción es obligatoria.
+        </div>
         <input type="datetime-local" [(ngModel)]="nuevoEvento.fechaInicio" name="fechaInicio" required />
+        <div class="error-msg" *ngIf="'fechaInicio' in erroresEventoCrear">
+          {{ erroresEventoCrear['fechaInicio'] }}
+        </div>
         <input type="datetime-local" [(ngModel)]="nuevoEvento.fecha_fin" name="fechaFin" required />
+        <div class="error-msg" *ngIf="'fechaFin' in erroresEventoCrear">
+          {{ erroresEventoCrear['fechaFin'] }}
+        </div>
         <input type="text" [(ngModel)]="nuevoEvento.lugar" name="lugar" placeholder="Lugar" required />
+        <div class="error-msg" *ngIf="erroresEventoCrear['general'] && !nuevoEvento.lugar">
+          El lugar es obligatorio.
+        </div>
         <input type="number" [(ngModel)]="nuevoEvento.descuento" name="descuento" placeholder="Descuento (%)" min="0" max="100" required />
+        <div class="error-msg" *ngIf="erroresEventoCrear['general'] && (nuevoEvento.descuento === null || nuevoEvento.descuento === undefined)">
+          El descuento es obligatorio.
+        </div>
         <button type="submit" class="btn-guardar">Guardar</button>
       </form>
     </div>

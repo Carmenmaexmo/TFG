@@ -150,3 +150,8 @@
     border: 1px solid #ccc;
   }
   
+  .error-msg {
+  color: red;
+  font-size: 0.85rem;
+  margin: 4px 0 8px;
+}
