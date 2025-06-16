@@ -134,7 +134,7 @@ export class CarritoService {
           if (Array.isArray(carrito)) {
             this.carrito = carrito;
             this.carrito$.next(this.carrito);
-            localStorage.setItem('carrito', JSON.stringify(this.carrito));
+            localStorage.setItem('carrito', JSON.stringify(this.carrito)); //convertir texto en un array de objetos
             console.log('🛒 Carrito cargado del backend');
           }
         } catch (e) {
